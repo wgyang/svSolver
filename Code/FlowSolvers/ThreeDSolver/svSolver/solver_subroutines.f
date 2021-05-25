@@ -4,33 +4,33 @@ c
 c Portions of the code Copyright (c) 2009-2011 Open Source Medical
 c Software Corporation, University of California, San Diego.
 c
-c Portions of the code Copyright (c) 2000-2007, Stanford University, 
-c     Rensselaer Polytechnic Institute, Kenneth E. Jansen, 
+c Portions of the code Copyright (c) 2000-2007, Stanford University,
+c     Rensselaer Polytechnic Institute, Kenneth E. Jansen,
 c     Charles A. Taylor.
-c  
-c  See SimVascular Acknowledgements file for additional 
+c
+c  See SimVascular Acknowledgements file for additional
 c  contributors to the source code.
 c
-c  Redistribution and use in source and binary forms, with or without 
-c  modification, are permitted provided that the following conditions 
+c  Redistribution and use in source and binary forms, with or without
+c  modification, are permitted provided that the following conditions
 c  are met:
 c
 c  Redistributions of source code must retain the above copyright notice,
-c  this list of conditions and the following disclaimer. 
-c  Redistributions in binary form must reproduce the above copyright 
-c  notice, this list of conditions and the following disclaimer in the 
-c  documentation and/or other materials provided with the distribution. 
+c  this list of conditions and the following disclaimer.
+c  Redistributions in binary form must reproduce the above copyright
+c  notice, this list of conditions and the following disclaimer in the
+c  documentation and/or other materials provided with the distribution.
 c  Neither the name of the Stanford University or Rensselaer Polytechnic
 c  Institute nor the names of its contributors may be used to endorse or
-c  promote products derived from this software without specific prior 
+c  promote products derived from this software without specific prior
 c  written permission.
 c
 c  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 c  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-c  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-c  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-c  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-c  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+c  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+c  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+c  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+c  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 c  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 c  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
 c  AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -48,7 +48,7 @@ c
         include "common_blocks/conpar.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
-        
+
 c..........DECLARATION.................................................
         INTEGER row_fill_list(nshg,6*nnz),
      &          ien(npro,nshl),
@@ -71,7 +71,7 @@ c
            do j=1,nshl
               jnd=ndlist(j)
               jlngth=adjcnt(jnd) ! current length of j's list
-              do k=1,nshl 
+              do k=1,nshl
                  knd=ndlist(k)
                  ibroke=zero
                  do l= 1,jlngth
@@ -80,7 +80,7 @@ c
                        exit
                     endif
                  enddo
-                 
+
 c
 c  to get here k was not in  j's list so add it
 c
@@ -106,13 +106,13 @@ c
 !> This routine computes and assembles the data corresponding to the
 !! boundary elements.
 
-      subroutine AsBFlx (u,           y,           ac,      
-     &                   x,           shpb,    
-     &                   shglb,       ienb,        iBCB,    
+      subroutine AsBFlx (u,           y,           ac,
+     &                   x,           shpb,
+     &                   shglb,       ienb,        iBCB,
      &                   BCB,         invflx,      flxres,
      &                   flxLHS,      flxnrm,      xKebe )
 
-        use LagrangeMultipliers 
+        use LagrangeMultipliers
 
         include "global.h"
         include "common_blocks/conpar.h"
@@ -127,13 +127,13 @@ c..........................Declaration................................
        INTEGER i,ienb,iBCB,invflx,lnflx,lnode,n
        REAL*8 ac,BCB,flxres,flxLHS,flxnrm,shpb,shglb,u,y,x,xKebe
        REAL*8  yl,xlb,rl,sgn,flhsl,fnrml,ul,acl,dwl
-c.....................................................................       
+c.....................................................................
 c
         dimension y(nshg,ndofl),           x(numnp,nsd),
      &            ac(nshg,ndofl),          u(nshg,nsd),
      &            shpb(nshl,ngaussb),
-     &            shglb(nsd,nshl,ngaussb),         
-     &            ienb(npro,nshl),         
+     &            shglb(nsd,nshl,ngaussb),
+     &            ienb(npro,nshl),
      &            iBCB(npro,ndiBCB),       BCB(npro,nshlb,ndBCB),
      &            invflx(nshg),            flxres(nshg,nflow),
      &            flxLHS(nshg,1),          flxnrm(nshg,nsd)
@@ -144,8 +144,8 @@ c
      &            lnflx(npro),             lnode(27),
      &            ul(npro,nshl,nsd),       acl(npro,nshl,ndofl),
      &        dwl(npro,nshl)
-        
-        dimension xKebe(npro,9,nshl,nshl) 
+
+        dimension xKebe(npro,9,nshl,nshl)
 
 c
 c.... compute the nodes which lie on the boundary (hierarchic)
@@ -157,7 +157,7 @@ c
         if (ipord .gt. 1) then
            call getsgn(ienb,sgn)
         endif
-c     
+c
 c.... gather the variables
 c
         call localy(y,      yl,     ienb,   ndofl,  'gather  ')
@@ -176,9 +176,9 @@ c
         if(Lagrange.gt.zero) then
            allocate(loclhsLag(npro,9,nshlb,nshlb,3))
            loclhsLag = zero
-        endif           
-c        
-        call e3b  (ul,      yl,      acl,     iBCB,    BCB,     
+        endif
+c
+        call e3b  (ul,      yl,      acl,     iBCB,    BCB,
      &             shpb,    shglb,
      &             xlb,     rl,      sgn,     dwl,     xKebe)
         ires = 1
@@ -193,7 +193,7 @@ c
         call f3lhs (shpb,       shglb,      xlb,
      &              flhsl,      fnrml,      sgn )
 
-c     
+c
 c.... reset the non-contributing element values
 c
         lnflx = 0
@@ -216,7 +216,7 @@ c
         if(Lagrange.gt.zero) then
            deallocate(loclhsLag)
         endif
-c     
+c
 c.... end
 c
         return
@@ -237,7 +237,7 @@ c
      &                   shgl,    ien,     xmudmi,
      &                   qres,    rmass    )
 
-      
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/elmpar.h"
@@ -245,7 +245,7 @@ c
         include "common_blocks/intpt.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
- 
+
 c
 C     Argument variables
 C
@@ -262,19 +262,19 @@ C
       REAL*8                rmassl,      sgn
       REAL*8                xl,          yl
 
-        dimension y(nshg,ndof),               x(numnp,nsd),            
+        dimension y(nshg,ndof),               x(numnp,nsd),
      &            shp(nshl,ngauss),         shgl(nsd,nshl,ngauss),
      &            ien(npro,nshl),      dwl(npro,nenl),
      &            qres(nshg,idflx),    rmass(nshg)
 c
-        dimension yl(npro,nshl,ndof),          xl(npro,nenl,nsd),         
+        dimension yl(npro,nshl,ndof),          xl(npro,nenl,nsd),
      &            ql(npro,nshl,idflx),  rmassl(npro,nshl),
      &            xmudmi(npro,ngauss)
 c
         dimension sgn(npro,nshl)
 c
-c.... create the matrix of mode signs for the hierarchic basis 
-c     functions. 
+c.... create the matrix of mode signs for the hierarchic basis
+c     functions.
 c
         do i=1,nshl
            where ( ien(:,i) < 0 )
@@ -291,17 +291,17 @@ c
         call localy(y,      yl,     ien,    ndof,   'gather  ')
         call localx (x,      xl,     ien,    nsd,    'gather  ')
 c
-c.... get the element residuals 
+c.... get the element residuals
 c
         ql     = zero
         rmassl = zero
 
-        call e3q  (yl,         dwl,      shp,      shgl,    
+        call e3q  (yl,         dwl,      shp,      shgl,
      &             xl,         ql,       rmassl,
      &             xmudmi,     sgn  )
 
 c
-c.... assemble the diffusive flux residual 
+c.... assemble the diffusive flux residual
 c
         call local (qres,   ql,  ien,  idflx,  'scatter ')
         call local (rmass,  rmassl, ien,  1,          'scatter ')
@@ -317,7 +317,7 @@ c
 !! flux vector.
 
         subroutine AsIqSclr (y,       x,       shp,
-     &                       shgl,    ien,     qres,    
+     &                       shgl,    ien,     qres,
      &                       rmass    )
 c
         include "global.h"
@@ -327,7 +327,7 @@ c
         include "common_blocks/intpt.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
- 
+
 c
 C     Argument variables
 C
@@ -342,12 +342,12 @@ C
       REAL*8                sgn,         xl,          yl
 
 
-        dimension y(nshg,ndof),             x(numnp,nsd),            
+        dimension y(nshg,ndof),             x(numnp,nsd),
      &            shp(nshl,ngauss),         shgl(nsd,nshl,ngauss),
      &            ien(npro,nshl),      dwl(npro,nenl),
      &            qres(nshg,nsd),           rmass(nshg)
 c
-        dimension yl(npro,nshl,ndof),       xl(npro,nenl,nsd),         
+        dimension yl(npro,nshl,ndof),       xl(npro,nenl,nsd),
      &            ql(npro,nshl,nsd),        rmassl(npro,nshl)
 c
         dimension sgn(npro,nshl)
@@ -361,17 +361,17 @@ c
         call localy(y,      yl,     ien,    ndof,   'gather  ')
         call localx (x,      xl,     ien,    nsd,    'gather  ')
 c
-c.... get the element residuals 
+c.... get the element residuals
 c
         ql     = zero
         rmassl = zero
 
-        call e3qSclr  (yl,      dwl,    shp,    shgl,    
-     &                 xl,      ql,     rmassl, 
+        call e3qSclr  (yl,      dwl,    shp,    shgl,
+     &                 xl,      ql,     rmassl,
      &                 sgn             )
 
 c
-c.... assemble the temperature diffusive flux residual 
+c.... assemble the temperature diffusive flux residual
 c
         call local (qres,   ql,  ien,  nsd,  'scatter ')
         call local (rmass,  rmassl, ien,  1, 'scatter ')
@@ -381,7 +381,7 @@ c
         return
         end
 
-!> This routine satisfies the BC of LHS mass matrix for all  
+!> This routine satisfies the BC of LHS mass matrix for all
 !! elements in this block.
 !! @param[in] iBC(nshg) boundary condition code
 !! @param[in] BC(nshg,ndofBC) Dirichlet BC constraint parameters
@@ -396,7 +396,7 @@ c
         include "common_blocks/genpar.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
-        
+
 C     Argument variables
 C
       INTEGER             ibc
@@ -443,7 +443,7 @@ c.... x1-velocity
 c
               if ( ibits(iBC(in),3,3) .eq. 1) then
 c
- ! we want to project out the x1 component of the velocity from the tangent  
+ ! we want to project out the x1 component of the velocity from the tangent
  ! matix which is, mathematically, M^e = S^T M^e S. We will do the M^e S
  ! product first. It has the effect of
  ! subtracting the column of the block-9 matrix from each column of the block-9
@@ -451,9 +451,9 @@ c
  ! BC array associated with that row) FOR EACH column  of the
  ! nshl by nshl matrix FOR EACH element.  THEN the transpose of the
  ! operation is carried out (replace the word "column" by row
- ! EVERYWHERE). The following code has been set up so that we only have to 
+ ! EVERYWHERE). The following code has been set up so that we only have to
  ! give the starting position in each case since we know the block-9 matrix is
- ! ordered like this   
+ ! ordered like this
  !  1 2 3
  !  4 5 6
  !  7 8 9
@@ -470,12 +470,12 @@ c
                  iadj2=iadj1+3
                  iadj3=iadj2+3
                  do i = 1, nshl
-                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem1,i,inod) 
-                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem2,i,inod) 
-                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem3,i,inod) 
+                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem1,i,inod)
+                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem2,i,inod)
+                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem3,i,inod)
 
                  enddo
  ! block status ' denotes colunn 1 projected off.
@@ -490,12 +490,12 @@ c
                  iadj2=iadj1+3
                  iadj3=iadj2+3
                  do i = 1, nshl
-                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod) 
-     &                           - BC(in,5) * xKebe(iel,irem1,i,inod) 
-                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod) 
-     &                           - BC(in,5) * xKebe(iel,irem2,i,inod) 
-                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod) 
-     &                           - BC(in,5) * xKebe(iel,irem3,i,inod) 
+                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod)
+     &                           - BC(in,5) * xKebe(iel,irem1,i,inod)
+                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod)
+     &                           - BC(in,5) * xKebe(iel,irem2,i,inod)
+                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod)
+     &                           - BC(in,5) * xKebe(iel,irem3,i,inod)
  ! block status
  !  1 2' 3'
  !  4 5' 6'
@@ -505,9 +505,9 @@ c
 c
 c done with the first  columns_block-9 for columns AND rows of nshl
 c
-                    xKebe(iel,irem1,i,inod) = zero 
-                    xKebe(iel,irem2,i,inod) = zero 
-                    xKebe(iel,irem3,i,inod) = zero 
+                    xKebe(iel,irem1,i,inod) = zero
+                    xKebe(iel,irem2,i,inod) = zero
+                    xKebe(iel,irem3,i,inod) = zero
 
 
  ! block status
@@ -517,7 +517,7 @@ c
 
                  enddo
 c
-c  now adjust the second row_block-9 for EACH row nshl for EACH element 
+c  now adjust the second row_block-9 for EACH row nshl for EACH element
 c
 
                  iadj1=4
@@ -527,12 +527,12 @@ c
                  irem2=irem1+1
                  irem3=irem2+1
                  do i = 1, nshl
-                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem1,inod,i) 
-                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem2,inod,i) 
-                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem3,inod,i) 
+                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem1,inod,i)
+                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem2,inod,i)
+                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem3,inod,i)
 
                  enddo
  ! block status
@@ -545,12 +545,12 @@ c
                  iadj2=iadj1+1
                  iadj3=iadj2+1
                  do i = 1, nshl
-                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i) 
-     &                           - BC(in,5) * xKebe(iel,irem1,inod,i) 
-                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i) 
-     &                           - BC(in,5) * xKebe(iel,irem2,inod,i) 
-                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i) 
-     &                           - BC(in,5) * xKebe(iel,irem3,inod,i) 
+                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i)
+     &                           - BC(in,5) * xKebe(iel,irem1,inod,i)
+                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i)
+     &                           - BC(in,5) * xKebe(iel,irem2,inod,i)
+                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i)
+     &                           - BC(in,5) * xKebe(iel,irem3,inod,i)
 
  ! block status
  !  0 2' 3'
@@ -561,10 +561,10 @@ c
 
 c
 c eliminate the first row of block-9 for all rows
-c 
-                    xKebe(iel,irem1,inod,i) = zero 
-                    xKebe(iel,irem2,inod,i) = zero 
-                    xKebe(iel,irem3,inod,i) = zero 
+c
+                    xKebe(iel,irem1,inod,i) = zero
+                    xKebe(iel,irem2,inod,i) = zero
+                    xKebe(iel,irem3,inod,i) = zero
 
                  enddo
 
@@ -573,7 +573,7 @@ c
  !  0 5'' 6''
  !  0 8'' 9''
 
-  ! Be aware that this simple status of the block does not reflect that when 
+  ! Be aware that this simple status of the block does not reflect that when
   ! we eliminated columns we did it for columns in nshl as well for the given
   ! inod. Conversely when we eliminated rows in the block we did so for ALL
   !  rows in nshl as can be seen by the transpose of i and inod.
@@ -606,12 +606,12 @@ c
                  iadj2=iadj1+3
                  iadj3=iadj2+3
                  do i = 1, nshl
-                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem1,i,inod) 
-                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem2,i,inod) 
-                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem3,i,inod) 
+                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem1,i,inod)
+                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem2,i,inod)
+                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem3,i,inod)
 
                  enddo
 c
@@ -622,12 +622,12 @@ c
                  iadj2=iadj1+3
                  iadj3=iadj2+3
                  do i = 1, nshl
-                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod) 
-     &                           - BC(in,5) * xKebe(iel,irem1,i,inod) 
-                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod) 
-     &                           - BC(in,5) * xKebe(iel,irem2,i,inod) 
-                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod) 
-     &                           - BC(in,5) * xKebe(iel,irem3,i,inod) 
+                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod)
+     &                           - BC(in,5) * xKebe(iel,irem1,i,inod)
+                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod)
+     &                           - BC(in,5) * xKebe(iel,irem2,i,inod)
+                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod)
+     &                           - BC(in,5) * xKebe(iel,irem3,i,inod)
 
                  enddo
                  do i=1,nshl
@@ -635,13 +635,13 @@ c
 c done with the second  columns_block-9 for columns
 c
 
-                    xKebe(iel,irem1,i,inod) = zero 
-                    xKebe(iel,irem2,i,inod) = zero 
-                    xKebe(iel,irem3,i,inod) = zero 
+                    xKebe(iel,irem1,i,inod) = zero
+                    xKebe(iel,irem2,i,inod) = zero
+                    xKebe(iel,irem3,i,inod) = zero
 
                  enddo
 c
-c  now adjust the 1st row_block-9 for EACH row nshl for EACH element 
+c  now adjust the 1st row_block-9 for EACH row nshl for EACH element
 c
 
                  iadj1=1
@@ -651,33 +651,33 @@ c
                  irem2=irem1+1
                  irem3=irem2+1
                  do i = 1, nshl
-                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem1,inod,i) 
-                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem2,inod,i) 
-                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem3,inod,i) 
+                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem1,inod,i)
+                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem2,inod,i)
+                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem3,inod,i)
 
                  enddo
                  iadj1=7
                  iadj2=iadj1+1
                  iadj3=iadj2+1
                  do i = 1, nshl
-                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i) 
-     &                           - BC(in,5) * xKebe(iel,irem1,inod,i) 
-                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i) 
-     &                           - BC(in,5) * xKebe(iel,irem2,inod,i) 
-                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i) 
-     &                           - BC(in,5) * xKebe(iel,irem3,inod,i) 
+                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i)
+     &                           - BC(in,5) * xKebe(iel,irem1,inod,i)
+                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i)
+     &                           - BC(in,5) * xKebe(iel,irem2,inod,i)
+                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i)
+     &                           - BC(in,5) * xKebe(iel,irem3,inod,i)
                  enddo
                  do i=1,nshl
 
 c
-c eliminate the second row of block-9 for all rows 
-c 
-                    xKebe(iel,irem1,inod,i) = zero 
-                    xKebe(iel,irem2,inod,i) = zero 
-                    xKebe(iel,irem3,inod,i) = zero 
+c eliminate the second row of block-9 for all rows
+c
+                    xKebe(iel,irem1,inod,i) = zero
+                    xKebe(iel,irem2,inod,i) = zero
+                    xKebe(iel,irem3,inod,i) = zero
                  enddo
                  xKebe(iel,5,inod,inod)=one
               endif
@@ -703,12 +703,12 @@ c
                  iadj2=iadj1+3
                  iadj3=iadj2+3
                  do i = 1, nshl
-                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem1,i,inod) 
-                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem2,i,inod) 
-                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem3,i,inod) 
+                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem1,i,inod)
+                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem2,i,inod)
+                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem3,i,inod)
 
                  enddo
 c
@@ -719,26 +719,26 @@ c
                  iadj2=iadj1+3
                  iadj3=iadj2+3
                  do i = 1, nshl
-                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod) 
-     &                           - BC(in,5) * xKebe(iel,irem1,i,inod) 
-                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod) 
-     &                           - BC(in,5) * xKebe(iel,irem2,i,inod) 
-                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod) 
-     &                           - BC(in,5) * xKebe(iel,irem3,i,inod) 
+                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod)
+     &                           - BC(in,5) * xKebe(iel,irem1,i,inod)
+                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod)
+     &                           - BC(in,5) * xKebe(iel,irem2,i,inod)
+                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod)
+     &                           - BC(in,5) * xKebe(iel,irem3,i,inod)
                  enddo
                  do i=1,nshl
 
 c
-c done with the 3rd columns_block-9 for columns 
+c done with the 3rd columns_block-9 for columns
 c
 
-                    xKebe(iel,irem1,i,inod) = zero 
-                    xKebe(iel,irem2,i,inod) = zero 
-                    xKebe(iel,irem3,i,inod) = zero 
+                    xKebe(iel,irem1,i,inod) = zero
+                    xKebe(iel,irem2,i,inod) = zero
+                    xKebe(iel,irem3,i,inod) = zero
 
                  enddo
 c
-c  now adjust the 1st row_block-9 for EACH row nshl for EACH element 
+c  now adjust the 1st row_block-9 for EACH row nshl for EACH element
 c
 
                  iadj1=1
@@ -748,35 +748,35 @@ c
                  irem2=irem1+1
                  irem3=irem2+1
                  do i = 1, nshl
-                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem1,inod,i) 
-                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem2,inod,i) 
-                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem3,inod,i) 
+                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem1,inod,i)
+                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem2,inod,i)
+                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem3,inod,i)
 
                  enddo
                  iadj1=4
                  iadj2=iadj1+1
                  iadj3=iadj2+1
                  do i = 1, nshl
-                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i) 
-     &                           - BC(in,5) * xKebe(iel,irem1,inod,i) 
-                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i) 
-     &                           - BC(in,5) * xKebe(iel,irem2,inod,i) 
-                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i) 
-     &                           - BC(in,5) * xKebe(iel,irem3,inod,i) 
+                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i)
+     &                           - BC(in,5) * xKebe(iel,irem1,inod,i)
+                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i)
+     &                           - BC(in,5) * xKebe(iel,irem2,inod,i)
+                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i)
+     &                           - BC(in,5) * xKebe(iel,irem3,inod,i)
 
                  enddo
                  do i=1,nshl
-                    xKebe(iel,irem1,inod,i) = zero 
-                    xKebe(iel,irem2,inod,i) = zero 
-                    xKebe(iel,irem3,inod,i) = zero 
+                    xKebe(iel,irem1,inod,i) = zero
+                    xKebe(iel,irem2,inod,i) = zero
+                    xKebe(iel,irem3,inod,i) = zero
 
                  enddo
                  xKebe(iel,9,inod,inod)=one
               endif
-c     
+c
 c.... x1-velocity and x2-velocity
 c
               if ( ibits(iBC(in),3,3) .eq. 3 ) then
@@ -803,15 +803,15 @@ c
                  iadj2=iadj1+3
                  iadj3=iadj2+3
                  do i = 1, nshl
-                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem1,i,inod) 
-     &                           - BC(in,6) * xKebe(iel,ire21,i,inod) 
-                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem2,i,inod) 
-     &                           - BC(in,6) * xKebe(iel,ire22,i,inod) 
-                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem3,i,inod) 
-     &                           - BC(in,6) * xKebe(iel,ire23,i,inod) 
+                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem1,i,inod)
+     &                           - BC(in,6) * xKebe(iel,ire21,i,inod)
+                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem2,i,inod)
+     &                           - BC(in,6) * xKebe(iel,ire22,i,inod)
+                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem3,i,inod)
+     &                           - BC(in,6) * xKebe(iel,ire23,i,inod)
 
  ! Status of the block-9 matrix
  !  1 2 3'
@@ -823,13 +823,13 @@ c
 c done with the first and second columns_block-9 for columns AND rows of nshl
 c
 
-                    xKebe(iel,irem1,i,inod) = zero 
-                    xKebe(iel,irem2,i,inod) = zero 
-                    xKebe(iel,irem3,i,inod) = zero 
+                    xKebe(iel,irem1,i,inod) = zero
+                    xKebe(iel,irem2,i,inod) = zero
+                    xKebe(iel,irem3,i,inod) = zero
 
-                    xKebe(iel,ire21,i,inod) = zero 
-                    xKebe(iel,ire22,i,inod) = zero 
-                    xKebe(iel,ire23,i,inod) = zero 
+                    xKebe(iel,ire21,i,inod) = zero
+                    xKebe(iel,ire22,i,inod) = zero
+                    xKebe(iel,ire23,i,inod) = zero
 
  ! Status of the block-9 matrix
  !  0 0 3'
@@ -838,7 +838,7 @@ c
 
                  enddo
 c
-c  now adjust the 3rd row_block-9 for EACH row nshl for EACH element 
+c  now adjust the 3rd row_block-9 for EACH row nshl for EACH element
 c
 
                  iadj1=7
@@ -851,15 +851,15 @@ c
                  ire22=ire21+1
                  ire23=ire22+1
                  do i = 1, nshl
-                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem1,inod,i) 
-     &                           - BC(in,6) * xKebe(iel,ire21,inod,i) 
-                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem2,inod,i) 
-     &                           - BC(in,6) * xKebe(iel,ire22,inod,i) 
-                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem3,inod,i) 
-     &                           - BC(in,6) * xKebe(iel,ire23,inod,i) 
+                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem1,inod,i)
+     &                           - BC(in,6) * xKebe(iel,ire21,inod,i)
+                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem2,inod,i)
+     &                           - BC(in,6) * xKebe(iel,ire22,inod,i)
+                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem3,inod,i)
+     &                           - BC(in,6) * xKebe(iel,ire23,inod,i)
 
 
  ! Status of the block-9 matrix
@@ -868,13 +868,13 @@ c
  !  0 0 9''
                  enddo
                  do i=1,nshl
-                    xKebe(iel,irem1,inod,i) = zero 
-                    xKebe(iel,irem2,inod,i) = zero 
-                    xKebe(iel,irem3,inod,i) = zero 
+                    xKebe(iel,irem1,inod,i) = zero
+                    xKebe(iel,irem2,inod,i) = zero
+                    xKebe(iel,irem3,inod,i) = zero
 
-                    xKebe(iel,ire21,inod,i) = zero 
-                    xKebe(iel,ire22,inod,i) = zero 
-                    xKebe(iel,ire23,inod,i) = zero 
+                    xKebe(iel,ire21,inod,i) = zero
+                    xKebe(iel,ire22,inod,i) = zero
+                    xKebe(iel,ire23,inod,i) = zero
 
  ! Status of the block-9 matrix
  !  0 0 0
@@ -885,7 +885,7 @@ c
                  xKebe(iel,1,inod,inod)=one
                  xKebe(iel,5,inod,inod)=one
               endif
-c     
+c
 c.... x1-velocity and x3-velocity
 c
               if ( ibits(iBC(in),3,3) .eq. 5 ) then
@@ -912,31 +912,31 @@ c
                  iadj2=iadj1+3
                  iadj3=iadj2+3
                  do i = 1, nshl
-                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem1,i,inod) 
-     &                           - BC(in,6) * xKebe(iel,ire21,i,inod) 
-                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem2,i,inod) 
-     &                           - BC(in,6) * xKebe(iel,ire22,i,inod) 
-                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem3,i,inod) 
-     &                           - BC(in,6) * xKebe(iel,ire23,i,inod) 
+                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem1,i,inod)
+     &                           - BC(in,6) * xKebe(iel,ire21,i,inod)
+                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem2,i,inod)
+     &                           - BC(in,6) * xKebe(iel,ire22,i,inod)
+                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem3,i,inod)
+     &                           - BC(in,6) * xKebe(iel,ire23,i,inod)
 
                  enddo
                  do i=1,nshl
 c
 c done with the first and third columns_block-9 for columns AND rows of nshl
 c
-                    xKebe(iel,irem1,i,inod) = zero 
-                    xKebe(iel,irem2,i,inod) = zero 
-                    xKebe(iel,irem3,i,inod) = zero 
+                    xKebe(iel,irem1,i,inod) = zero
+                    xKebe(iel,irem2,i,inod) = zero
+                    xKebe(iel,irem3,i,inod) = zero
 
-                    xKebe(iel,ire21,i,inod) = zero 
-                    xKebe(iel,ire22,i,inod) = zero 
-                    xKebe(iel,ire23,i,inod) = zero 
+                    xKebe(iel,ire21,i,inod) = zero
+                    xKebe(iel,ire22,i,inod) = zero
+                    xKebe(iel,ire23,i,inod) = zero
                  enddo
 c
-c  now adjust the 2nd row_block-9 for EACH row nshl for EACH element 
+c  now adjust the 2nd row_block-9 for EACH row nshl for EACH element
 c
 
                  iadj1=4
@@ -949,31 +949,31 @@ c
                  ire22=ire21+1
                  ire23=ire22+1
                  do i = 1, nshl
-                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem1,inod,i) 
-     &                           - BC(in,6) * xKebe(iel,ire21,inod,i) 
-                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem2,inod,i) 
-     &                           - BC(in,6) * xKebe(iel,ire22,inod,i) 
-                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem3,inod,i) 
-     &                           - BC(in,6) * xKebe(iel,ire23,inod,i) 
+                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem1,inod,i)
+     &                           - BC(in,6) * xKebe(iel,ire21,inod,i)
+                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem2,inod,i)
+     &                           - BC(in,6) * xKebe(iel,ire22,inod,i)
+                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem3,inod,i)
+     &                           - BC(in,6) * xKebe(iel,ire23,inod,i)
 
                  enddo
                  do i=1,nshl
-                    xKebe(iel,irem1,inod,i) = zero 
-                    xKebe(iel,irem2,inod,i) = zero 
-                    xKebe(iel,irem3,inod,i) = zero 
+                    xKebe(iel,irem1,inod,i) = zero
+                    xKebe(iel,irem2,inod,i) = zero
+                    xKebe(iel,irem3,inod,i) = zero
 
-                    xKebe(iel,ire21,inod,i) = zero 
-                    xKebe(iel,ire22,inod,i) = zero 
-                    xKebe(iel,ire23,inod,i) = zero 
+                    xKebe(iel,ire21,inod,i) = zero
+                    xKebe(iel,ire22,inod,i) = zero
+                    xKebe(iel,ire23,inod,i) = zero
 
                  enddo
                  xKebe(iel,1,inod,inod)=one
                  xKebe(iel,9,inod,inod)=one
               endif
-c     
+c
 c.... x2-velocity and x3-velocity
 c
               if ( ibits(iBC(in),3,3) .eq. 6 ) then
@@ -1000,32 +1000,32 @@ c
                  iadj2=iadj1+3
                  iadj3=iadj2+3
                  do i = 1, nshl
-                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem1,i,inod) 
-     &                           - BC(in,6) * xKebe(iel,ire21,i,inod) 
-                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem2,i,inod) 
-     &                           - BC(in,6) * xKebe(iel,ire22,i,inod) 
-                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod) 
-     &                           - BC(in,4) * xKebe(iel,irem3,i,inod) 
-     &                           - BC(in,6) * xKebe(iel,ire23,i,inod) 
+                    xKebe(iel,iadj1,i,inod) = xKebe(iel,iadj1,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem1,i,inod)
+     &                           - BC(in,6) * xKebe(iel,ire21,i,inod)
+                    xKebe(iel,iadj2,i,inod) = xKebe(iel,iadj2,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem2,i,inod)
+     &                           - BC(in,6) * xKebe(iel,ire22,i,inod)
+                    xKebe(iel,iadj3,i,inod) = xKebe(iel,iadj3,i,inod)
+     &                           - BC(in,4) * xKebe(iel,irem3,i,inod)
+     &                           - BC(in,6) * xKebe(iel,ire23,i,inod)
                  enddo
                  do i=1,nshl
 
 c
 c done with the first and second columns_block-9 for columns AND rows of nshl
 c
-                    xKebe(iel,irem1,i,inod) = zero 
-                    xKebe(iel,irem2,i,inod) = zero 
-                    xKebe(iel,irem3,i,inod) = zero 
+                    xKebe(iel,irem1,i,inod) = zero
+                    xKebe(iel,irem2,i,inod) = zero
+                    xKebe(iel,irem3,i,inod) = zero
 
-                    xKebe(iel,ire21,i,inod) = zero 
-                    xKebe(iel,ire22,i,inod) = zero 
-                    xKebe(iel,ire23,i,inod) = zero 
+                    xKebe(iel,ire21,i,inod) = zero
+                    xKebe(iel,ire22,i,inod) = zero
+                    xKebe(iel,ire23,i,inod) = zero
 
                  enddo
 c
-c  now adjust the 3rd row_block-9 for EACH row nshl for EACH element 
+c  now adjust the 3rd row_block-9 for EACH row nshl for EACH element
 c
 
                  iadj1=7
@@ -1038,45 +1038,45 @@ c
                  ire22=ire21+1
                  ire23=ire22+1
                  do i = 1, nshl
-                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem1,inod,i) 
-                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem2,inod,i) 
-                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i) 
-     &                           - BC(in,4) * xKebe(iel,irem3,inod,i) 
-     &                           - BC(in,6) * xKebe(iel,ire23,inod,i) 
+                    xKebe(iel,iadj1,inod,i) = xKebe(iel,iadj1,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem1,inod,i)
+                    xKebe(iel,iadj2,inod,i) = xKebe(iel,iadj2,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem2,inod,i)
+                    xKebe(iel,iadj3,inod,i) = xKebe(iel,iadj3,inod,i)
+     &                           - BC(in,4) * xKebe(iel,irem3,inod,i)
+     &                           - BC(in,6) * xKebe(iel,ire23,inod,i)
 
                  enddo
                  do i=1,nshl
-                    xKebe(iel,irem1,inod,i) = zero 
-                    xKebe(iel,irem2,inod,i) = zero 
-                    xKebe(iel,irem3,inod,i) = zero 
+                    xKebe(iel,irem1,inod,i) = zero
+                    xKebe(iel,irem2,inod,i) = zero
+                    xKebe(iel,irem3,inod,i) = zero
 
-c 
-                    xKebe(iel,ire21,inod,i) = zero 
-                    xKebe(iel,ire22,inod,i) = zero 
-                    xKebe(iel,ire23,inod,i) = zero 
+c
+                    xKebe(iel,ire21,inod,i) = zero
+                    xKebe(iel,ire22,inod,i) = zero
+                    xKebe(iel,ire23,inod,i) = zero
 
                  enddo
                  xKebe(iel,5,inod,inod)=one
                  xKebe(iel,9,inod,inod)=one
               endif
-      
+
  5000         continue
-        
-c        
+
+c
 c.... end loop over shape functions (nodes)
-c        
+c
            enddo
 c
 c.... end loop over elements
-c     
+c
         enddo
 c
-c These elements should assemble to a matrix with the rows and columns 
+c These elements should assemble to a matrix with the rows and columns
 c associated with the Dirichlet nodes zeroed out.  Note that BC3 Diag
 c
-c     
+c
 c.... return
 c
         return
@@ -1090,12 +1090,12 @@ c
 
         subroutine bc3per (iBC,  res, iper, ilwork,nQs)
         use periodicity  ! this gives you rcount(1:nshg) (real*8)
-        
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/fronts.h"
         include "common_blocks/workfc.h"
-        
+
 C     Argument variables
 C
       INTEGER             ibc,         ilwork,      iper,        nqs
@@ -1126,15 +1126,15 @@ c
         if(numpe.gt.1) then
 c
 c.... nodes treated on another processor are eliminated
-c     
+c
            numtask = ilwork(1)
            itkbeg = 1
-           
+
            do itask = 1, numtask
-              
+
               iacc   = ilwork (itkbeg + 2)
               numseg = ilwork (itkbeg + 4)
-              
+
               if (iacc .eq. 0) then
                  do is = 1,numseg
                     isgbeg = ilwork (itkbeg + 3 + 2*is)
@@ -1143,9 +1143,9 @@ c
                     res(isgbeg:isgend,:) = zero
                  enddo
               endif
-              
+
               itkbeg = itkbeg + 4 + 2*numseg
-              
+
            enddo
         endif
 c
@@ -1166,7 +1166,7 @@ c
         include "common_blocks/conpar.h"
         include "common_blocks/fronts.h"
         include "common_blocks/genpar.h"
-        
+
 C
 C     Argument variables
 C
@@ -1175,15 +1175,15 @@ C
       REAL*8                bc,          res
 C
         dimension iBC(nshg),
-     &            BC(nshg,ndofBC),   
+     &            BC(nshg,ndofBC),
      &            res(nshg,nflow),           ilwork(nlwork),
      &            iper(nshg)
 c
 c.... local periodic boundary conditions (no communications)
 c
         call bc3per(iBC,  res, iper, ilwork, nflow)
-c 
-c.... pressure 
+c
+c.... pressure
 c
         where (btest(iBC,2))
            res(:,4) = zero
@@ -1193,7 +1193,7 @@ c.... velocities
 c
 c ibits(n1,n2,n3) extracts bits n2+1 through n2+n3 (extending to the left
 c as is traditional in binary) of the integer n1
-c and returns the base 10 integer. In examples below x y z a b can 
+c and returns the base 10 integer. In examples below x y z a b can
 c be 1 or zero without any effect.
 c
 c.... x1-velocity
@@ -1202,7 +1202,7 @@ c if iBC=4   bits of ibc =00000100 => ibits(4,3,3)=0
 c if iBC=40  bits of ibc =00101000 => ibits(40,3,3)=5
 c if iBC=40  bits of ibc =00101000 => ibits(40,3,2)=1
 c
-        where (ibits(iBC,3,3) .eq. 1)   ! bits of iBC= xy001zab 
+        where (ibits(iBC,3,3) .eq. 1)   ! bits of iBC= xy001zab
 c
 c     notice that the extracted 3 bits form the number 1.  below
 c     you will see the combinations which make up 2-7, all of the
@@ -1215,7 +1215,7 @@ c
 c
 c.... x2-velocity
 c
-        where (ibits(iBC,3,3) .eq. 2)   ! bits of iBC= xy010zab 
+        where (ibits(iBC,3,3) .eq. 2)   ! bits of iBC= xy010zab
           res(:,1) = res(:,1) - BC(:,4) * res(:,2)
           res(:,3) = res(:,3) - BC(:,5) * res(:,2)
           res(:,2) = zero
@@ -1223,7 +1223,7 @@ c
 c
 c.... x1-velocity and x2-velocity
 c
-        where (ibits(iBC,3,3) .eq. 3)  ! bits of iBC= xy011zab 
+        where (ibits(iBC,3,3) .eq. 3)  ! bits of iBC= xy011zab
           res(:,3) = res(:,3) - BC(:,4) * res(:,1) - BC(:,6) * res(:,2)
           res(:,1) = zero
           res(:,2) = zero
@@ -1231,7 +1231,7 @@ c
 c
 c.... x3-velocity
 c
-        where (ibits(iBC,3,3) .eq. 4)  ! bits of iBC= xy100zab 
+        where (ibits(iBC,3,3) .eq. 4)  ! bits of iBC= xy100zab
           res(:,1) = res(:,1) - BC(:,4) * res(:,3)
           res(:,2) = res(:,2) - BC(:,5) * res(:,3)
           res(:,3) = zero
@@ -1239,7 +1239,7 @@ c
 c
 c.... x1-velocity and x3-velocity
 c
-        where (ibits(iBC,3,3) .eq. 5)  ! bits of iBC= xy101zab 
+        where (ibits(iBC,3,3) .eq. 5)  ! bits of iBC= xy101zab
           res(:,2) = res(:,2) - BC(:,4) * res(:,1) - BC(:,6) * res(:,3)
           res(:,1) = zero
           res(:,3) = zero
@@ -1247,7 +1247,7 @@ c
 c
 c.... x2-velocity and x3-velocity
 c
-        where (ibits(iBC,3,3) .eq. 6)  ! bits of iBC= xy110zab 
+        where (ibits(iBC,3,3) .eq. 6)  ! bits of iBC= xy110zab
           res(:,1) = res(:,1) - BC(:,4) * res(:,2) - BC(:,6) * res(:,3)
           res(:,2) = zero
           res(:,3) = zero
@@ -1255,7 +1255,7 @@ c
 c
 c.... x1-velocity, x2-velocity and x3-velocity
 c
-        where (ibits(iBC,3,3) .eq. 7)  ! bits of iBC= xy111zab 
+        where (ibits(iBC,3,3) .eq. 7)  ! bits of iBC= xy111zab
           res(:,1) = zero
           res(:,2) = zero
           res(:,3) = zero
@@ -1263,7 +1263,7 @@ c
 c
 c.... scaled plane extraction boundary condition
 c
-        
+
         where (btest(iBC,11))
           res(:,1) = zero
           res(:,2) = zero
@@ -1272,7 +1272,7 @@ c         NATHAN TURBULENCE REMOVAL
 c         DES - if pressures are interpolated, res should be zero
 c         res(:,4) = zero
         endwhere
-        
+
 c
 c.... return
 c
@@ -1306,9 +1306,9 @@ c
 
 
         if(isclr.eq.0) then
-c     
+c
 c.... temperature
-c     
+c
            where (btest(iBC,1)) res(:) = zero
         else
 c
@@ -1338,13 +1338,13 @@ c
 !!  - tau_1n   ... tau_nsd n <B>boundary viscous flux</B> <BR>
 
       subroutine Bflux ( y,          ac,        u,      x,
-     &                   shp,       shgl,       shpb,   
+     &                   shp,       shgl,       shpb,
      &                   shglb,     ilwork,     iBC,
      &                   BC,        iper  )
-      
+
       use pointer_data
       use LagrangeMultipliers
-      
+
         include "global.h"
         include "mpif.h"
         include "common_blocks/aerfrc.h"
@@ -1360,7 +1360,7 @@ c
         include "common_blocks/outpar.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
-        include "common_blocks/timdat.h" 
+        include "common_blocks/timdat.h"
         include "common_blocks/workfc.h"
 
 C     Argument variables
@@ -1380,18 +1380,18 @@ C
 
 C
       character*5  cname
-      
+
       real*8    y(nshg,ndof),             ac(nshg,ndof),
      &          u(nshg,nsd),              x(numnp,nsd)
-      dimension iBC(nshg),           
-     &            BC(nshg,ndofBC),  
+      dimension iBC(nshg),
+     &            BC(nshg,ndofBC),
      &            iper(nshg)
-     
-      real*8    shp(MAXTOP,maxsh,MAXQPT),  
-     &          shgl(MAXTOP,nsd,maxsh,MAXQPT), 
+
+      real*8    shp(MAXTOP,maxsh,MAXQPT),
+     &          shgl(MAXTOP,nsd,maxsh,MAXQPT),
      &          shpb(MAXTOP,maxsh,MAXQPT),
-     &          shglb(MAXTOP,nsd,maxsh,MAXQPT) 
-c    
+     &          shglb(MAXTOP,nsd,maxsh,MAXQPT)
+c
 c
       real*8    flxres(nshg,nflow),
      &          flxLHS(nshg,1),           flxnrm(nshg,nsd),
@@ -1402,7 +1402,7 @@ c
 
 c
       integer   ilwork(nlwork),
-     &          invflx(nshg),             nodflx(nshg)             
+     &          invflx(nshg),             nodflx(nshg)
 c
       character*20 fname1,  fmt1, fmt2, fnamer
       character*25 fname2
@@ -1419,17 +1419,17 @@ c
       numflx  = 0
       invflx  = 0
       nodflx  = 0
-      do iblk = 1, nelblb 
+      do iblk = 1, nelblb
          iel    = lcblkb(1,iblk)
          lcsyst = lcblkb(3,iblk)
-         nenl   = lcblkb(5,iblk) 
-         nenbl  = lcblkb(6,iblk) 
+         nenl   = lcblkb(5,iblk)
+         nenbl  = lcblkb(6,iblk)
          ndofl  = lcblkb(8,iblk)
          nshl   = lcblkb(9,iblk)
          nshlb  = lcblkb(10,iblk)
-         npro   = lcblkb(1,iblk+1) - iel 
-         call flxNode (mienb(iblk)%p,   miBCB(iblk)%p,  invflx) 
-      enddo 
+         npro   = lcblkb(1,iblk+1) - iel
+         call flxNode (mienb(iblk)%p,   miBCB(iblk)%p,  invflx)
+      enddo
 c      do i = 1, nshg
       do i = 1, numnp
          if (invflx(i) .ne. 0) then
@@ -1437,17 +1437,17 @@ c      do i = 1, nshg
             nodflx(numflx) = i
          endif
       enddo
-c     
+c
 c.... -------------------->   interior elements   <--------------------
-c     
+c
 c.... initialize the arrays
-c     
+c
       flxres = zero
       flxLHS = zero
       flxnrm = zero
       if (numflx .ne. 0)  then !we have flux nodes
          qres   = zero
-c     
+c
 c.... loop over the element-blocks
 c
          lhs    = 0
@@ -1455,29 +1455,29 @@ c
          ires=2  ! shield e3ql from an unmapped lmassinv
 
          do iblk = 1, nelblk
-c     
+c
 c.... set up the parameters
-c     
+c
             iel    = lcblk(1,iblk)
             nenl   = lcblk(5,iblk) ! no. of vertices per element
             nshl   = lcblk(10,iblk)
             ndofl  = lcblk(8,iblk)
             lcsyst = lcblk(3,iblk)
-            npro   = lcblk(1,iblk+1) - iel 
-            ngauss = nint(lcsyst)       
+            npro   = lcblk(1,iblk+1) - iel
+            ngauss = nint(lcsyst)
             allocate ( ien2(npro,nshl) )
             allocate ( xmu2(npro,maxsh))
             allocate ( map(npro) )
 c
 c.... get the elements touching the boundary
-c         
+c
             call mapConn( mien(iblk)%p,    ien2,    invflx,
-     &                    map,             nshl,    npro,    
+     &                    map,             nshl,    npro,
      &                    npro2,           nshg )
 
             nprold = npro
             npro = npro2
-         
+
             if (npro .ne. 0) then
 
                call mapArray( mxmudmi(iblk)%p, xmu2,    map,
@@ -1489,19 +1489,19 @@ c
                allocate ( xGoC (npro,4,nshl,nshl) )
             if(Lagrange.gt.zero) then
                allocate(loclhsLag(npro,9,nshlb,nshlb,3))
-            endif 
-c     
+            endif
+c
 c.... compute and assemble the residuals
-c     
+c
                call AsIGMR (y,                    ac,
      &                      x,                    xmu2(1:npro,:),
      &                      shp(lcsyst,1:nshl,:),
      &                      shgl(lcsyst,:,1:nshl,:),
-     &                      ien2(1:npro,:),       
+     &                      ien2(1:npro,:),
      &                      flxres,               qres,
      &                      xKebe,                xGoC,
      &                      rtmp)
-c     
+c
                deallocate ( xKebe )
                deallocate ( xGoC  )
             if(Lagrange.gt.zero) then
@@ -1511,13 +1511,13 @@ c
             deallocate ( ien2  )
             deallocate ( xmu2  )
             deallocate ( map   )
-c     
+c
          enddo ! iblk = 1, nelblk
-c     
+c
 c.... -------------------->   boundary elements   <--------------------
-c     
+c
          do iblk = 1, nelblb
-c     
+c
 c.... set up the parameters
 c
             iel    = lcblkb(1,iblk)
@@ -1526,10 +1526,10 @@ c
             nshl   = lcblkb(9,iblk)
             nenbl  = lcblkb(6,iblk)
             nshlb  = lcblkb(10,iblk)
-            npro   = lcblkb(1,iblk+1) - iel 
- 
+            npro   = lcblkb(1,iblk+1) - iel
+
             if(lcsyst.eq.3) lcsyst=nenbl
-c     
+c
             if(lcsyst.eq.3 .or. lcsyst.eq.4) then
                ngaussb = nintb(lcsyst)
             else
@@ -1538,8 +1538,8 @@ c
 c
 c.... allocate the element matrices (though they're not needed)
 c
-            allocate ( xKebe(npro,9,nshl,nshl) )  
- 
+            allocate ( xKebe(npro,9,nshl,nshl) )
+
 c.... compute and assemble the residuals
 c
             call AsBFlx (u,                      y,
@@ -1551,9 +1551,9 @@ c
      &                   invflx,                  flxres,
      &                   flxLHS,                  flxnrm,
      &                   xKebe  )
-c     
+c
                deallocate ( xKebe )
-c     
+c
 c.... end of boundary element loop
 c
          enddo !iblk = 1, nelblb
@@ -1611,7 +1611,7 @@ c     the force calculation just sums flxres (and each on processor node
 c     has his "piece" of the sum already).
 c
       ntoutv=ntout
-      if ( (mod(lstep, ntoutv) .eq. 0) 
+      if ( (mod(lstep, ntoutv) .eq. 0)
      &     .or.  (istep .eq. nstep(itseq)) ) then
 
 c
@@ -1619,18 +1619,18 @@ c  need to zero the slaves to prevent counting twice
 c  (actually unnecessary since flxres of boundary nodes will be counted n
 c  times while flxlhs will be counted n times-> the ratio is still
 c  correct
-c      
+c
          wallssVec=rtmp
 
          if (numflx .eq. 0) then   !no flux nodes
             rtmp=zero
             wallssVec = zero
          else
-c     
+c
 c.... ---------------------------->  Solve  <---------------------------
 c
 c.... compute the viscous and heat fluxes
-c     
+c
 c
 c.... ---------------------------->  Print  <---------------------------
 c
@@ -1640,11 +1640,11 @@ c
                where ( (invflx .ne. 0) .and. (flxLHS(:,1) .ne. zero) )
      &              flxres(:,i) = flxres(:,i) / flxLHS(:,1)
             enddo
-c     
+c
 c.... normalize the outward normal
-c     
-            temp = sqrt( flxnrm(:,1)**2 
-     &                 + flxnrm(:,2)**2 
+c
+            temp = sqrt( flxnrm(:,1)**2
+     &                 + flxnrm(:,2)**2
      &                 + flxnrm(:,3)**2 )
             where ( (invflx .ne. 0) .and. (temp .ne. zero) )
                flxnrm(:,1) = flxnrm(:,1) / temp
@@ -1653,8 +1653,8 @@ c
             endwhere
 c        NO ENDIF IN MAHDI VERSION - MAKE SURE IT IS OK - DES
          endif !no flux nodes
-         
-c     
+
+c
 c.... ---------------------------->  Communications <-------------------
 c
          if(numpe > 1) then
@@ -1686,20 +1686,20 @@ c        ENDIF IN MAHDI VERSION - MAKE SURE IS OK - DES
          if (lstep .gt. 0) itmp = int(log10(float(lstep)))+1
          write (fmt1,"('(''flux.'',i',i1,',1x)')") itmp
          write (fname1,fmt1) lstep
-      
+
          fname1 = trim(fname1) // cname(myrank+1)
-   
-c         open (unit=iflux, file=fname1, status='unknown', 
+
+c         open (unit=iflux, file=fname1, status='unknown',
 c     &         form='formatted',err=997)
 
 c      write (iflux) machin, nshg, lstep
 c      write (iflux) rtmp(:,1:6)
 c
 c.... output the results
-c     
+c
 c         do n = 1, numflx
 c            k = nodflx(n)
-c            write (iflux,2000) k, (x(k,i), i=1,3), 
+c            write (iflux,2000) k, (x(k,i), i=1,3),
 c     &           (flxnrm(k,i),  i=1,3),
 c     &           (flxres(k,i),  i=1,3)
 c         enddo
@@ -1717,51 +1717,51 @@ c
 c.... open input files
 c
          call openfile(  fname2,  'append?'//CHAR(0), irstin )
-         
+
          fnamer = 'rin plane traction'
          isize = nshg*ndof
          nitems = 3
          iarray(1) = nshg
          iarray(2) = ndof
          iarray(3) = lstep
-         call writeheader(irstin, fnamer,iarray, nitems, isize, 
+         call writeheader(irstin, fnamer,iarray, nitems, isize,
      &        'double'//CHAR(0), iotype )
-    
-c         fnamer = 'boundary flux'        
+
+c         fnamer = 'boundary flux'
          nitems = nshg*ndof
          call writedatablock(irstin, fnamer,rtmp(:,2:4), nitems,
      &        'double'//CHAR(0), iotype)
-        
+
          call closefile( irstin, "append"//CHAR(0) )
 c         call Write_boundaryflux(myrank,lstep,nshg,ndof,rtmp(:,1:ndof))
 
 c     wallss vectors into the restart file(s)
 c         if( iowflux .eq. 1) then
             call openfile(  fname2,  'append?'//CHAR(0), irstin )
-            
+
             fnamer = 'rwall shear stresses'
             isize = nshg*ndof
-            
+
             nitems = 3
             iarray(1) = nshg
             iarray(2) = ndof
             iarray(3) = lstep
-            call writeheader(irstin, fnamer,iarray, nitems, isize, 
+            call writeheader(irstin, fnamer,iarray, nitems, isize,
      &           'double'//CHAR(0), iotype )
 
 c     fnamer = 'boundary flux'
             nitems = nshg*ndof
 
-         
+
 c     wall shear stresses vectors  are in wallssVec
-            call writedatablock(irstin, fnamer,wallssVec, nitems, 
+            call writedatablock(irstin, fnamer,wallssVec, nitems,
      &           'double'//CHAR(0), iotype)
-            
-            call closefile( irstin, "append"//CHAR(0) )         
+
+            call closefile( irstin, "append"//CHAR(0) )
 c         endif! iowflux
 
       endif
-c     
+c
       return
 c
 c.... file error handling
@@ -2013,7 +2013,7 @@ C
       INTEGER             i,           j,           nodelcl
 C
 c
-      integer   flg(nshg),        iBCB(npro,ndiBCB),     
+      integer   flg(nshg),        iBCB(npro,ndiBCB),
      &          ienb(npro, nshl), lnode(27)
 
 c
@@ -2021,11 +2021,11 @@ c.... compute the nodes which lie on the boundary (hierarchic)
 c
       call getbnodes(lnode)
 
-      do i=1, npro 
+      do i=1, npro
          if (nsrflist(iBCB(i,2)).eq.1) then
             do j=1, nshlb
                nodelcl = lnode(j)
-               flg(abs(ienb(i,nodelcl)))=flg(abs(ienb(i,nodelcl)))+1  
+               flg(abs(ienb(i,nodelcl)))=flg(abs(ienb(i,nodelcl)))+1
             enddo
          endif
       enddo
@@ -2183,11 +2183,11 @@ c     for beArea
 
 !> Create a condensed connectivity array based on the nodes in
 !! mask.
-      
+
       subroutine mapConn( ien,      ien2,    mask,
-     &                    map,      nshl,    npro,    
+     &                    map,      nshl,    npro,
      &                    npro2,    nshg )
-      
+
       integer ien(npro,nshl),ien2(npro,nshl),mask(nshg),
      &        map(npro)
 
@@ -2195,14 +2195,14 @@ c     for beArea
 
 c
 c.... first build the map
-c      
+c
       map = 0
       do i = 1, nshl
          do iel = 1, npro
             map(iel) = map(iel) + mask( abs(ien(iel,i)) )
          enddo
       enddo
-      
+
       npro2 = 0
       do iel = 1, npro
          if ( map(iel) .gt. 0 ) then
@@ -2222,15 +2222,15 @@ c
             enddo
          enddo
       endif
-      
-      return 
+
+      return
       end
 
 !> Maps array x into array x2 based on the given map
-               
+
       subroutine mapArray(x,x2,map,nshl,nprold)
 
-      real*8   x(nprold,nshl),    x2(nprold,nshl)      
+      real*8   x(nprold,nshl),    x2(nprold,nshl)
       integer  map(nprold)
       integer   nprold, nshl,i
 c
@@ -2240,13 +2240,13 @@ c
          x2(map(:),i) = x(:,i)
       enddo
 
-      return 
+      return
       end
 
         block data endata
 c
 c----------------------------------------------------------------------
-c 
+c
 c  Almost all data statements are stored in this block data.
 c
 c----------------------------------------------------------------------
@@ -2282,31 +2282,31 @@ c.... boundary nodes of boundary elements
 c.... common /bndnod/ mnodeb(9,8,3)
 c
         data (((mnodeb(i,j,k), i=1,9), j=1,8), k=1,2)
-     &              /  1,  0,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  0,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  0,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  0,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  0,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  0,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  0,  0,   0,  0,  0,   0,  0,  0, 
+     &              /  1,  0,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  0,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  0,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  0,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  0,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  0,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  0,  0,   0,  0,  0,   0,  0,  0,
      &                 1,  0,  0,   0,  0,  0,   0,  0,  0,     ! 1D
-     &                 1,  2,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  2,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  2,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  2,  0,   0,  0,  0,   0,  0,  0, 
-     &                 1,  2,  5,   0,  0,  0,   0,  0,  0, 
+     &                 1,  2,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  2,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  2,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  2,  0,   0,  0,  0,   0,  0,  0,
+     &                 1,  2,  5,   0,  0,  0,   0,  0,  0,
      &                 1,  2,  4,   0,  0,  0,   0,  0,  0,
      &                 1,  2,  4,   0,  0,  0,   0,  0,  0,
      &                 1,  2,  4,   0,  0,  0,   0,  0,  0   /  ! 2D
         data (((mnodeb(i,j,k), i=1,9), j=1,8), k=3,3)
-     &              /  1,  2,  3,   4,  0,  0,   0,  0,  0, 
-     &                 1,  2,  3,   0,  0,  0,   0,  0,  0, 
-     &                 1,  2,  3,   0,  0,  0,   0,  0,  0, 
-     &                 1,  2,  5,   4,  0,  0,   0,  0,  0, 
+     &              /  1,  2,  3,   4,  0,  0,   0,  0,  0,
+     &                 1,  2,  3,   0,  0,  0,   0,  0,  0,
+     &                 1,  2,  3,   0,  0,  0,   0,  0,  0,
+     &                 1,  2,  5,   4,  0,  0,   0,  0,  0,
      &                 1,  2,  3,   4,  9, 10,  11, 12, 21,
      &                 1,  2,  3,   5,  6,  9,   0,  0,  0,
      &                 1,  2,  3,   7,  9,  8,   0,  0,  0,
-     &                 1,  2,  5,   4,  7, 10,  13, 14, 16   /  ! 3D  
+     &                 1,  2,  5,   4,  7, 10,  13, 14, 16   /  ! 3D
 c
 c----------------------------------------------------------------------
 c
@@ -2367,7 +2367,7 @@ c
 c
 c----------------------------------------------------------------------
 c
-c.... run parameters 
+c.... run parameters
 c.... common /matpar/ ithm,   pr,     Planck, Stefan, Nh,     Rh,
 c                     Rgas,   gamma,  gamma1, s0,     const,  xN2,
 c                     xO2,    yN2,    yO2,    Msh,    cpsh,   s0sh,
@@ -2387,7 +2387,7 @@ c
         data    xN2,                  xO2
      &  /       0.79000000000000d+0,  0.21000000000000d+0     /
 c
-        data    Msh 
+        data    Msh
      &  /       2.80000000000000d-2,  3.20000000000000d-2,
      &          3.00000000000000d-2,  1.40000000000000d-2,
      &          1.60000000000000d-2    /
@@ -2568,12 +2568,12 @@ C
 !!                           = 'out' for cummunicating the solution
 !!
 !!
-!! The array ilwork describes the details of the communications. 
-!! Each communication step (call of this routine) consists of a 
-!! sequence of "tasks", where a task is defined as a communication 
-!! between two processors where data is exchanged. This would imply 
+!! The array ilwork describes the details of the communications.
+!! Each communication step (call of this routine) consists of a
+!! sequence of "tasks", where a task is defined as a communication
+!! between two processors where data is exchanged. This would imply
 !! that for a given processor, there will be as many tasks as there
-!! are processors with which it must communicate. Details of the 
+!! are processors with which it must communicate. Details of the
 !! ilwork array appear below.
 
       subroutine commu (global, ilwork,  n,  code)
@@ -2608,11 +2608,11 @@ C
       dimension global(nshg,n),
      &          rtemp(maxfront*n,numpe),
      &          ilwork(nlwork)
- 
+
       character*3 code
 
 
-      if (code .ne. 'in ' .and. code .ne. 'out') 
+      if (code .ne. 'in ' .and. code .ne. 'out')
      &  call error ('commu   ','code    ',0)
 
       if     (n .eq. 1)      then        ! like a scalar
@@ -2636,7 +2636,7 @@ C
       elseif (n .eq. 7 ) then
         kdof = 10
       elseif (n .eq. 33 ) then
-         kdof = 11 
+         kdof = 11
       elseif (n .eq. 22 ) then
          kdof = 12
       elseif (n .eq. 16 ) then
@@ -2644,7 +2644,7 @@ C
       elseif (n .eq. 10 ) then
          kdof = 14
        elseif (n .eq. nflow*nsd ) then   !surface tension + qres
-         kdof = 15 
+         kdof = 15
       else
         call error ('commu   ','n       ',n)
       endif
@@ -2660,10 +2660,10 @@ c     itag: tag of the communication
 c     iacc: == 0 if task is a send
 c           == 1 if task is a recieve
 c     iother: rank of processor with which this communication occurs
-c     numseg: number of data "segments" to be sent or recieved. A 
+c     numseg: number of data "segments" to be sent or recieved. A
 c             segment is defined as a continuous section of the global
 c             vector to be communicated, (i.e. a group of nodes (or,
-c             rather, "shape function coefficients") which occur 
+c             rather, "shape function coefficients") which occur
 c             sequentially in the array global(nshg,n)).
 c     isbeg:  location of the first segment in the array owned by the
 c             current processor.
@@ -2675,22 +2675,22 @@ c
 c The following comment pertains to a communication of type 'in':
 c
 c     If the task is a send, then all of the numseg segments are
-c     sent with a single call to MPI_SEND. Where these segments live in 
-c     the array is built into the array sevsegtype, which is a common 
+c     sent with a single call to MPI_SEND. Where these segments live in
+c     the array is built into the array sevsegtype, which is a common
 c     array constructed in the subroutine "ctypes.f". In other words,
 c     sevsegtype is a data type that describes the indices of the blocks
-c     to be sent, in terms of there beginning index, and the length of 
+c     to be sent, in terms of there beginning index, and the length of
 c     each segment. Using this, we can make a single send to take care of
-c     all the segments for this task. 
-c      
+c     all the segments for this task.
+c
 c     If the task is a recieve, then once the vector is recieved, the
 c     recieved segments must be added to the correct locations in the
 c     current array. These locations are described in ilwork as the
 c     beginning position, then the length of the segment.
-c     
+c
 c---------------------------------------------------------------------
       numtask = ilwork(1)
-      
+
       itkbeg = 1
       m = 0
       idl=0
@@ -2706,18 +2706,18 @@ c
 c.... if iacc == 0, then this task is a send.
 c     slave
 c
-        if (iacc .EQ. 0) then  
+        if (iacc .EQ. 0) then
 c
 c.... residual communication
 c
           if (code .eq. 'in ')
-     &      call MPI_ISEND(global(isgbeg, 1), 1, sevsegtype(itask,kdof), 
+     &      call MPI_ISEND(global(isgbeg, 1), 1, sevsegtype(itask,kdof),
      &                     iother, itag, MPI_COMM_WORLD, req(m), ierr)
 c
 c.... solution communication
 c
           if (code .eq. 'out') then
-            call MPI_IRECV(global(isgbeg, 1), 1, sevsegtype(itask,kdof), 
+            call MPI_IRECV(global(isgbeg, 1), 1, sevsegtype(itask,kdof),
      &                     iother, itag, MPI_COMM_WORLD, req(m), ierr)
 c            call MPI_RECV(global(isgbeg,1), 1, sevsegtype(itask,kdof),
 c     &                    iother, itag, MPI_COMM_WORLD, status, ierr)
@@ -2741,11 +2741,11 @@ c
 c.... recieve all segments for this task in a single step
 c
             idl=idl+1 ! stands for i Do Later, the number to fix later
-            call MPI_IRECV(rtemp(1,idl), lfront*n, MPI_DOUBLE_PRECISION, 
+            call MPI_IRECV(rtemp(1,idl), lfront*n, MPI_DOUBLE_PRECISION,
      &                     iother, itag, MPI_COMM_WORLD, req(m), ierr)
           endif
           if (code .eq. 'out') then
-            call MPI_ISEND(global(isgbeg, 1), 1, sevsegtype(itask,kdof), 
+            call MPI_ISEND(global(isgbeg, 1), 1, sevsegtype(itask,kdof),
      &                     iother, itag, MPI_COMM_WORLD, req(m), ierr)
           endif
         endif
@@ -2804,7 +2804,7 @@ c
         include "common_blocks/conpar.h"
         include "common_blocks/fronts.h"
         include "common_blocks/newdim.h"
-        
+
 C     Parameter variables
 C
       INTEGER             maxseg
@@ -2831,11 +2831,11 @@ C
 c
 c.... maxfront is a common variable being set in this routine
 c
-      maxfront = 0  
+      maxfront = 0
       numtask = ilwork (1)
       itkbeg  = 1
 
-      if (numtask .gt. maxtask) 
+      if (numtask .gt. maxtask)
      &  call error('ctypes  ','numtask ',numtask)
 
       nshg0 = nshg
@@ -2854,12 +2854,12 @@ c
 c.... adjust the number of the other processor, since processors
 c     are numbered here starting from 0, not 1.
 c
-        ilwork (itkbeg + 3) = ilwork (itkbeg + 3) - 1 
-        if (numseg .gt. maxseg) 
+        ilwork (itkbeg + 3) = ilwork (itkbeg + 3) - 1
+        if (numseg .gt. maxseg)
      &    call error('ctypes  ','numseg  ',numseg )
 c
 c.... lfront = total number of nodes involved in this task
-c     
+c
         lfront = 0
         do is = 1,numseg
 c
@@ -2876,7 +2876,7 @@ c
           lfront       = lfront + lenseg(is)
 c
 c.... nshg0: number of nodes to be assembled on this processor,
-c             i.e. subtract the number of nodes which will be 
+c             i.e. subtract the number of nodes which will be
 c             sent to another processor.
 c
         if (iacc .eq. 0) nshg0 = nshg0 - lenseg(is)
@@ -2896,11 +2896,11 @@ c
 c.... now set up the MPI data types which will be used in commu.f.
 c     These data types represent the indexed sets that will be sent
 c     and recieved.
-c 
+c
 c
 c.... the following call to MPI_TYPE_INDEXED will create a new data
 c     type which will represent the blocks of data we wish to transfer
-c     for this task. A handle to the new type is returned 
+c     for this task. A handle to the new type is returned
 c     (sevsegtype(itask,1)). This data type describes the blocks of
 c     data to be transferred in terms of segments.
 c     Input to this routine:
@@ -2913,7 +2913,7 @@ c
         call MPI_TYPE_INDEXED (numseg, lenseg, ioffset,
      &                  MPI_DOUBLE_PRECISION, sevsegtype(itask,1), ierr)
 c
-c.... now create a new data type for each of the types of arrays we 
+c.... now create a new data type for each of the types of arrays we
 c     may wish to communicate with. For example ndof will be used when
 c     communicating the residual vector. Each one of these is derived
 c     from the first data type defined above, sevsegtype(itask,1).
@@ -2970,12 +2970,12 @@ c
       end
 
       subroutine initDtN
-      
+
       use dtnmod
-      
+
       include "global.h"
       include "common_blocks/conpar.h"
-      
+
       allocate (ifeature(nshg))
       end
 
@@ -2983,7 +2983,7 @@ c
       subroutine DtN(iBC,BC,y)
 
       use dtnmod
-      
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/genpar.h"
@@ -3005,7 +3005,7 @@ C
             call Dirichlet2Neumann(nsclr, itype, tmp)
 c
 c  put the value in the position a Dirichlet value would be in BC.
-c  later we will localize this value to the BCB array.  
+c  later we will localize this value to the BCB array.
 c  this is not dangerous because we should NEVER need to set Dirichlet
 c  on the same node as a DtN condition
 c
@@ -3044,9 +3044,9 @@ c               tmpBC(i,j)=BC(i,nstart+j)
             enddo
 c         endif
 c      enddo
-      
+
       call localb(tmpBC,tmpBCB,ienb,nsclr,'gather  ')
-      
+
       do i=1,npro
          do j=1,nsclr
             if(iBCB(i,2).lt.0) then  !this is a face with dtn
@@ -3060,13 +3060,13 @@ c      enddo
       end
 
 c
-c This routine just calls the appropriate version of D2N for the number 
+c This routine just calls the appropriate version of D2N for the number
 c of scalars used
 c
       subroutine Dirichlet2Neumann(nscalar, itype, tmp)
       integer nscalar, itype
       real*8 tmp(nscalar),foo
-      
+
 c Just short circuit the routine for a little bit.
 c      tmp(1)=0.0d0
 c      return
@@ -3082,7 +3082,7 @@ c         return
          write(*,*) 'FATAL ERROR: cannont handle ',nscalar,' scalars'
          stop
       endif
-            
+
       return
       end
 
@@ -3092,7 +3092,7 @@ c         return
 !! a particular feature.
 !!
 !! There is an inherent assumption that we are going to be doing
-!! electroplating. This routine sets up the filenames and the 
+!! electroplating. This routine sets up the filenames and the
 !! top-of-the-domain boundary conditions.
 
       subroutine Dirichlet2Neumann_2(nscalar, itype, tmp)
@@ -3118,7 +3118,7 @@ c two dependent--for each point, up to maxdata+1.
       integer numdata(2,maxtypes)
       save dx
       save numdata
-      
+
       real*8  x,y, z(3,2)
 c We can only deal with two parameter models for now.
       if(nscalar .ne. 2) then
@@ -3138,20 +3138,20 @@ c If we haven't read in our parameters for this featuretype yet...
 
       x = tmp(1)
       y = tmp(2)
-      
+
       if(.false.) then
-         if( x .gt. table(1,0,0,itype) .or. 
+         if( x .gt. table(1,0,0,itype) .or.
      &        x .lt. table(1,numdata(1,itype)-1,0,itype) ) then
             write(*,*) 'Sorry, concentration 1 asked for: ', x
             write(*,*) '  is out of the table bounds.'
             write(*,*)  '#1  [ ',table(1,0,0,itype), ' , ',
      &           table(1,numdata(1,itype)-1,0,itype), ' ] ',
      &           numdata(1,itype)-1
-            
+
             write(*,*) '  STOPPING...'
             stop
          endif
-         if( y .gt. table(2,0,0,itype) .or. 
+         if( y .gt. table(2,0,0,itype) .or.
      &        y .lt. table(2,0,numdata(2,itype)-1,itype) ) then
             write(*,*) 'Sorry, concentration 2 asked for: ', y
             write(*,*) '  is out of the table bounds.'
@@ -3188,7 +3188,7 @@ c         write(*,*) 'Reseting j high: ',i,j,x,y
       endif
 
       do n=3,4
-         
+
          z(1,1) = table(n,i,j,itype)
          z(3,1) = table(n,i+1,j,itype)
          z(1,2) = table(n,i,j+1,itype)
@@ -3200,7 +3200,7 @@ c         write(*,*) 'Reseting j high: ',i,j,x,y
      &        *(x-table(1,i,j,itype)) + z(1,2)
          tmp(n-2) = (z(2,2) - z(2,1))/dx(2,itype)
      &        *(y-table(2,i,j,itype)) + z(2,1)
-      
+
       enddo
 c      write(*,*) 'Interpolation from ',x,y,' to:', tmp(1),tmp(2)
       return
@@ -3208,8 +3208,8 @@ c      write(*,*) 'Interpolation from ',x,y,' to:', tmp(1),tmp(2)
       end
 
 !> Read a table of ordered quadruplets and place them into the slot in
-!! TABLE that is assosciated with ISLOT. Store the number of 
-!! data in NUMDATA and the spacing in DX.  The file to be read 
+!! TABLE that is assosciated with ISLOT. Store the number of
+!! data in NUMDATA and the spacing in DX.  The file to be read
 !! is 'TABLE.[islot]' The data but be in a rectangular regular grid.
 !!
 !! AUTHOR: Max Bloomfield, May 2000
@@ -3240,7 +3240,7 @@ c
 
       write(*,*) 'Opening ', filename
 
- 1    continue 
+ 1    continue
       read (unit=1066,fmt='(a)',end=999) linein
 
       if (linein(1:1).eq.'#') then
@@ -3249,7 +3249,7 @@ c
       endif
 c
       if (i.gt.maxdata**2+maxdata+1) then
-         write(*,*) 
+         write(*,*)
      &        'reached the maximum number of data points allowed'
          write(*,*) 'FATAL ERROR: stopping'
          stop
@@ -3262,12 +3262,12 @@ c        to the next "row" (not in fortran speak, but in table speak.)
          j = j + 1
          i=0
       endif
-         
+
       table(1,i,j,islot) = x1*1.d-0
       table(2,i,j,islot) = x2*1.d-0
       table(3,i,j,islot) = y1*1.d-0
       table(4,i,j,islot) = y2*1.d-0
-c      
+c
       i=i+1
       x2old = x2
 
@@ -3277,27 +3277,27 @@ c
 c
       numdata(1,islot) = I
       numdata(2,islot) = j+1
-c      
+c
       dx(1,islot) = table(1,2,1,islot) - table(1,1,1,islot)
       dx(2,islot) = table(2,1,2,islot) - table(2,1,1,islot)
 
       if(verbose) then
          write(*,*) 'Table is ',i,' by ',j+1
-         
+
          write(*,*) 'there are ',i*(j+1),' flux data points'
          write(*,*) 'closing unit 1066'
          close(1066)
-c     
+c
          write(*,*) 'The abscissa are ',
      &        dx(1,islot),' and ',dx(2,islot),' apart.'
-         
+
          write(*,*) 'the flux data are '
          do i=0,numdata(1,islot)-1
             do j=0,numdata(2,islot)-1
                write(*,*) i,j,(table(k,i,j,islot), k=1,4)
             end do
          end do
-         
+
       endif
       return
       end
@@ -3308,7 +3308,7 @@ c
 !! a particular feature.
 !!
 !! There is an inherent assumption that we are going to be doing
-!! electroplating. This routine sets up the filenames and the 
+!! electroplating. This routine sets up the filenames and the
 !! top-of-the-domain boundary conditions.
 
       subroutine Dirichlet2Neumann_1(nscalar, itype, tmp)
@@ -3332,7 +3332,7 @@ c
       save dx
       integer numdata(maxtypes)
       save numdata
-      
+
       real*8 dt, conc_BC, flux_BC
 c We can only deal with one parameter models for now.
 
@@ -3358,8 +3358,8 @@ c         write(*,*) 'back from readtable'
 c      write(*,*) 'returning from D2N'
 
       conc_BC = tmp(1)
-      
-c      if( conc_BC .lt. table(0,1,itype) .or. 
+
+c      if( conc_BC .lt. table(0,1,itype) .or.
 c     &    conc_BC .gt. table(numdata(itype),1,itype) ) then
 c         write(*,*) 'Sorry, concentration asked for: ', conc_BC
 c         write(*,*) '  is out of the table bounds.'
@@ -3378,7 +3378,7 @@ c      endif
          i = numdata(itype)
          conc_BC =  table(i,1,itype)
       endif
-         
+
 
       dt = conc_BC - table(i,1,itype)
       flux_BC = dt * (table(i+1,2,itype) - table(i,2,itype)) +
@@ -3386,13 +3386,13 @@ c      endif
 
 
       tmp(1) = flux_BC
-      
+
 
       end
 
 !> Read a table of ordered pairs and place them into the slot in
-!! TABLE that is assosciated with ISLOT. Store the number of 
-!! data in NUMDATA and the spacing in DX.  The file to be read 
+!! TABLE that is assosciated with ISLOT. Store the number of
+!! data in NUMDATA and the spacing in DX.  The file to be read
 !! is 'TABLE.[islot]'
 !!
 !! AUTHOR: Max Bloomfield, May 2000
@@ -3412,13 +3412,13 @@ c
       verbose = .true.
 
       i=-1
-      
+
       write(filename,1066) islot
  1066 format('TABLE.',i1)
       open(file=filename,unit=1066)
       if(verbose) write(*,*) 'Opening ', filename
 
- 1    continue 
+ 1    continue
       read (unit=1066,fmt='(a)',end=999) linein
 
       if (linein(1:1).eq.'#') then
@@ -3428,7 +3428,7 @@ c
 c
       i=i+1
       if (i.ge.maxdata) then
-         write(*,*) 
+         write(*,*)
      &        'reached the maximum number of data points allowed'
          write(*,*) 'FATAL ERROR: stopping'
          stop
@@ -3437,19 +3437,19 @@ c
       read (linein,*) table(i,1,islot), table(i,2,islot)
       table(i,1,islot)= table(i,1,islot)*1.0d-0
       table(i,2,islot)= table(i,2,islot)*1.0d-0
-c      
+c
       goto 1
 c
  999  continue
 c
       numdata = i
       dx = table(1,1,islot)-table(0,1,islot)
-c      
+c
       if(verbose) then
          write(*,*) 'there are ',numdata,' flux data points'
          write(*,*) 'closing unit 1066'
          close(1066)
-c     
+c
          write(*,*) 'the flux data are '
          do 101 j=0,i
             write(*,*) j,table(j,1,islot), table(j,2,islot)
@@ -3458,7 +3458,7 @@ c
       return
       end
 
-!> This routine calculates the residual and tangent matrix for the 
+!> This routine calculates the residual and tangent matrix for the
 !! UBar formulation of the incompressible Navier Stokes equations.
 !!
 !! input:    e    a   1..5   when we think of U^e_a  and U is 5 variables <BR>
@@ -3482,7 +3482,7 @@ c
 
         subroutine e3 (yl,      acl,     dwl,     shp,
      &                 shgl,    xl,      rl,      ql,
-     &                 xKebe,   xGoC,    xmudmi,  sgn, 
+     &                 xKebe,   xGoC,    xmudmi,  sgn,
      &                 rerrl, rlsl)
 
         include "global.h"
@@ -3513,11 +3513,11 @@ C
 C
 c
         dimension yl(npro,nshl,ndof),
-     &            acl(npro,nshl,ndof),       
+     &            acl(npro,nshl,ndof),
      &            shp(nshl,ngauss),       shgl(nsd,nshl,ngauss),
      &            xl(npro,nenl,nsd),      dwl(npro,nenl),
      &            rl(npro,nshl,nflow),     ql(npro,nshl,idflx)
-c      
+c
 
         dimension xKebe(npro,9,nshl,nshl), xGoC(npro,4,nshl,nshl)
 c
@@ -3525,12 +3525,12 @@ c.... local declarations
 c
         dimension g1yi(npro,ndof),        g2yi(npro,ndof),
      &            g3yi(npro,ndof),        shg(npro,nshl,nsd),
-     &            aci(npro,3),            dxidx(npro,nsd,nsd),       
+     &            aci(npro,3),            dxidx(npro,nsd,nsd),
      &            WdetJ(npro),            rho(npro),
      &            pres(npro),             u1(npro),
      &            u2(npro),               u3(npro),
      &            rLui(npro,nsd),         uBar(npro,nsd),
-     &            xmudmi(npro,ngauss),     sgn(npro,nshl), 
+     &            xmudmi(npro,ngauss),     sgn(npro,nshl),
      &            shpfun(npro,nshl),      shdrv(npro,nsd,nshl),
      &            rmu(npro),              tauC(npro),
      &            tauM(npro),             tauBar(npro),
@@ -3542,13 +3542,13 @@ c
         integer   aa
 
 c
-c     DES - TO REMOVE !!!     
+c     DES - TO REMOVE !!!
 c.... local reconstruction of diffusive flux vector for quadratics
 c     or greater but NOT for bflux since local mass was not mapped
 c
 c        if ( idiff==2 .and. ires .eq. 1 ) then
-c           call e3ql (yl,        dwl,       shp,       shgl, 
-c     &                xl,        ql,        xmudmi, 
+c           call e3ql (yl,        dwl,       shp,       shgl,
+c     &                xl,        ql,        xmudmi,
 c     &                sgn)
 c        endif
 c
@@ -3560,7 +3560,7 @@ c
 c
 c.... get the hierarchic shape functions at this int point
 c
-        call getshp(shp,          shgl,      sgn, 
+        call getshp(shp,          shgl,      sgn,
      &              shpfun,       shdrv)
 c
 c.... get necessary fluid properties (including eddy viscosity)
@@ -3571,20 +3571,20 @@ c.... calculate the integration variables
 c
         call e3ivar (yl,          acl,       shpfun,
      &               shdrv,       xl,
-     &               aci,         g1yi,      g2yi,    
-     &               g3yi,        shg,       dxidx,   
-     &               WdetJ,       rho,       pres, 
-     &               u1,          u2,        u3,              
+     &               aci,         g1yi,      g2yi,
+     &               g3yi,        shg,       dxidx,
+     &               WdetJ,       rho,       pres,
+     &               u1,          u2,        u3,
      &               ql,          rLui,      src,
      &               rerrl,       rlsl,      rlsli,
-     &               dwl) 
+     &               dwl)
 c
 c.... compute the stabilization terms
 c
         call e3stab (rho,          u1,       u2,
-     &               u3,           dxidx,    rLui,   
-     &               rmu,          tauC,     tauM,   
-     &               tauBar,       uBar )  
+     &               u3,           dxidx,    rLui,
+     &               rmu,          tauC,     tauM,
+     &               tauBar,       uBar )
 c
 c.... compute the residual contribution at this integration point
 c
@@ -3629,12 +3629,12 @@ c
       return
       end
 
-!> This routine calculates the residual and tangent matrix for the 
+!> This routine calculates the residual and tangent matrix for the
 !! advection - diffusion equation for scalar.
 
       subroutine e3Sclr (yl,      acl,     shp,
      &                     shgl,    xl,      dwl,
-     &                     rl,      ql,      xSebe,   
+     &                     rl,      ql,      xSebe,
      &                     sgn,     xmudmi)
         include "global.h"
         include "common_blocks/conpar.h"
@@ -3646,9 +3646,9 @@ c
         include "common_blocks/sclrs.h"
         include "common_blocks/solpar.h"
 c
-      real*8    yl(npro,nshl,ndof),     acl(npro,nshl,ndof),       
+      real*8    yl(npro,nshl,ndof),     acl(npro,nshl,ndof),
      &            shp(nshl,ngauss),       shgl(nsd,nshl,ngauss),
-     &            xl(npro,nenl,nsd),      rl(npro,nshl),          
+     &            xl(npro,nenl,nsd),      rl(npro,nshl),
      &            ql(npro,nshl,nsd),      xSebe(npro,nshl,nshl),
      &            dwl(npro,nshl)
 c
@@ -3656,9 +3656,9 @@ c.... local declarations
 c
       real*8    gradS(npro,nsd),        shg(npro,nshl,nsd),
      &            Sdot(npro),             Sclr(npro),
-     &            dxidx(npro,nsd,nsd),    WdetJ(npro),      
+     &            dxidx(npro,nsd,nsd),    WdetJ(npro),
      &            u1(npro),     u2(npro), u3(npro),
-     &            sgn(npro,nshl),         shpfun(npro,nshl),       
+     &            sgn(npro,nshl),         shpfun(npro,nshl),
      &            shdrv(npro,nsd,nshl),   rLS(npro),
      &            tauS(npro),             diffus(npro),
      &            srcL(npro),             srcR(npro),
@@ -3668,13 +3668,13 @@ c
 c.... Source terms sometimes take the form (beta_i)*(phi,_i).  Since
 c     the convective term has (u_i)*(phi,_i), it is useful to treat
 c     beta_i as a "correction" to the velocity.  In calculating the
-c     stabilization terms, the new "modified" velocity (u_i-beta_i) is 
+c     stabilization terms, the new "modified" velocity (u_i-beta_i) is
 c     then used in place of the pure velocity for stabilization terms,
 c     and the source term sneaks into the RHS and LHS.
       real*8    uMod(npro,nsd), srcRat(npro), xmudmi(npro,ngauss)
 c
       integer   aa, b
-c     DES - TO REMOVE !!!     
+c     DES - TO REMOVE !!!
 c.... local reconstruction of diffusive flux vector
 c
 c        if ( idiff==2 ) then
@@ -3689,7 +3689,7 @@ c
 c
 c.... get the hierarchic shape functions at this int point
 c
-        call getshp(shp,          shgl,      sgn, 
+        call getshp(shp,          shgl,      sgn,
      &              shpfun,        shdrv)
 c
 c.... get necessary fluid properties
@@ -3701,8 +3701,8 @@ c
         call e3ivarSclr(yl,          acl,       shpfun,
      &                  shdrv,       xl,        xmudmi,
      &                  Sclr,        Sdot,      gradS,
-     &                  shg,         dxidx,     WdetJ,       
-     &                  u1,          u2,        u3,              
+     &                  shg,         dxidx,     WdetJ,
+     &                  u1,          u2,        u3,
      &                  ql,          rLS,       SrcR,
      &                  SrcL,        uMod,      dwl,
      &                  diffus,      srcRat)
@@ -3711,14 +3711,14 @@ c
 c
 c.... compute the stabilization terms
 c
-        call e3StabSclr (uMod,    dxidx,   tauS, 
+        call e3StabSclr (uMod,    dxidx,   tauS,
      &                   diffus,  srcR,    giju,
      &                   srcRat)
 c
 c... computing the DC factor for the discontinuity capturing
 c
         if (idcsclr(1) .ne. 0) then
-           if ((idcsclr(2).eq.1 .and. isclr.eq.1) .or. 
+           if ((idcsclr(2).eq.1 .and. isclr.eq.1) .or.
      &          (idcsclr(2).eq.2 .and. isclr.eq.2)) then ! scalar with dc
 c
               call e3dcSclr ( gradS,    giju,     gGradS,
@@ -3730,17 +3730,17 @@ c
 c.... compute the residual contribution at this integration point
 c
         call e3ResSclr ( uMod,      gGradS,
-     &                   Sclr,      Sdot,       gradS,  
+     &                   Sclr,      Sdot,       gradS,
      &                   WdetJ,     rLS,        tauS,
      &                   shpfun,    shg,        srcR,
-     &                   diffus, 
+     &                   diffus,
      &                   rl )
 c
 c.... compute the tangent matrix contribution
 c
         if (lhs .eq. 1) then
            call e3LHSSclr ( uMod,      giju,       dcFct,
-     &                      Sclr,      Sdot,       gradS,  
+     &                      Sclr,      Sdot,       gradS,
      &                      WdetJ,     rLS,        tauS,
      &                      shpfun,    shg,        srcL,
      &                      diffus,
@@ -3759,7 +3759,7 @@ c
       return
       end
 
-!> This routine calculates the 3D RHS residual of the fluid boundary 
+!> This routine calculates the 3D RHS residual of the fluid boundary
 !! elements.
 !!
 !! input:<BR>
@@ -3768,20 +3768,20 @@ c
 !!                              a bit tested boundary integral flag i.e.
 !!                              if set to value of BCB
 !!                              if set to floating value
-!! @param[in] iBCB(:,1) 
+!! @param[in] iBCB(:,1)
 !! - convective flux * 1  0  (ditto to all below)
 !! - pressure   flux * 2
 !! - viscous    flux * 4
 !! - heat       flux * 8
-!! - turbulence wall * 16 
+!! - turbulence wall * 16
 !! - scalarI   flux  * 16*2^I (where I is the scalar number)
 !!
 !! @param[in] iBCB(:,2) is the srfID given by the user in MGI that we will
 !!                      collect integrated fluxes for.
 !!
 !! @param[in] BCB(npro,nshlb,ndBCB) Boundary Condition values
-!! - BCB (1) mass flux 
-!! - BCB (2) pressure 
+!! - BCB (1) mass flux
+!! - BCB (2) pressure
 !! - BCB (3) viscous flux in x1-direc.
 !! - BCB (4) viscous flux in x2-direc.
 !! - BCB (5) : viscous flux in x3-direc.
@@ -3794,18 +3794,18 @@ c
 !! output:<BR>
 !! $param[in] rl(npro,nshl,nflow) Element residual
 !!
-!! Note: Always the first side of the element is on the boundary.  
-!!       However, note that for higher-order elements the nodes on 
-!!       the boundary side are not the first nshlb nodes, see the 
+!! Note: Always the first side of the element is on the boundary.
+!!       However, note that for higher-order elements the nodes on
+!!       the boundary side are not the first nshlb nodes, see the
 !!       array mnodeb.
 
 
-        subroutine e3b (ul,      yl,      acl,     iBCB,    BCB,     
+        subroutine e3b (ul,      yl,      acl,     iBCB,    BCB,
      &                  shpb,    shglb,
      &                  xlb,     rl,      sgn,     dwl,     xKebe)
-        use LagrangeMultipliers 
+        use LagrangeMultipliers
 c
-        include "global.h"        
+        include "global.h"
         include "common_blocks/aerfrc.h"
         include "common_blocks/conpar.h"
         include "common_blocks/elmpar.h"
@@ -3817,7 +3817,7 @@ c
         include "common_blocks/shpdat.h"
         include "common_blocks/solpar.h"
         include "common_blocks/timdat.h"
-  
+
 C     Argument variables
 C
       INTEGER             ibcb
@@ -3845,7 +3845,7 @@ C
 c
         dimension yl(npro,nshl,ndof),          iBCB(npro,ndiBCB),
      &            BCB(npro,nshlb,ndBCB),       shpb(nshl,ngaussb),
-     &            shglb(nsd,nshl,ngaussb),           
+     &            shglb(nsd,nshl,ngaussb),
      &            xlb(npro,nenl,nsd),          ul(npro,nshl,nsd),
      &            acl(npro,nshl,ndof),
      &            rl(npro,nshl,nflow)
@@ -3889,29 +3889,29 @@ c
         else
            ngaussb = nintb(lcsyst)
         endif
-        
+
         stabK = zero
 
         do intp = 1, ngaussb
 c
 c.... get the hierarchic shape functions at this int point
 c
-c        call getshp(shpb,        shglb,        sgn, 
+c        call getshp(shpb,        shglb,        sgn,
 c     &              shape,       shdrv)
 
 c       SHOULD CALL THE ROUTINE WITH BOUNDARY SHAPE FUNCTIONS
 c       OTHERWISE: BOUND CHECK ERROR - DES - 30JAN2014
-        call getshpb(shpb,        shglb,        sgn, 
+        call getshpb(shpb,        shglb,        sgn,
      &               shape,       shdrv)
 
 c
 c     NOTE I DID NOT PASS THE lnode down.  It is not needed
 c     since the shape functions are zero on the boundary
 c
-c     Note that xmudmi is not calculated at these quadrature 
+c     Note that xmudmi is not calculated at these quadrature
 c     points so you give it a zero.  This has implications.
-c     the traction calculated by this approach will include 
-c     molecular stresses ONLY.  This is why we will use the 
+c     the traction calculated by this approach will include
+c     molecular stresses ONLY.  This is why we will use the
 c     consistent flux method to obtain the forces when doing
 c     effective viscosity wall modeling.  When doing slip velocity
 c     this is not a problem since the traction is given from the
@@ -3925,18 +3925,18 @@ c
 c
 c.... calculate the integraton variables
 c
-        call e3bvar (yl,              acl,             ul,              
+        call e3bvar (yl,              acl,             ul,
      &               shape,
      &               shdrv,           xlb,
      &               lnode,           WdetJb,
-     &               bnorm,           pres,            
+     &               bnorm,           pres,
      &               u1,              u2,              u3,
      &               rmu,             unm,
      &               tau1n,           tau2n,           tau3n,
-     &               vdot,            rlKwall,         
+     &               vdot,            rlKwall,
      &               xKebe,           rKwall_glob,     f_suppt)
-        
-c        
+
+c
 c.... -----------------> boundary conditions <-------------------
 c
 
@@ -3944,7 +3944,7 @@ c
         do iel = 1, npro
 c
 c  if we have a nonzero value then
-c  calculate the fluxes through this surface 
+c  calculate the fluxes through this surface
 c
            iface = abs(iBCB(iel,2))
            if (iface .ne. 0 .and. ires.ne.2) then
@@ -3952,13 +3952,13 @@ c
               flxID(2,iface) =  flxID(2,iface) - WdetJb(iel) * unm(iel)
               flxID(3,iface) = flxID(3,iface)
      &                   - ( tau1n(iel) - bnorm(iel,1)*pres(iel))
-     &                   * WdetJb(iel) 
+     &                   * WdetJb(iel)
               flxID(4,iface) = flxID(4,iface)
      &                   - ( tau2n(iel) - bnorm(iel,2)*pres(iel))
-     &                   * WdetJb(iel) 
+     &                   * WdetJb(iel)
               flxID(5,iface) = flxID(5,iface)
      &                   - ( tau3n(iel) - bnorm(iel,3)*pres(iel))
-     &                   * WdetJb(iel) 
+     &                   * WdetJb(iel)
 
            endif
 c
@@ -3970,7 +3970,7 @@ c
               unm(iel)  = zero
               do n = 1, nshlb
                  nodlcl = lnode(n)
-                 unm(iel) = unm(iel) 
+                 unm(iel) = unm(iel)
      &                    + shape(iel,nodlcl) * BCB(iel,n,1)
               enddo
            endif
@@ -3981,24 +3981,24 @@ c
               pres(iel) = zero
               do n = 1, nshlb
                  nodlcl = lnode(n)
-                 pres(iel) = pres(iel) 
+                 pres(iel) = pres(iel)
      &                     + shape(iel,nodlcl) * BCB(iel,n,2)
               enddo
            endif
 c
 c.... viscous flux
-c        
+c
            if (btest(iBCB(iel,1),2)) then
               tau1n(iel) = zero
               tau2n(iel) = zero
               tau3n(iel) = zero
               do n = 1, nshlb
                  nodlcl = lnode(n)
-                 tau1n(iel) = tau1n(iel) 
+                 tau1n(iel) = tau1n(iel)
      &                      + shape(iel,nodlcl)*BCB(iel,n,3)
-                 tau2n(iel) = tau2n(iel) 
+                 tau2n(iel) = tau2n(iel)
      &                      + shape(iel,nodlcl)*BCB(iel,n,4)
-                 tau3n(iel) = tau3n(iel) 
+                 tau3n(iel) = tau3n(iel)
      &                      + shape(iel,nodlcl)*BCB(iel,n,5)
               enddo
            endif
@@ -4006,11 +4006,11 @@ c
 c.... turbulence wall (as a way of checking for deformable wall stiffness)
 c
            if (btest(iBCB(iel,1),4)) then
-              rlKwall(iel,:,:) = rlKwall(iel,:,:) / ngaussb ! divide by number of gauss points 
+              rlKwall(iel,:,:) = rlKwall(iel,:,:) / ngaussb ! divide by number of gauss points
               pres(iel) = zero                              ! to avoid the gauss point loop
               tau1n(iel) = zero                             ! and make the traction contribution
               tau2n(iel) = zero                             ! zero
-              tau3n(iel) = zero                              
+              tau3n(iel) = zero
            else
               rlKwall(iel,:,:) = zero                       ! this is not a deformable element
               vdot(iel,:) = zero
@@ -4039,7 +4039,7 @@ c
      &                                shape(iel,nodlcl2)*
      &                                LagInplaneVectors(m,j,k)*
      &                                LagInplaneVectors(l,j,k)
-                                enddo 
+                                enddo
                              enddo
                           enddo
                        enddo
@@ -4057,7 +4057,7 @@ c$$$c     in the computataion (could be done MUCH more efficiently!)--->
                                                                   !comment should read as for the consistent flux calculation rather than boundary forces
 c$$$c
         if (ires .eq. 2) then
-           do iel = 1, npro 
+           do iel = 1, npro
               if (nsrflist(iBCB(iel,2)) .ne. 0) then
                  unm(iel) = zero
                  tau1n(iel) = zero
@@ -4097,10 +4097,10 @@ c
         rNa(:,4) =  WdetJb * unm
 
 c
-c.... THIS IS DONE FOR ADDING STABILITY IN THE CASE OF BACK FLOW 
+c.... THIS IS DONE FOR ADDING STABILITY IN THE CASE OF BACK FLOW
 c
         rou      = backFlowStabCoef*5D-1*rho*WdetJb*(ABS(unm) - unm)
-        rNa(:,1) = rNa(:,1) + rou*u1 
+        rNa(:,1) = rNa(:,1) + rou*u1
         rNa(:,2) = rNa(:,2) + rou*u2
         rNa(:,3) = rNa(:,3) + rou*u3
 
@@ -4142,18 +4142,18 @@ c           END IF
 c        END DO
 
         if(iconvflow.eq.1) then     ! conservative form was integrated
-                                    ! by parts and has a convective 
+                                    ! by parts and has a convective
                                     ! boundary integral
 c
 c.... assemble the contributions
 c
            rou=rho*unm
-           rNa(:,1) = rNa(:,1) + WdetJb * rou * u1 
+           rNa(:,1) = rNa(:,1) + WdetJb * rou * u1
            rNa(:,2) = rNa(:,2) + WdetJb * rou * u2
            rNa(:,3) = rNa(:,3) + WdetJb * rou * u3
         endif
 
-c        
+c
 c    ----------> External tissue support (ISL July 2019) <-------------
 
         if (itissuesuppt .eq. 1) then
@@ -4178,26 +4178,26 @@ c.... add the flux to the residual
         enddo
 
         if(ideformwall.eq.1) then
-           rl(:,1,1) = rl(:,1,1) - rlKwall(:,1,1) 
+           rl(:,1,1) = rl(:,1,1) - rlKwall(:,1,1)
            rl(:,1,2) = rl(:,1,2) - rlKwall(:,1,2)
            rl(:,1,3) = rl(:,1,3) - rlKwall(:,1,3)
-           
+
            rl(:,2,1) = rl(:,2,1) - rlKwall(:,2,1)
            rl(:,2,2) = rl(:,2,2) - rlKwall(:,2,2)
            rl(:,2,3) = rl(:,2,3) - rlKwall(:,2,3)
-        
+
            rl(:,3,1) = rl(:,3,1) - rlKwall(:,3,1)
            rl(:,3,2) = rl(:,3,2) - rlKwall(:,3,2)
            rl(:,3,3) = rl(:,3,3) - rlKwall(:,3,3)
-        endif 
+        endif
 
         enddo                ! end of loop over gauss integration points
 
         if(ideformwall.eq.1) then
-c     
+c
 c.... -----> Wall Stiffness and Mass matrices for implicit LHS  <-----------
-c     
-c.... Now we simply have to add the stiffness contribution in rKwall_glob to 
+c
+c.... Now we simply have to add the stiffness contribution in rKwall_glob to
 c.... the mass contribution already contained in xKebe
 
 c.... this line is going to destroy the mass matrix contribution
@@ -4213,7 +4213,7 @@ c
 c.... return
 c
 
-        xKebe = xKebe + stabK 
+        xKebe = xKebe + stabK
 
         return
         end
@@ -4255,8 +4255,8 @@ C
 c
         dimension yl(npro,nshl,ndof),          iBCB(npro,ndiBCB),
      &            BCB(npro,nshlb,ndBCB),       shpb(nshl,*),
-     &            shglb(nsd,nshl,*),           
-     &            xlb(npro,nenl,nsd),          
+     &            shglb(nsd,nshl,*),
+     &            xlb(npro,nenl,nsd),
      &            rl(npro,nshl)
 c
         real*8    WdetJb(npro),                bnorm(npro,nsd)
@@ -4283,7 +4283,7 @@ c
 c.... get the hierarchic shape functions at this int point
 c
 c       BUG FIX - DES - 30JAN2014
-        call getshpb(shpb,        shglb,        sgn, 
+        call getshpb(shpb,        shglb,        sgn,
      &              shape,       shdrv)
 c
 c.... calculate the integraton variables
@@ -4291,14 +4291,14 @@ c
         call e3bvarSclr (yl,          shdrv,   xlb,
      &                   shape,       WdetJb,  bnorm,
      &                   flux,        dwl )
-c        
+c
 c.... -----------------> boundary conditions <-------------------
 c
 
 c
 c.... heat or scalar  flux
-c     
-        if(isclr.eq.0) then 
+c
+        if(isclr.eq.0) then
            iwalljump=0
         else
            iwalljump=1  !turb wall between heat and scalar flux..jump over
@@ -4308,11 +4308,11 @@ c
         do iel=1, npro
 c
 c  if we have a nonzero value then
-c  calculate the fluxes through this surface 
+c  calculate the fluxes through this surface
 c
            if (iBCB(iel,2) .ne. 0 .and. ires.ne.2) then
               iface = abs(iBCB(iel,2))
-              flxID(ibb,iface) =  flxID(ibb,iface) 
+              flxID(ibb,iface) =  flxID(ibb,iface)
      &                          - WdetJb(iel) * flux(iel)
            endif
 
@@ -4320,9 +4320,9 @@ c
               flux(iel) = zero
               do n = 1, nshlb
                  nodlcl = lnode(n)
-                 flux(iel) = flux(iel) 
+                 flux(iel) = flux(iel)
      &                     + shape(iel,nodlcl) * BCB(iel,n,ibb)
-              enddo           
+              enddo
            endif
         enddo
 c
@@ -4336,7 +4336,7 @@ c.... add the flux to the residual
 c
         do n = 1, nshlb
            nodlcl = lnode(n)
- 
+
            rl(:,nodlcl) = rl(:,nodlcl) - shape(:,nodlcl) * rNa(:)
         enddo
 c
@@ -4360,11 +4360,11 @@ c
         return
         end
 
-!> This routine computes the variables at integration points for 
+!> This routine computes the variables at integration points for
 !! the boundary element routine.
 !!
 !! input:<BR>
-!! @param[in] yl(npro,nshl,ndof) Primitive variables (local), ndof: 5[p,v1,v2,v3,T]+number of scalars solved 
+!! @param[in] yl(npro,nshl,ndof) Primitive variables (local), ndof: 5[p,v1,v2,v3,T]+number of scalars solved
 !! @param[in] acl(npro,nshl,ndof) Acceleration (local)
 !! @param[in] ul(npro,nshlb,nsd) Displacement (local)
 !! @param[in] shpb(npro, nshl) Boundary element shape-functions
@@ -4393,11 +4393,11 @@ c
 
       subroutine e3bvar (yl,      acl,     ul,
      &                   shpb,    shglb,
-     &                   xlb,     lnode,  
-     &                   WdetJb,  bnorm,   pres,    
-     &                   u1,      u2,      u3,      rmu,  
+     &                   xlb,     lnode,
+     &                   WdetJb,  bnorm,   pres,
+     &                   u1,      u2,      u3,      rmu,
      &                   unm,     tau1n,   tau2n,   tau3n,
-     &                   vdot,    rlKwall,         
+     &                   vdot,    rlKwall,
      &                   xKebe,   rKwall_glob, f_suppt)
 
         include "global.h"
@@ -4445,20 +4445,20 @@ C
       REAL*8                tmp1,        v1,          v2
       REAL*8                v3,          x1rot,       x2rot,      x3rot
 
-c     - ISL July 2019 - 
+c     - ISL July 2019 -
       REAL*8                disp,        f_suppt_LHS
 C
 c
       dimension yl(npro,nshl,ndof),        rmu(npro),
      &            shpb(npro,nshl),           shglb(npro,nsd,nshl),
-     &            xlb(npro,nenl,nsd),        
+     &            xlb(npro,nenl,nsd),
      &            lnode(27),                 g1yi(npro,ndof),
      &            g2yi(npro,ndof),           g3yi(npro,ndof),
      &            WdetJb(npro),              bnorm(npro,nsd),
-     &            pres(npro),                
+     &            pres(npro),
      &            u1(npro),                  u2(npro),
      &            u3(npro),
-     &            unm(npro),                 
+     &            unm(npro),
      &            tau1n(npro),               tau2n(npro),
      &            tau3n(npro),
      &            acl(npro,nshl,ndof),       ul(npro,nshl,nsd),
@@ -4473,7 +4473,7 @@ c
      &            temp1(npro),               temp2(npro),
      &            temp3(npro),
      &            v1(npro,nsd),              v2(npro,nsd),
-     &            v3(npro,nsd),              
+     &            v3(npro,nsd),
      &            rotnodallocal(npro,nsd,nsd),
      &            x1rot(npro,nsd),           x2rot(npro,nsd),
      &            x3rot(npro,nsd),           detJacrot(npro),
@@ -4499,20 +4499,20 @@ c
      &            rKwall_glob31(npro,nsd,nsd),
      &            rKwall_glob32(npro,nsd,nsd),
      &            rKwall_glob33(npro,nsd,nsd)
-c     
+c
       dimension   rKwall_glob(npro,9,nshl,nshl),
      &            xKebe(npro,9,nshl,nshl),
-     &            f_suppt_LHS(npro)                     ! ISL July 2019 
-c     
+     &            f_suppt_LHS(npro)                     ! ISL July 2019
+c
       real*8      lhmFctvw, tsFctvw(npro)
 
-      dimension   tmp1(npro)      
-c     
+      dimension   tmp1(npro)
+c
       real*8      Turb(npro),                xki,
      &            xki3,                      fv1
-c        
+c
       integer     e, i, j
-c      
+c
       integer     aa, b
 
 c
@@ -4526,10 +4526,10 @@ c
       u3   = zero
       disp = zero                                        ! ISL July 2019
 
-c             
+c
       do n = 1, nshlb
          nodlcl = lnode(n)
-c     
+c
          pres = pres + shpb(:,nodlcl) * yl(:,nodlcl,1)
          u1   = u1   + shpb(:,nodlcl) * yl(:,nodlcl,2)
          u2   = u2   + shpb(:,nodlcl) * yl(:,nodlcl,3)
@@ -4561,7 +4561,7 @@ c
       enddo
 c
 c.... compute the normal to the boundary. This is achieved by taking
-c     the cross product of two vectors in the plane of the 2-d 
+c     the cross product of two vectors in the plane of the 2-d
 c     boundary face.
 c
       if(lcsyst.eq.1) then      ! set to curl into element all others out
@@ -4591,14 +4591,14 @@ c
       temp1 = v1(:,2) * v2(:,3) - v2(:,2) * v1(:,3)
       temp2 = v2(:,1) * v1(:,3) - v1(:,1) * v2(:,3)
       temp3 = v1(:,1) * v2(:,2) - v2(:,1) * v1(:,2)
-c     
+c
 c mag is area for quads, twice area for tris
-c 
+c
       temp       = one / sqrt ( temp1**2 + temp2**2 + temp3**2 )
       bnorm(:,1) = temp1 * temp
       bnorm(:,2) = temp2 * temp
       bnorm(:,3) = temp3 * temp
-c        
+c
       if (lcsyst .eq. 1) then
          WdetJb     = Qwtb(lcsyst,intp) / (four*temp)
       elseif (lcsyst .eq. 2) then
@@ -4621,29 +4621,29 @@ c
 c
 c.... compute the inverse of deformation gradient
 c
-         dxidxb(:,1,1) =   dxdxib(:,2,2) * dxdxib(:,3,3) 
+         dxidxb(:,1,1) =   dxdxib(:,2,2) * dxdxib(:,3,3)
      &        - dxdxib(:,3,2) * dxdxib(:,2,3)
-         dxidxb(:,1,2) =   dxdxib(:,3,2) * dxdxib(:,1,3) 
+         dxidxb(:,1,2) =   dxdxib(:,3,2) * dxdxib(:,1,3)
      &        - dxdxib(:,1,2) * dxdxib(:,3,3)
-         dxidxb(:,1,3) =   dxdxib(:,1,2) * dxdxib(:,2,3) 
+         dxidxb(:,1,3) =   dxdxib(:,1,2) * dxdxib(:,2,3)
      &        - dxdxib(:,1,3) * dxdxib(:,2,2)
-         temp          = one / ( dxidxb(:,1,1) * dxdxib(:,1,1) 
-     &        + dxidxb(:,1,2) * dxdxib(:,2,1)  
+         temp          = one / ( dxidxb(:,1,1) * dxdxib(:,1,1)
+     &        + dxidxb(:,1,2) * dxdxib(:,2,1)
      &        + dxidxb(:,1,3) * dxdxib(:,3,1) )
          dxidxb(:,1,1) =  dxidxb(:,1,1) * temp
          dxidxb(:,1,2) =  dxidxb(:,1,2) * temp
          dxidxb(:,1,3) =  dxidxb(:,1,3) * temp
-         dxidxb(:,2,1) = (dxdxib(:,2,3) * dxdxib(:,3,1) 
+         dxidxb(:,2,1) = (dxdxib(:,2,3) * dxdxib(:,3,1)
      &        - dxdxib(:,2,1) * dxdxib(:,3,3)) * temp
-         dxidxb(:,2,2) = (dxdxib(:,1,1) * dxdxib(:,3,3) 
+         dxidxb(:,2,2) = (dxdxib(:,1,1) * dxdxib(:,3,3)
      &        - dxdxib(:,3,1) * dxdxib(:,1,3)) * temp
-         dxidxb(:,2,3) = (dxdxib(:,2,1) * dxdxib(:,1,3) 
+         dxidxb(:,2,3) = (dxdxib(:,2,1) * dxdxib(:,1,3)
      &        - dxdxib(:,1,1) * dxdxib(:,2,3)) * temp
-         dxidxb(:,3,1) = (dxdxib(:,2,1) * dxdxib(:,3,2) 
+         dxidxb(:,3,1) = (dxdxib(:,2,1) * dxdxib(:,3,2)
      &        - dxdxib(:,2,2) * dxdxib(:,3,1)) * temp
-         dxidxb(:,3,2) = (dxdxib(:,3,1) * dxdxib(:,1,2) 
+         dxidxb(:,3,2) = (dxdxib(:,3,1) * dxdxib(:,1,2)
      &        - dxdxib(:,1,1) * dxdxib(:,3,2)) * temp
-         dxidxb(:,3,3) = (dxdxib(:,1,1) * dxdxib(:,2,2) 
+         dxidxb(:,3,3) = (dxdxib(:,1,1) * dxdxib(:,2,2)
      &        - dxdxib(:,1,2) * dxdxib(:,2,1)) * temp
 c
 c.... compute local-grad-Y
@@ -4651,62 +4651,62 @@ c
          gl1yi = zero
          gl2yi = zero
          gl3yi = zero
-c     
+c
          do n = 1, nshl
             gl1yi(:,1) = gl1yi(:,1) + shglb(:,1,n) * yl(:,n,1)
             gl1yi(:,2) = gl1yi(:,2) + shglb(:,1,n) * yl(:,n,2)
             gl1yi(:,3) = gl1yi(:,3) + shglb(:,1,n) * yl(:,n,3)
             gl1yi(:,4) = gl1yi(:,4) + shglb(:,1,n) * yl(:,n,4)
-c     
+c
             gl2yi(:,1) = gl2yi(:,1) + shglb(:,2,n) * yl(:,n,1)
             gl2yi(:,2) = gl2yi(:,2) + shglb(:,2,n) * yl(:,n,2)
             gl2yi(:,3) = gl2yi(:,3) + shglb(:,2,n) * yl(:,n,3)
             gl2yi(:,4) = gl2yi(:,4) + shglb(:,2,n) * yl(:,n,4)
-c     
+c
             gl3yi(:,1) = gl3yi(:,1) + shglb(:,3,n) * yl(:,n,1)
             gl3yi(:,2) = gl3yi(:,2) + shglb(:,3,n) * yl(:,n,2)
             gl3yi(:,3) = gl3yi(:,3) + shglb(:,3,n) * yl(:,n,3)
             gl3yi(:,4) = gl3yi(:,4) + shglb(:,3,n) * yl(:,n,4)
          enddo
-c     
+c
 c.... convert local-grads to global-grads
-c     
-         g1yi(:,2) = dxidxb(:,1,1) * gl1yi(:,2) + 
+c
+         g1yi(:,2) = dxidxb(:,1,1) * gl1yi(:,2) +
      &        dxidxb(:,2,1) * gl2yi(:,2) +
      &        dxidxb(:,3,1) * gl3yi(:,2)
-         g2yi(:,2) = dxidxb(:,1,2) * gl1yi(:,2) + 
+         g2yi(:,2) = dxidxb(:,1,2) * gl1yi(:,2) +
      &        dxidxb(:,2,2) * gl2yi(:,2) +
      &        dxidxb(:,3,2) * gl3yi(:,2)
-         g3yi(:,2) = dxidxb(:,1,3) * gl1yi(:,2) + 
+         g3yi(:,2) = dxidxb(:,1,3) * gl1yi(:,2) +
      &        dxidxb(:,2,3) * gl2yi(:,2) +
      &        dxidxb(:,3,3) * gl3yi(:,2)
-c     
-         g1yi(:,3) = dxidxb(:,1,1) * gl1yi(:,3) + 
+c
+         g1yi(:,3) = dxidxb(:,1,1) * gl1yi(:,3) +
      &        dxidxb(:,2,1) * gl2yi(:,3) +
      &        dxidxb(:,3,1) * gl3yi(:,3)
-         g2yi(:,3) = dxidxb(:,1,2) * gl1yi(:,3) + 
+         g2yi(:,3) = dxidxb(:,1,2) * gl1yi(:,3) +
      &        dxidxb(:,2,2) * gl2yi(:,3) +
      &        dxidxb(:,3,2) * gl3yi(:,3)
-         g3yi(:,3) = dxidxb(:,1,3) * gl1yi(:,3) + 
+         g3yi(:,3) = dxidxb(:,1,3) * gl1yi(:,3) +
      &        dxidxb(:,2,3) * gl2yi(:,3) +
      &        dxidxb(:,3,3) * gl3yi(:,3)
-c     
-         g1yi(:,4) = dxidxb(:,1,1) * gl1yi(:,4) + 
+c
+         g1yi(:,4) = dxidxb(:,1,1) * gl1yi(:,4) +
      &        dxidxb(:,2,1) * gl2yi(:,4) +
      &        dxidxb(:,3,1) * gl3yi(:,4)
-         g2yi(:,4) = dxidxb(:,1,2) * gl1yi(:,4) + 
+         g2yi(:,4) = dxidxb(:,1,2) * gl1yi(:,4) +
      &        dxidxb(:,2,2) * gl2yi(:,4) +
      &        dxidxb(:,3,2) * gl3yi(:,4)
-         g3yi(:,4) = dxidxb(:,1,3) * gl1yi(:,4) + 
+         g3yi(:,4) = dxidxb(:,1,3) * gl1yi(:,4) +
      &        dxidxb(:,2,3) * gl2yi(:,4) +
      &        dxidxb(:,3,3) * gl3yi(:,4)
-c     
+c
 c.... end grad-v
-c     
+c
       endif
-c     
+c
 c.... mass flux
-c     
+c
       unm = bnorm(:,1) * u1 + bnorm(:,2) * u2  + bnorm(:,3) * u3
 ! no rho in continuity eq.
 
@@ -4714,22 +4714,22 @@ c
 c
 c.... viscous flux
 c
-      tau1n = bnorm(:,1) * two * rmu *  g1yi(:,2)  
+      tau1n = bnorm(:,1) * two * rmu *  g1yi(:,2)
      &     + bnorm(:,2) *      (rmu * (g2yi(:,2) + g1yi(:,3)))
      &     + bnorm(:,3) *      (rmu * (g3yi(:,2) + g1yi(:,4)))
       tau2n = bnorm(:,1) *      (rmu * (g2yi(:,2) + g1yi(:,3)))
-     &     + bnorm(:,2) * two * rmu *  g2yi(:,3) 
+     &     + bnorm(:,2) * two * rmu *  g2yi(:,3)
      &     + bnorm(:,3) *      (rmu * (g3yi(:,3) + g2yi(:,4)))
       tau3n = bnorm(:,1) *      (rmu * (g3yi(:,2) + g1yi(:,4)))
      &     + bnorm(:,2) *      (rmu * (g3yi(:,3) + g2yi(:,4)))
-     &     + bnorm(:,3) * two * rmu *  g3yi(:,4) 
-c     
+     &     + bnorm(:,3) * two * rmu *  g3yi(:,4)
+c
       temp1 = bnorm(:,1) * tau1n
      &     + bnorm(:,2) * tau2n
      &     + bnorm(:,3) * tau3n
-      
+
       pres  = pres - temp1
-      
+
       tau1n = tau1n - bnorm(:,1) * temp1
       tau2n = tau2n - bnorm(:,2) * temp1
       tau3n = tau3n - bnorm(:,3) * temp1
@@ -4744,105 +4744,105 @@ c.... --------------------------> Deformable wall <---------------------
       if(ideformwall.eq.1) then
       do n = 1, nshlb
          nodlcl = lnode(n)
-c     
+c
          vdot(:,1) = vdot(:,1) + shpb(:,nodlcl) * acl(:,nodlcl,2)
          vdot(:,2) = vdot(:,2) + shpb(:,nodlcl) * acl(:,nodlcl,3)
          vdot(:,3) = vdot(:,3) + shpb(:,nodlcl) * acl(:,nodlcl,4)
 
       enddo
       vdot = vdot * thicknessvw * rhovw
-c     
+c
 c.... --------------------->  Stiffness matrix & residual  <-----------------
-c     
+c
 c.... B^t * D * B formulation for plane stress enhanced membrane
 c
 c
 c.... rotation matrix
-c     
+c
       v1 = xlb(:,ipt2,:) - xlb(:,1,:)
       temp       = one / sqrt ( v1(:,1)**2 + v1(:,2)**2 + v1(:,3)**2 )
       v1(:,1) = v1(:,1) * temp
       v1(:,2) = v1(:,2) * temp
       v1(:,3) = v1(:,3) * temp
-      
+
       v2 = xlb(:,ipt3,:) - xlb(:,1,:)
-      
+
 c     compute cross product
       temp1 = v1(:,2) * v2(:,3) - v2(:,2) * v1(:,3)
       temp2 = v2(:,1) * v1(:,3) - v1(:,1) * v2(:,3)
       temp3 = v1(:,1) * v2(:,2) - v2(:,1) * v1(:,2)
-      
+
       temp       = one / sqrt ( temp1**2 + temp2**2 + temp3**2 )
       v3(:,1) = temp1 * temp
       v3(:,2) = temp2 * temp
       v3(:,3) = temp3 * temp
-      
+
 c     cross product again for v2
       temp1 = v3(:,2) * v1(:,3) - v1(:,2) * v3(:,3)
       temp2 = v1(:,1) * v3(:,3) - v3(:,1) * v1(:,3)
       temp3 = v3(:,1) * v1(:,2) - v1(:,1) * v3(:,2)
-      
+
       temp       = one / sqrt ( temp1**2 + temp2**2 + temp3**2 )
       v2(:,1) = temp1 * temp
       v2(:,2) = temp2 * temp
       v2(:,3) = temp3 * temp
-      
+
       do j = 1, nsd
          rotnodallocal(:,1,j) = v1(:,j)
          rotnodallocal(:,2,j) = v2(:,j)
          rotnodallocal(:,3,j) = v3(:,j)
-      enddo      
-c     
+      enddo
+c
 c.... rotated coordinates
 c
       x1rot = zero
       x2rot = zero
       x3rot = zero
-      
+
       do i = 1, nsd
-         do j = 1, nsd 
+         do j = 1, nsd
             x1rot(:,i) = x1rot(:,i)+rotnodallocal(:,i,j)*xlb(:,1,j)
             x2rot(:,i) = x2rot(:,i)+rotnodallocal(:,i,j)*xlb(:,ipt2,j)
             x3rot(:,i) = x3rot(:,i)+rotnodallocal(:,i,j)*xlb(:,ipt3,j)
          enddo
-      enddo      
-c     
+      enddo
+c
 c.... B matrices
-c     
+c
       B1 = zero
       B2 = zero
       B3 = zero
-      detJacrot = (x2rot(:,1)-x1rot(:,1)) * (x3rot(:,2)-x1rot(:,2)) - 
+      detJacrot = (x2rot(:,1)-x1rot(:,1)) * (x3rot(:,2)-x1rot(:,2)) -
      &     (x3rot(:,1)-x1rot(:,1)) * (x2rot(:,2)-x1rot(:,2))
-      
+
       B1(:,1,1) = (x2rot(:,2)-x3rot(:,2))/detJacrot(:)
       B1(:,2,2) = (x3rot(:,1)-x2rot(:,1))/detJacrot(:)
       B1(:,3,1) = (x3rot(:,1)-x2rot(:,1))/detJacrot(:)
       B1(:,3,2) = (x2rot(:,2)-x3rot(:,2))/detJacrot(:)
       B1(:,4,3) = (x2rot(:,2)-x3rot(:,2))/detJacrot(:)
       B1(:,5,3) = (x3rot(:,1)-x2rot(:,1))/detJacrot(:)
-      
+
       B2(:,1,1) = (x3rot(:,2)-x1rot(:,2))/detJacrot(:)
       B2(:,2,2) = (x1rot(:,1)-x3rot(:,1))/detJacrot(:)
       B2(:,3,1) = (x1rot(:,1)-x3rot(:,1))/detJacrot(:)
       B2(:,3,2) = (x3rot(:,2)-x1rot(:,2))/detJacrot(:)
       B2(:,4,3) = (x3rot(:,2)-x1rot(:,2))/detJacrot(:)
       B2(:,5,3) = (x1rot(:,1)-x3rot(:,1))/detJacrot(:)
-      
+
       B3(:,1,1) = (x1rot(:,2)-x2rot(:,2))/detJacrot(:)
       B3(:,2,2) = (x2rot(:,1)-x1rot(:,1))/detJacrot(:)
       B3(:,3,1) = (x2rot(:,1)-x1rot(:,1))/detJacrot(:)
       B3(:,3,2) = (x1rot(:,2)-x2rot(:,2))/detJacrot(:)
       B3(:,4,3) = (x1rot(:,2)-x2rot(:,2))/detJacrot(:)
       B3(:,5,3) = (x2rot(:,1)-x1rot(:,1))/detJacrot(:)
-      
+
 C      B1 = B1 / detJacrot
 C      B2 = B2 / detJacrot
 C      B3 = B3 / detJacrot
-      
-c     
+
+c
 c.... D matrix
-c     
+c
       Dmatrix = zero
       temp1 = evw / (1.0d0 - rnuvw*rnuvw)
       temp2 = rnuvw * temp1
@@ -4854,27 +4854,27 @@ c
       Dmatrix(:,3,3) = temp3
       Dmatrix(:,4,4) = temp3*rshearconstantvw
       Dmatrix(:,5,5) = temp3*rshearconstantvw
-c     
+c
 c.... D * [B1|B2|B3]
-c     
+c
       DtimesB1 = zero
       DtimesB2 = zero
       DtimesB3 = zero
       do i = 1, 5
          do j = 1, 3
             do k = 1, 5
-               DtimesB1(:,i,j) = DtimesB1(:,i,j) 
+               DtimesB1(:,i,j) = DtimesB1(:,i,j)
      &              + Dmatrix(:,i,k) * B1(:,k,j)
-               DtimesB2(:,i,j) = DtimesB2(:,i,j) 
+               DtimesB2(:,i,j) = DtimesB2(:,i,j)
      &              + Dmatrix(:,i,k) * B2(:,k,j)
-               DtimesB3(:,i,j) = DtimesB3(:,i,j) 
+               DtimesB3(:,i,j) = DtimesB3(:,i,j)
      &              + Dmatrix(:,i,k) * B3(:,k,j)
             enddo
          enddo
       enddo
-c     
+c
 c.... [B1|B2|B3]^T * D * [B1|B2|B3]
-c     
+c
       rKwall_local11 = zero
       rKwall_local12 = zero
       rKwall_local13 = zero
@@ -4884,7 +4884,7 @@ c
       rKwall_local31 = zero
       rKwall_local32 = zero
       rKwall_local33 = zero
-      
+
       do i = 1, 3               ! i is a node index: i=1, nenbl=3
          do j = 1, 3            ! same is true for j
             do k = 1, 5
@@ -4909,10 +4909,10 @@ c
             enddo
          enddo
       enddo
-      
-c     
+
+c
 c.... Now we need to rotate each of these submatrices to the global frame
-c     
+c
       call rotatestiff(rKwall_local11, rotnodallocal, rKwall_glob11)
       call rotatestiff(rKwall_local12, rotnodallocal, rKwall_glob12)
       call rotatestiff(rKwall_local13, rotnodallocal, rKwall_glob13)
@@ -4926,90 +4926,90 @@ c
 c     multiply the nodal matrices by the area and the thickness
       do i =1, nsd
          do j = 1, nsd
-            rKwall_glob11(:,i,j) = rKwall_glob11(:,i,j) * detJacrot(:) 
+            rKwall_glob11(:,i,j) = rKwall_glob11(:,i,j) * detJacrot(:)
      &                           * pt5 * thicknessvw
-            rKwall_glob12(:,i,j) = rKwall_glob12(:,i,j) * detJacrot(:) 
+            rKwall_glob12(:,i,j) = rKwall_glob12(:,i,j) * detJacrot(:)
      &                           * pt5 * thicknessvw
-            rKwall_glob13(:,i,j) = rKwall_glob13(:,i,j) * detJacrot(:) 
+            rKwall_glob13(:,i,j) = rKwall_glob13(:,i,j) * detJacrot(:)
      &                           * pt5 * thicknessvw
-            rKwall_glob21(:,i,j) = rKwall_glob21(:,i,j) * detJacrot(:) 
+            rKwall_glob21(:,i,j) = rKwall_glob21(:,i,j) * detJacrot(:)
      &                           * pt5 * thicknessvw
-            rKwall_glob22(:,i,j) = rKwall_glob22(:,i,j) * detJacrot(:) 
+            rKwall_glob22(:,i,j) = rKwall_glob22(:,i,j) * detJacrot(:)
      &                           * pt5 * thicknessvw
-            rKwall_glob23(:,i,j) = rKwall_glob23(:,i,j) * detJacrot(:) 
+            rKwall_glob23(:,i,j) = rKwall_glob23(:,i,j) * detJacrot(:)
      &                           * pt5 * thicknessvw
-            rKwall_glob31(:,i,j) = rKwall_glob31(:,i,j) * detJacrot(:) 
+            rKwall_glob31(:,i,j) = rKwall_glob31(:,i,j) * detJacrot(:)
      &                           * pt5 * thicknessvw
-            rKwall_glob32(:,i,j) = rKwall_glob32(:,i,j) * detJacrot(:) 
+            rKwall_glob32(:,i,j) = rKwall_glob32(:,i,j) * detJacrot(:)
      &                           * pt5 * thicknessvw
-            rKwall_glob33(:,i,j) = rKwall_glob33(:,i,j) * detJacrot(:) 
+            rKwall_glob33(:,i,j) = rKwall_glob33(:,i,j) * detJacrot(:)
      &                           * pt5 * thicknessvw
          enddo
       enddo
 
-c     
+c
 c.... Final K * u product (in global coordinates) to get the residual
 c
       do i = 1, 3               ! now i is a spatial index: i=1, nsd=3
-         rlKwall(:,1,1) = rlKwall(:,1,1) 
-     &                  + rKwall_glob11(:,1,i) * ul(:,1,i) 
-     &                  + rKwall_glob12(:,1,i) * ul(:,2,i) 
-     &                  + rKwall_glob13(:,1,i) * ul(:,3,i) 
+         rlKwall(:,1,1) = rlKwall(:,1,1)
+     &                  + rKwall_glob11(:,1,i) * ul(:,1,i)
+     &                  + rKwall_glob12(:,1,i) * ul(:,2,i)
+     &                  + rKwall_glob13(:,1,i) * ul(:,3,i)
          rlKwall(:,1,2) = rlKwall(:,1,2)
-     &                  + rKwall_glob11(:,2,i) * ul(:,1,i) 
-     &                  + rKwall_glob12(:,2,i) * ul(:,2,i) 
-     &                  + rKwall_glob13(:,2,i) * ul(:,3,i) 
-         rlKwall(:,1,3) = rlKwall(:,1,3) 
-     &                  + rKwall_glob11(:,3,i) * ul(:,1,i) 
-     &                  + rKwall_glob12(:,3,i) * ul(:,2,i) 
-     &                  + rKwall_glob13(:,3,i) * ul(:,3,i) 
-         rlKwall(:,2,1) = rlKwall(:,2,1) 
-     &                  + rKwall_glob21(:,1,i) * ul(:,1,i) 
-     &                  + rKwall_glob22(:,1,i) * ul(:,2,i) 
-     &                  + rKwall_glob23(:,1,i) * ul(:,3,i) 
+     &                  + rKwall_glob11(:,2,i) * ul(:,1,i)
+     &                  + rKwall_glob12(:,2,i) * ul(:,2,i)
+     &                  + rKwall_glob13(:,2,i) * ul(:,3,i)
+         rlKwall(:,1,3) = rlKwall(:,1,3)
+     &                  + rKwall_glob11(:,3,i) * ul(:,1,i)
+     &                  + rKwall_glob12(:,3,i) * ul(:,2,i)
+     &                  + rKwall_glob13(:,3,i) * ul(:,3,i)
+         rlKwall(:,2,1) = rlKwall(:,2,1)
+     &                  + rKwall_glob21(:,1,i) * ul(:,1,i)
+     &                  + rKwall_glob22(:,1,i) * ul(:,2,i)
+     &                  + rKwall_glob23(:,1,i) * ul(:,3,i)
          rlKwall(:,2,2) = rlKwall(:,2,2)
-     &                  + rKwall_glob21(:,2,i) * ul(:,1,i) 
-     &                  + rKwall_glob22(:,2,i) * ul(:,2,i) 
-     &                  + rKwall_glob23(:,2,i) * ul(:,3,i) 
-         rlKwall(:,2,3) = rlKwall(:,2,3) 
-     &                  + rKwall_glob21(:,3,i) * ul(:,1,i) 
-     &                  + rKwall_glob22(:,3,i) * ul(:,2,i) 
+     &                  + rKwall_glob21(:,2,i) * ul(:,1,i)
+     &                  + rKwall_glob22(:,2,i) * ul(:,2,i)
+     &                  + rKwall_glob23(:,2,i) * ul(:,3,i)
+         rlKwall(:,2,3) = rlKwall(:,2,3)
+     &                  + rKwall_glob21(:,3,i) * ul(:,1,i)
+     &                  + rKwall_glob22(:,3,i) * ul(:,2,i)
      &                  + rKwall_glob23(:,3,i) * ul(:,3,i)
-         rlKwall(:,3,1) = rlKwall(:,3,1) 
-     &                  + rKwall_glob31(:,1,i) * ul(:,1,i) 
-     &                  + rKwall_glob32(:,1,i) * ul(:,2,i) 
-     &                  + rKwall_glob33(:,1,i) * ul(:,3,i) 
+         rlKwall(:,3,1) = rlKwall(:,3,1)
+     &                  + rKwall_glob31(:,1,i) * ul(:,1,i)
+     &                  + rKwall_glob32(:,1,i) * ul(:,2,i)
+     &                  + rKwall_glob33(:,1,i) * ul(:,3,i)
          rlKwall(:,3,2) = rlKwall(:,3,2)
-     &                  + rKwall_glob31(:,2,i) * ul(:,1,i) 
-     &                  + rKwall_glob32(:,2,i) * ul(:,2,i) 
-     &                  + rKwall_glob33(:,2,i) * ul(:,3,i) 
-         rlKwall(:,3,3) = rlKwall(:,3,3) 
-     &                  + rKwall_glob31(:,3,i) * ul(:,1,i) 
-     &                  + rKwall_glob32(:,3,i) * ul(:,2,i) 
+     &                  + rKwall_glob31(:,2,i) * ul(:,1,i)
+     &                  + rKwall_glob32(:,2,i) * ul(:,2,i)
+     &                  + rKwall_glob33(:,2,i) * ul(:,3,i)
+         rlKwall(:,3,3) = rlKwall(:,3,3)
+     &                  + rKwall_glob31(:,3,i) * ul(:,1,i)
+     &                  + rKwall_glob32(:,3,i) * ul(:,2,i)
      &                  + rKwall_glob33(:,3,i) * ul(:,3,i)
       enddo
-c     
+c
 c.... --------------> End of Stiffness matrix & residual  <-----------------
-c     
+c
 
-c     
+c
 c.... -----> Wall Stiffness and Mass matrices for implicit LHS  <-----------
-c     
+c
 
-c....  Here we just add the mass matrix contribution.  The stiffness contribution 
+c....  Here we just add the mass matrix contribution.  The stiffness contribution
 c....  is added in e3b
 
 c      lhmFct = almi * (one - flmpl)      Maybe we have to define flmplW: lumped
                                         ! mass parameter for the wall
-      lhmFctvw = almi * (one - flmpl)                                  
+      lhmFctvw = almi * (one - flmpl)
 c
 c.... scale variables for efficiency
 c
-      tsFctvw     = lhmFctvw * WdetJb * rhovw * thicknessvw     
+      tsFctvw     = lhmFctvw * WdetJb * rhovw * thicknessvw
 c
 c.... compute mass and convection terms
 c
-c.... NOTE:  the wall mass contributions should only have 3 nodal components 
+c.... NOTE:  the wall mass contributions should only have 3 nodal components
 c.... since the fourth node is an interior node... therefore, the loops should
 c.... be done from 1 to nshlb=3...
 
@@ -5027,9 +5027,9 @@ c...     ----------> External tissue support (ISL July 2019) <----------
 
             if (itissuesuppt .eq. 1) then
 
-               f_suppt_LHS = WdetJb * ( alfi * gami * Delt(itseq) * 
-     &                       csvw * shpb(:, aa) * shpb(:, b) + 
-     &                       alfi * betai * Delt(itseq) * Delt(itseq) * 
+               f_suppt_LHS = WdetJb * ( alfi * gami * Delt(itseq) *
+     &                       csvw * shpb(:, aa) * shpb(:, b) +
+     &                       alfi * betai * Delt(itseq) * Delt(itseq) *
      &                       ksvw * shpb(:, aa) * shpb(:, b) )
 c
                xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + f_suppt_LHS
@@ -5037,16 +5037,16 @@ c
                xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + f_suppt_LHS
 
             endif
-            
+
          enddo
       enddo
 
 c
 c.... assemble the nodal stiffness into the element stiffness matrix rKwall_glob
 c
-c.... We have passed the integer intp to make this operation only once: we are 
-c.... not using the gauss points structure to compute the stiffness of the wall 
-c.... elements, so we don't want to be redundant and calculate ngaussb times the 
+c.... We have passed the integer intp to make this operation only once: we are
+c.... not using the gauss points structure to compute the stiffness of the wall
+c.... elements, so we don't want to be redundant and calculate ngaussb times the
 c.... stiffness matrix which is constant for linear triangles...
 
 c.... This is ugly, but I will fix it later...
@@ -5061,7 +5061,7 @@ c.... This is ugly, but I will fix it later...
         rKwall_glob(:,7,1,1) = rKwall_glob11(:,3,1)
         rKwall_glob(:,8,1,1) = rKwall_glob11(:,3,2)
         rKwall_glob(:,9,1,1) = rKwall_glob11(:,3,3)
-      
+
         rKwall_glob(:,1,1,2) = rKwall_glob12(:,1,1)
         rKwall_glob(:,2,1,2) = rKwall_glob12(:,1,2)
         rKwall_glob(:,3,1,2) = rKwall_glob12(:,1,3)
@@ -5071,7 +5071,7 @@ c.... This is ugly, but I will fix it later...
         rKwall_glob(:,7,1,2) = rKwall_glob12(:,3,1)
         rKwall_glob(:,8,1,2) = rKwall_glob12(:,3,2)
         rKwall_glob(:,9,1,2) = rKwall_glob12(:,3,3)
-      
+
         rKwall_glob(:,1,1,3) = rKwall_glob13(:,1,1)
         rKwall_glob(:,2,1,3) = rKwall_glob13(:,1,2)
         rKwall_glob(:,3,1,3) = rKwall_glob13(:,1,3)
@@ -5081,7 +5081,7 @@ c.... This is ugly, but I will fix it later...
         rKwall_glob(:,7,1,3) = rKwall_glob13(:,3,1)
         rKwall_glob(:,8,1,3) = rKwall_glob13(:,3,2)
         rKwall_glob(:,9,1,3) = rKwall_glob13(:,3,3)
-      
+
         rKwall_glob(:,1,2,1) = rKwall_glob21(:,1,1)
         rKwall_glob(:,2,2,1) = rKwall_glob21(:,1,2)
         rKwall_glob(:,3,2,1) = rKwall_glob21(:,1,3)
@@ -5091,7 +5091,7 @@ c.... This is ugly, but I will fix it later...
         rKwall_glob(:,7,2,1) = rKwall_glob21(:,3,1)
         rKwall_glob(:,8,2,1) = rKwall_glob21(:,3,2)
         rKwall_glob(:,9,2,1) = rKwall_glob21(:,3,3)
-      
+
         rKwall_glob(:,1,2,2) = rKwall_glob22(:,1,1)
         rKwall_glob(:,2,2,2) = rKwall_glob22(:,1,2)
         rKwall_glob(:,3,2,2) = rKwall_glob22(:,1,3)
@@ -5100,7 +5100,7 @@ c.... This is ugly, but I will fix it later...
         rKwall_glob(:,6,2,2) = rKwall_glob22(:,2,3)
         rKwall_glob(:,7,2,2) = rKwall_glob22(:,3,1)
         rKwall_glob(:,8,2,2) = rKwall_glob22(:,3,2)
-        rKwall_glob(:,9,2,2) = rKwall_glob22(:,3,3)      
+        rKwall_glob(:,9,2,2) = rKwall_glob22(:,3,3)
 
         rKwall_glob(:,1,2,3) = rKwall_glob23(:,1,1)
         rKwall_glob(:,2,2,3) = rKwall_glob23(:,1,2)
@@ -5111,7 +5111,7 @@ c.... This is ugly, but I will fix it later...
         rKwall_glob(:,7,2,3) = rKwall_glob23(:,3,1)
         rKwall_glob(:,8,2,3) = rKwall_glob23(:,3,2)
         rKwall_glob(:,9,2,3) = rKwall_glob23(:,3,3)
-      
+
         rKwall_glob(:,1,3,1) = rKwall_glob31(:,1,1)
         rKwall_glob(:,2,3,1) = rKwall_glob31(:,1,2)
         rKwall_glob(:,3,3,1) = rKwall_glob31(:,1,3)
@@ -5131,7 +5131,7 @@ c.... This is ugly, but I will fix it later...
         rKwall_glob(:,7,3,2) = rKwall_glob32(:,3,1)
         rKwall_glob(:,8,3,2) = rKwall_glob32(:,3,2)
         rKwall_glob(:,9,3,2) = rKwall_glob32(:,3,3)
-      
+
         rKwall_glob(:,1,3,3) = rKwall_glob33(:,1,1)
         rKwall_glob(:,2,3,3) = rKwall_glob33(:,1,2)
         rKwall_glob(:,3,3,3) = rKwall_glob33(:,1,3)
@@ -5150,9 +5150,9 @@ c.... ----------> External tissue support (ISL July 2019) <-------------
       if (itissuesuppt .eq. 1) then
          f_suppt(:, 1) = -ksvw * disp(:, 1) - csvw * u1 -
      &                   p0vw * bnorm(:, 1)
-         f_suppt(:, 2) = -ksvw * disp(:, 2) - csvw * u2 - 
+         f_suppt(:, 2) = -ksvw * disp(:, 2) - csvw * u2 -
      &                   p0vw * bnorm(:, 2)
-         f_suppt(:, 3) = -ksvw * disp(:, 3) - csvw * u3 - 
+         f_suppt(:, 3) = -ksvw * disp(:, 3) - csvw * u3 -
      &                   p0vw * bnorm(:, 3)
       endif
 
@@ -5161,7 +5161,7 @@ c.... ----------> External tissue support (ISL July 2019) <-------------
 
       return
       end
-      
+
 !> Variables for boundary elements
 
         subroutine e3bvarSclr (yl,        shdrv,    xlb,
@@ -5203,7 +5203,7 @@ c
      &            gradSl(npro,nsd),          gradS(npro,nsd)
 
         real*8    diffus(npro),              dwl(npro,nshl)
-        
+
         call getdiffsclr(shape,dwl,yl,diffus)
 c
 c.... ---------------------->  Element Metrics  <-----------------------
@@ -5223,19 +5223,19 @@ c
            dxdxib(:,3,2) = dxdxib(:,3,2) + xlb(:,n,3) * shdrv(:,2,n)
            dxdxib(:,3,3) = dxdxib(:,3,3) + xlb(:,n,3) * shdrv(:,3,n)
         enddo
-c     
+c
 c.... compute the normal to the boundary. This is achieved by taking
-c     the cross product of two vectors in the plane of the 2-d 
+c     the cross product of two vectors in the plane of the 2-d
 c     boundary face.
 c
         v1 = xlb(:,2,:) - xlb(:,1,:)
         v2 = xlb(:,3,:) - xlb(:,1,:)
-        
-c     
-c.....The following are done in order to correct temp1..3  
-c     based on the results from compressible code.  This is done only 
-c     for wedges, depending on the bounary face.(tri or quad)  
-c     
+
+c
+c.....The following are done in order to correct temp1..3
+c     based on the results from compressible code.  This is done only
+c     for wedges, depending on the bounary face.(tri or quad)
+c
         if (lcsyst .eq. 4) then
            temp1 = dxdxib(:,2,1) * dxdxib(:,3,3) -
      &             dxdxib(:,2,3) * dxdxib(:,3,1)
@@ -5243,12 +5243,12 @@ c
      &             dxdxib(:,3,3) * dxdxib(:,1,1)
            temp3 = dxdxib(:,1,1) * dxdxib(:,2,3) -
      &             dxdxib(:,1,3) * dxdxib(:,2,1)
-             
+
         elseif (lcsyst .eq. 1) then
            temp1 = v1(:,2) * v2(:,3) - v2(:,2) * v1(:,3)
            temp2 = v2(:,1) * v1(:,3) - v1(:,1) * v2(:,3)
            temp3 = v1(:,1) * v2(:,2) - v2(:,1) * v1(:,2)
-        else 
+        else
            temp1 = - v1(:,2) * v2(:,3) + v2(:,2) * v1(:,3)
            temp2 = - v2(:,1) * v1(:,3) + v1(:,1) * v2(:,3)
            temp3 = - v1(:,1) * v2(:,2) + v2(:,1) * v1(:,2)
@@ -5259,14 +5259,14 @@ c
         bnorm(:,2) = temp2 * temp
         bnorm(:,3) = temp3 * temp
 c
-     
+
         if (lcsyst .eq. 3) then
            WdetJb     = (1 - Qwtb(lcsyst,intp)) / (four*temp)
         elseif (lcsyst .eq. 4) then
            WdetJb     = Qwtb(lcsyst,intp) / temp
         else
            WdetJb     = Qwtb(lcsyst,intp) / (four*temp)
-        endif      
+        endif
 c
 c.... -------------------------->  Grad-V  <----------------------------
 c
@@ -5276,29 +5276,29 @@ c
 c
 c.... compute the inverse of deformation gradient
 c
-          dxidxb(:,1,1) =   dxdxib(:,2,2) * dxdxib(:,3,3) 
+          dxidxb(:,1,1) =   dxdxib(:,2,2) * dxdxib(:,3,3)
      &                    - dxdxib(:,3,2) * dxdxib(:,2,3)
-          dxidxb(:,1,2) =   dxdxib(:,3,2) * dxdxib(:,1,3) 
+          dxidxb(:,1,2) =   dxdxib(:,3,2) * dxdxib(:,1,3)
      &                    - dxdxib(:,1,2) * dxdxib(:,3,3)
-          dxidxb(:,1,3) =   dxdxib(:,1,2) * dxdxib(:,2,3) 
+          dxidxb(:,1,3) =   dxdxib(:,1,2) * dxdxib(:,2,3)
      &                    - dxdxib(:,1,3) * dxdxib(:,2,2)
-          temp          = one / ( dxidxb(:,1,1) * dxdxib(:,1,1) 
-     &                          + dxidxb(:,1,2) * dxdxib(:,2,1)  
+          temp          = one / ( dxidxb(:,1,1) * dxdxib(:,1,1)
+     &                          + dxidxb(:,1,2) * dxdxib(:,2,1)
      &                          + dxidxb(:,1,3) * dxdxib(:,3,1) )
           dxidxb(:,1,1) =  dxidxb(:,1,1) * temp
           dxidxb(:,1,2) =  dxidxb(:,1,2) * temp
           dxidxb(:,1,3) =  dxidxb(:,1,3) * temp
-          dxidxb(:,2,1) = (dxdxib(:,2,3) * dxdxib(:,3,1) 
+          dxidxb(:,2,1) = (dxdxib(:,2,3) * dxdxib(:,3,1)
      &                   - dxdxib(:,2,1) * dxdxib(:,3,3)) * temp
-          dxidxb(:,2,2) = (dxdxib(:,1,1) * dxdxib(:,3,3) 
+          dxidxb(:,2,2) = (dxdxib(:,1,1) * dxdxib(:,3,3)
      &                   - dxdxib(:,3,1) * dxdxib(:,1,3)) * temp
-          dxidxb(:,2,3) = (dxdxib(:,2,1) * dxdxib(:,1,3) 
+          dxidxb(:,2,3) = (dxdxib(:,2,1) * dxdxib(:,1,3)
      &                   - dxdxib(:,1,1) * dxdxib(:,2,3)) * temp
-          dxidxb(:,3,1) = (dxdxib(:,2,1) * dxdxib(:,3,2) 
+          dxidxb(:,3,1) = (dxdxib(:,2,1) * dxdxib(:,3,2)
      &                   - dxdxib(:,2,2) * dxdxib(:,3,1)) * temp
-          dxidxb(:,3,2) = (dxdxib(:,3,1) * dxdxib(:,1,2) 
+          dxidxb(:,3,2) = (dxdxib(:,3,1) * dxdxib(:,1,2)
      &                   - dxdxib(:,1,1) * dxdxib(:,3,2)) * temp
-          dxidxb(:,3,3) = (dxdxib(:,1,1) * dxdxib(:,2,2) 
+          dxidxb(:,3,3) = (dxdxib(:,1,1) * dxdxib(:,2,2)
      &                   - dxdxib(:,1,2) * dxdxib(:,2,1)) * temp
 c
 c.... compute local-grad-Y
@@ -5314,18 +5314,18 @@ c
 c
 c.... convert local-grads to global-grads
 c
-          gradS(:,1) = dxidxb(:,1,1) * gradSl(:,1) + 
-     &                 dxidxb(:,2,1) * gradSl(:,2) + 
-     &                 dxidxb(:,3,1) * gradSl(:,3)  
+          gradS(:,1) = dxidxb(:,1,1) * gradSl(:,1) +
+     &                 dxidxb(:,2,1) * gradSl(:,2) +
+     &                 dxidxb(:,3,1) * gradSl(:,3)
 
 c
           gradS(:,2) = dxidxb(:,1,2) * gradSl(:,1) +
      &                 dxidxb(:,2,2) * gradSl(:,2) +
-     &                 dxidxb(:,3,2) * gradSl(:,3) 
+     &                 dxidxb(:,3,2) * gradSl(:,3)
 
           gradS(:,3) = dxidxb(:,1,3) * gradSl(:,1) +
      &                 dxidxb(:,2,3) * gradSl(:,2) +
-     &                 dxidxb(:,3,3) * gradSl(:,3) 
+     &                 dxidxb(:,3,3) * gradSl(:,3)
 c
 c.... end grad-T
 c
@@ -5342,12 +5342,12 @@ c
 
 !> Rotates the local nodal stiffnesses to the goblal frame
 
-      subroutine rotatestiff(rKlocal, rotation, 
+      subroutine rotatestiff(rKlocal, rotation,
      &                       rKglobal)
 
       include "global.h"
       include "common_blocks/propar.h"
-      
+
 C     Argument variables
 C
       REAL*8                rkglobal,    rklocal,     rotation
@@ -5367,17 +5367,17 @@ C
       do i = 1, 3
          do j = 1, 3
             do k = 1, 3
-               tempm(:,i,j) = tempm(:,i,j) 
+               tempm(:,i,j) = tempm(:,i,j)
      &              + rKlocal(:,i,k) * rotation(:,k,j)
             enddo
          enddo
       enddo
-      
+
       rKglobal = zero
       do i = 1, 3
          do j = 1, 3
             do k = 1, 3
-               rKglobal(:,i,j) = rKglobal(:,i,j) 
+               rKglobal(:,i,j) = rKglobal(:,i,j)
      &              + rotation(:,k,i) * tempm(:,k,j)
             enddo
          enddo
@@ -5431,7 +5431,7 @@ C
 c
 c.... Form GijUp gradS and  gradS . GijUp gradS (store in dcFct)
 c
-      
+
           gGradS(:,1) = GijU(:,1) * gradS(:,1)
      1                  + GijU(:,4) * gradS(:,2)
      2                  + GijU(:,6) * gradS(:,3)
@@ -5446,57 +5446,57 @@ c
      1                    + gradS(:,2) * gGradS(:,2)
      2                    + gradS(:,3) * gGradS(:,3)
      3                    + epsM
-      
+
           dcFct(:) = 1.0/ dcFct(:)
 c
 c.... Form pdeRes 2-norm / gradT 2-norm
 c
 
-          dcFct  = dcFct * (rLS - srcR) ** 2 
+          dcFct  = dcFct * (rLS - srcR) ** 2
 c
 c.... ------------------------->  DC factor  <------------------------
 c
 c.... DC-mallet
 c
           if (idcsclr(1) .eq. 1) then
-c       
+c
              fact = one
              if (ipord .eq. 2)  fact = 0.9
              if (ipord .eq. 3) fact = 0.75
-c       
+c
 c$$$  dcFct(:)=dim((fact*sqrt(dcFct(:))),(tauS(:)*dcFct(:))) !not work
                                                           !with all compilers
              dcFct(:)=max(0.0,(fact*sqrt(dcFct(:)))-(tauS(:)*dcFct(:)))
 c
           endif
-c       
-c       
+c
+c
 c....   DC-quadratic
-c       
+c
           if (idcsclr(1) .eq. 2) then
-c       
+c
              dcFct(:) = two * tauS(:) * dcFct(:)
-c       
+c
           endif
-c       
+c
 c....   DC-min
-c       
+c
           if (idcsclr(1) .eq. 3) then
-c       
+c
              fact = one
              if (ipord .eq. 2)  fact = 0.9
-c       
+c
           dcFct(:) = min( max(0.0, (fact * sqrt(dcFct(:)) -
      &                   tauS(:)*dcFct(:)) ), two * tauS(:) * dcFct(:))
-c       
+c
           endif
 c
 c.... Scale the gGradT for residual formation
-c      
+c
           gGradS(:,1) = dcFct(:) * gGradS(:,1)
           gGradS(:,2) = dcFct(:) * gGradS(:,2)
           gGradS(:,3) = dcFct(:) * gGradS(:,3)
-      
+
 
 
       return
@@ -5506,7 +5506,7 @@ c
 !!
 !! input:<BR>
 !! @param[in] yl(npro,nshl,ndof) Primitive variables
-!! @param[in] acl(npro,nshl,ndof) Prim.var. accel. 
+!! @param[in] acl(npro,nshl,ndof) Prim.var. accel.
 !! @param[in] shp(nen) Element shape-functions
 !! @param[in] shgl(nsd,nen) Element local-grad-shape-functions
 !! @param[in] xl(npro,nenl,nsd) Nodal coordinates at current step
@@ -5514,7 +5514,7 @@ c
 !! @param[in] rlsl(npro,nshl,6) Resolved Leonard stresses
 !!
 !! output:<BR>
-!! @param[out] aci(npro,3) Primvar accel. variables 
+!! @param[out] aci(npro,3) Primvar accel. variables
 !! @param[out] g1yi(npro,ndof) Grad-y in direction 1
 !! @param[out] g2yi(npro,ndof) Grad-y in direction 2
 !! @param[out] g3yi(npro,ndof) Grad-y in direction 3
@@ -5534,11 +5534,11 @@ c
 !!  divqi(npro,nsd+isurf) Divergence of reconstructed quantity
 
       subroutine e3ivar (yl,          acl,       shpfun,
-     &                   shgl,        xl,       
-     &                   aci,         g1yi,      g2yi,    
-     &                   g3yi,        shg,       dxidx,   
-     &                   WdetJ,       rho,       pres, 
-     &                   u1,          u2,        u3,              
+     &                   shgl,        xl,
+     &                   aci,         g1yi,      g2yi,
+     &                   g3yi,        shg,       dxidx,
+     &                   WdetJ,       rho,       pres,
+     &                   u1,          u2,        u3,
      &                   ql,          rLui,      src,
      &                   rerrl,       rlsl,      rlsli,
      &                   dwl)
@@ -5551,8 +5551,8 @@ c
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
         include "common_blocks/timdat.h"
-  
- 
+
+
 c
 C     Argument variables
 C
@@ -5573,13 +5573,13 @@ C
 C
 c  passed arrays
 c
-      dimension yl(npro,nshl,ndof),        dwl(npro,nenl),       
+      dimension yl(npro,nshl,ndof),        dwl(npro,nenl),
      &            acl(npro,nshl,ndof),       shpfun(npro,nshl),
      &            shgl(npro,nsd,nshl),       xl(npro,nenl,nsd),
      &            aci(npro,nsd),             g1yi(npro,ndof),
      &            g2yi(npro,ndof),           g3yi(npro,ndof),
      &            shg(npro,nshl,nsd),        dxidx(npro,nsd,nsd),
-     &            WdetJ(npro),               
+     &            WdetJ(npro),
      &            rho(npro),                 pres(npro),
      &            u1(npro),                  u2(npro),
      &            u3(npro),                  divqi(npro,nflow-1+isurf),
@@ -5604,7 +5604,7 @@ c
        u2   = zero
        u3   = zero
 c
-       do n = 1, nshl 
+       do n = 1, nshl
           pres = pres + shpfun(:,n) * yl(:,n,1)
           u1   = u1   + shpfun(:,n) * yl(:,n,2)
           u2   = u2   + shpfun(:,n) * yl(:,n,3)
@@ -5641,7 +5641,7 @@ c
 c
 c.... --------------------->  Element Metrics  <-----------------------
 c
-       call e3metric( xl,         shgl,       dxidx,  
+       call e3metric( xl,         shgl,       dxidx,
      &                shg,        WdetJ)
 c
 c.... compute the global gradient of u and P
@@ -5670,94 +5670,94 @@ c
        divqi = zero
        idflow = 3
        if ( idiff >= 1 .or. isurf==1 ) then
-c     
+c
 c.... compute divergence of diffusive flux vector, qi,i
-c     
+c
           if(idiff >= 1) then
              do n=1, nshl
-                divqi(:,1) = divqi(:,1) + shg(:,n,1)*ql(:,n,1 ) 
+                divqi(:,1) = divqi(:,1) + shg(:,n,1)*ql(:,n,1 )
      &                                  + shg(:,n,2)*ql(:,n,4 )
      &                                  + shg(:,n,3)*ql(:,n,7 )
 
-                divqi(:,2) = divqi(:,2) + shg(:,n,1)*ql(:,n,2 ) 
+                divqi(:,2) = divqi(:,2) + shg(:,n,1)*ql(:,n,2 )
      &                                  + shg(:,n,2)*ql(:,n,5 )
      &                                  + shg(:,n,3)*ql(:,n,8)
 
-                divqi(:,3) = divqi(:,3) + shg(:,n,1)*ql(:,n,3 ) 
+                divqi(:,3) = divqi(:,3) + shg(:,n,1)*ql(:,n,3 )
      &                                  + shg(:,n,2)*ql(:,n,6 )
      &                                  + shg(:,n,3)*ql(:,n,9 )
 
           enddo
 
           endif                 !end of idiff
-c     
-          if (isurf .eq. 1) then   
+c
+          if (isurf .eq. 1) then
 c     .... divergence of normal calculation (curvature)
              do n=1, nshl
-                divqi(:,idflow+1) = divqi(:,idflow+1) 
+                divqi(:,idflow+1) = divqi(:,idflow+1)
      &               + shg(:,n,1)*ql(:,n,idflx-2)
      &               + shg(:,n,2)*ql(:,n,idflx-1)
      &               + shg(:,n,3)*ql(:,n,idflx)
-             enddo 
+             enddo
 c     .... initialization of some variables
              Sclr = zero
              gradh= zero
              gyti = zero
              sforce=zero
              do i = 1, npro
-                do n = 1, nshl      
+                do n = 1, nshl
                    Sclr(i) = Sclr(i) + shpfun(i,n) * yl(i,n,6) !scalar
-c     
+c
 c     .... compute the global gradient of Scalar variable
-c     
-                   gyti(i,1) = gyti(i,1) + shg(i,n,1) * yl(i,n,6) 
+c
+                   gyti(i,1) = gyti(i,1) + shg(i,n,1) * yl(i,n,6)
                    gyti(i,2) = gyti(i,2) + shg(i,n,2) * yl(i,n,6)
                    gyti(i,3) = gyti(i,3) + shg(i,n,3) * yl(i,n,6)
-c     
+c
                 enddo
 
 c NMW - 2014-03-25: Not really sure what this is doing.
 c                   deleted since we don't have epsilon_ls anymore, but
 c                   not sure if this is correct.
 c                if (abs (sclr(i)) .le. epsilon_ls) then
-c                   gradh(i,1) = 0.5/epsilon_ls * (1.0 
+c                   gradh(i,1) = 0.5/epsilon_ls * (1.0
 c     &                  + cos(pi*Sclr(i)/epsilon_ls)) * gyti(i,1)
-c                   gradh(i,2) = 0.5/epsilon_ls * (1.0 
-c     &                  + cos(pi*Sclr(i)/epsilon_ls)) * gyti(i,2) 
-c                   gradh(i,3) = 0.5/epsilon_ls * (1.0 
+c                   gradh(i,2) = 0.5/epsilon_ls * (1.0
+c     &                  + cos(pi*Sclr(i)/epsilon_ls)) * gyti(i,2)
+c                   gradh(i,3) = 0.5/epsilon_ls * (1.0
 c     &                  + cos(pi*Sclr(i)/epsilon_ls)) * gyti(i,3)
 c                endif
              enddo              !end of the loop over npro
-c     
+c
 c .. surface tension force calculation
 c .. divide by density now as it gets multiplied in e3res.f, as surface
 c    tension force is already in the form of force per unit volume
-c     
+c
              weber(:) = Bo
              sforce(:,1) = -(1.0/weber(:)) * divqi(:,idflow+1) !x-direction
      &            *gradh(:,1) /rho(:)
              sforce(:,2) = -(1.0/weber(:)) * divqi(:,idflow+1) !y-direction
      &            *gradh(:,2) /rho(:)
              sforce(:,3) = -(1.0/weber(:)) * divqi(:,idflow+1) !z-direction
-     &            *gradh(:,3) /rho(:)          
+     &            *gradh(:,3) /rho(:)
 c
           endif        ! end of the surface tension force calculation
        endif           ! diffusive flux computation
 c
 c Calculate strong form of pde as well as the source term
-c      
+c
        call e3resStrongPDE(
-     &      aci,  u1,   u2,   u3,   Temp, rho,  xx,
-     &            g1yi, g2yi, g3yi,
+     &      aci,  u1,   u2,   u3,   Temp, rho,
+     &      xx, g1yi, g2yi, g3yi,
      &      rLui, src, divqi)
 c
 c.... take care of the surface tension force term here
 c
-       if (isurf .eq. 1) then  ! note multiplied by density in e3res.f 
+       if (isurf .eq. 1) then  ! note multiplied by density in e3res.f
           src(:,1) = src(:,1) + sforce(:,1)
           src(:,2) = src(:,2) + sforce(:,2)
           src(:,3) = src(:,3) + sforce(:,3)
-       endif       
+       endif
 
        return
        end
@@ -5767,9 +5767,9 @@ c
 
       subroutine e3ivarSclr (yl,          acl,       shpfun,
      &                      shgl,        xl,        xmudmi,
-     &                      Sclr,        Sdot,      gradS,  
+     &                      Sclr,        Sdot,      gradS,
      &                      shg,         dxidx,     WdetJ,
-     &                      u1,          u2,        u3,              
+     &                      u1,          u2,        u3,
      &                      ql,          rLS ,       SrcR,
      &                      SrcL,        uMod,      dwl,
      &                      diffus,      srcRat)
@@ -5802,19 +5802,19 @@ C
 C
 c  passed arrays
 c
-      dimension yl(npro,nshl,ndof),        acl(npro,nshl,ndof), 
+      dimension yl(npro,nshl,ndof),        acl(npro,nshl,ndof),
      &          Sclr(npro),                Sdot(npro),
      &          gradS(npro,nsd),           shpfun(npro,nshl),
      &          shgl(npro,nsd,nshl),       xl(npro,nenl,nsd),
      &          shg(npro,nshl,nsd),        dxidx(npro,nsd,nsd),
-     &          WdetJ(npro),              
+     &          WdetJ(npro),
      &          u1(npro),                  u2(npro),
      &          u3(npro),                  divS(npro),
      &          ql(npro,nshl,nsd),         rLS(npro),
      &          SrcR(npro),                 SrcL(npro),
      &          dwl(npro,nshl),            diffus(npro),
      &          umod(npro,nsd), Temp(npro),xx(npro,nsd),
-     &          divqi(npro)   
+     &          divqi(npro)
 c
       dimension tmp(npro), srcRat(npro)
       real*8 rLui(npro,nsd),     aci(npro,nsd),
@@ -5835,7 +5835,7 @@ c
       Sclr = zero
 c
       id=isclr+5
-      do n = 1, nshl 
+      do n = 1, nshl
          u1   = u1   + shpfun(:,n) * yl(:,n,2)
          u2   = u2   + shpfun(:,n) * yl(:,n,3)
          u3   = u3   + shpfun(:,n) * yl(:,n,4)
@@ -5853,7 +5853,7 @@ c
 c.... --------------------->  Element Metrics  <-----------------------
 c
 
-      call e3metric( xl,         shgl,        dxidx,  
+      call e3metric( xl,         shgl,        dxidx,
      &               shg,        WdetJ)
 
 c
@@ -5873,9 +5873,9 @@ c
 c.... compute divergence of diffusive flux vector, qi,i
 c
           do n=1, nshl
-             divS(:) = divS(:) + shg(:,n,1)*ql(:,n,1 ) 
-     &                         + shg(:,n,2)*ql(:,n,2 ) 
-     &                         + shg(:,n,3)*ql(:,n,3 ) 
+             divS(:) = divS(:) + shg(:,n,1)*ql(:,n,1 )
+     &                         + shg(:,n,2)*ql(:,n,2 )
+     &                         + shg(:,n,3)*ql(:,n,3 )
           enddo
        endif                    ! diffusive flux computation
 
@@ -5912,26 +5912,26 @@ c     user-specified body force or coriolis force specified
              g1yi(:,2) = g1yi(:,2) + shg(:,n,1) * yl(:,n,2)
              g1yi(:,3) = g1yi(:,3) + shg(:,n,1) * yl(:,n,3)
              g1yi(:,4) = g1yi(:,4) + shg(:,n,1) * yl(:,n,4)
-c     
+c
              g2yi(:,1) = g2yi(:,1) + shg(:,n,2) * yl(:,n,1)
              g2yi(:,2) = g2yi(:,2) + shg(:,n,2) * yl(:,n,2)
              g2yi(:,3) = g2yi(:,3) + shg(:,n,2) * yl(:,n,3)
              g2yi(:,4) = g2yi(:,4) + shg(:,n,2) * yl(:,n,4)
-c     
+c
              g3yi(:,1) = g3yi(:,1) + shg(:,n,3) * yl(:,n,1)
              g3yi(:,2) = g3yi(:,2) + shg(:,n,3) * yl(:,n,2)
              g3yi(:,3) = g3yi(:,3) + shg(:,n,3) * yl(:,n,3)
              g3yi(:,4) = g3yi(:,4) + shg(:,n,3) * yl(:,n,4)
           enddo
-c          
-          
+c
+
           rho  = datmat(1,1,1)
           rmu = datmat(1,2,1)
-                    
+
           divqi=zero  ! until we reconstruct q_flow for scalar solve
           call e3resStrongPDE(
-     &         aci,  u1,   u2,   u3,   Temp, rho,  xx,
-     &               g1yi, g2yi, g3yi,
+     &         aci,  u1,   u2,   u3,   Temp, rmu, rho,
+     &         xx,   g1yi, g2yi, g3yi,
      &         rLui, src, divqi)
           src(:,1)=u1           !
           src(:,2)=u2           ! store u in src memory
@@ -5952,7 +5952,7 @@ c
        umod(:,1) = u1
        umod(:,2) = u2
        umod(:,3) = u3
-c     
+c
 c.... no source terms
 c
         srcRat = zero
@@ -5962,10 +5962,10 @@ c
 c.... -------------------> Scalar residual  <-----------------
 c
 
-         rLS(:) = ( Sdot(:) +  (u1*gradS(:,1) + 
+         rLS(:) = ( Sdot(:) +  (u1*gradS(:,1) +
      &                              u2*gradS(:,2) +
      &                              u3*gradS(:,3)) )
-     &        - divS(:)           
+     &        - divS(:)
 
 c
 c.... return
@@ -5973,7 +5973,7 @@ c
        return
        end
 
-!> This routine computes the left hand side tangent matrix at an 
+!> This routine computes the left hand side tangent matrix at an
 !! integration point.
 !!
 !!  input:<BR>
@@ -5997,7 +5997,7 @@ c
 
       subroutine e3LHS ( u1,        u2,         u3,
      &                   uBar,      WdetJ,      rho,
-     &                   rLui,      rmu,       
+     &                   rLui,      rmu,
      &                   tauC,      tauM,       tauBar,
      &                   shpfun,    shg,        xKebe,
      &                   xGoC )
@@ -6008,7 +6008,7 @@ c
         include "common_blocks/shpdat.h"
         include "common_blocks/solpar.h"
         include "common_blocks/timdat.h"
-C    
+C
 C  Argument variables
 C
       REAL*8                rho,         rlui,        rmu,         shg
@@ -6022,35 +6022,35 @@ C
       REAL*8                tmp,         tmp1,        tmp2
       dimension u1(npro),         u2(npro),       u3(npro),
      &          uBar(npro,3),     WdetJ(npro),    rho(npro),
-     &          rLui(npro,3),     rmu(npro),   
+     &          rLui(npro,3),     rmu(npro),
      &          tauC(npro),       tauM(npro),     tauBar(npro),
      &          shpfun(npro,nshl),shg(npro,nshl,3)
-      
+
       dimension xKebe(npro,9,nshl,nshl), xGoC(npro,4,nshl,nshl)
 c
 c.... local declarations
 c
       dimension t1(npro,3),       t2(npro,3),      t3(npro,3),
-     &          tmp1(npro),       tmp2(npro),    
+     &          tmp1(npro),       tmp2(npro),
      &          tmp(npro),        tlW(npro)
 
       integer   aa, b
-      
+
       real*8    lhmFct, lhsFct,           tsFct(npro)
-      
+
       lhsFct = alfi * gami * Delt(itseq)
-      lhmFct = almi * (one - flmpl) 
+      lhmFct = almi * (one - flmpl)
 c
 c.... scale variables for efficiency
 c
-      tlW      = lhsFct * WdetJ     
+      tlW      = lhsFct * WdetJ
       tmp1      = tlW * rho
-      tauM      = tlW * tauM 
-      tauC      = tlW * tauC 
-      rmu       = tlW * rmu 
+      tauM      = tlW * tauM
+      tauC      = tlW * tauC
+      rmu       = tlW * rmu
       tsFct     = lhmFct * WdetJ * rho
-      if(iconvflow.eq.2) then  ! 2 is ubar form 3 is cons form but ubar tang. 
-         tauBar    = lhsFct * WdetJ * tauBar 
+      if(iconvflow.eq.2) then  ! 2 is ubar form 3 is cons form but ubar tang.
+         tauBar    = lhsFct * WdetJ * tauBar
          uBar(:,1) = tmp1 * uBar(:,1)
          uBar(:,2) = tmp1 * uBar(:,2)
          uBar(:,3) = tmp1 * uBar(:,3)
@@ -6069,16 +6069,16 @@ c
      &           + uBar(:,2) * shg(:,b,2)
      &           + uBar(:,3) * shg(:,b,3)
 c
-c t1=ubar_k N^b,k*rho*alpha_f*gamma*deltat*WdetJ  
+c t1=ubar_k N^b,k*rho*alpha_f*gamma*deltat*WdetJ
 c
          do aa = 1, nshl
             tmp1 = tsFct * shpfun(:,aa) * shpfun(:,b)
             tmp2 = tmp1 + t1(:,1) * shpfun(:,aa)
 c
 c tmp1=alpha_m*(1-lmp)*WdetJ*N^aN^b*rho   the time term CORRECT
-c tmp2=tmp1+N^a*ubar_k N^b,k*rho*alpha_f*gamma*deltat*WdetJ   the 
+c tmp2=tmp1+N^a*ubar_k N^b,k*rho*alpha_f*gamma*deltat*WdetJ   the
 c    second term is convective term CORRECT
-c            
+c
             xKebe(:,1,aa,b) = xKebe(:,1,aa,b) + tmp2
             xKebe(:,5,aa,b) = xKebe(:,5,aa,b) + tmp2
             xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp2
@@ -6086,22 +6086,22 @@ c
       enddo
 c
 c.... compute the rest of K (symmetric terms)
-c      
+c
       do b = 1, nshl
-         
+
          t1(:,1) = tauC * shg(:,b,1)
          t1(:,2) = tauC * shg(:,b,2)
          t1(:,3) = tauC * shg(:,b,3)
 
 c t1 is tauC*N^b_i,j*alpha_f*gamma*deltat*WdetJ
-         
+
          t2(:,1) = rmu  * shg(:,b,1)
          t2(:,2) = rmu  * shg(:,b,2)
          t2(:,3) = rmu  * shg(:,b,3)
 c t2 is mu*N^b_j,k*alpha_f*gamma*deltat*WdetJ
-      
-         tmp1 = tauM   * ( u1 * shg(:,b,1)  
-     &                   + u2 * shg(:,b,2) 
+
+         tmp1 = tauM   * ( u1 * shg(:,b,1)
+     &                   + u2 * shg(:,b,2)
      &                   + u3 * shg(:,b,3) )*rho
 c tmp1 is tauM*(rho u_m N^b_j,m)*alpha_f*gamma*deltat*WdetJ
 
@@ -6113,15 +6113,15 @@ c tmp2 is taubar*(L_m N^b_j,m)*alpha_f*gamma*deltat*WdetJ
          t3(:,2) = t2(:,2) + tmp1 * u2 + tmp2 * rLui(:,2)
          t3(:,3) = t2(:,3) + tmp1 * u3 + tmp2 * rLui(:,3)
 
-c t3 is   (mu*N^b_j,k + u_k tauM*(rho u_m N^b_j,m)+ L_k*taubar*(L_mN^b_j,m ) 
+c t3 is   (mu*N^b_j,k + u_k tauM*(rho u_m N^b_j,m)+ L_k*taubar*(L_mN^b_j,m )
 c   *alpha_f*gamma*deltat*WdetJ     which isline 2 page 40 of whiting
 c   ALMOST (waiting to get hit with N^a_{i,k}
 c mu correct NOW (wrong before) and rho weight on tauM term
 c
-c.... first do the (nodal) diagonal blocks         
+c.... first do the (nodal) diagonal blocks
 c
          aa  = b
-         
+
          tmp = t3(:,1) * shg(:,aa,1)
      &       + t3(:,2) * shg(:,aa,2)
      &       + t3(:,3) * shg(:,aa,3)
@@ -6139,18 +6139,18 @@ c previous command is the N^a_{i,k} dot product with t3 defined above
 c
          tmp1               = t1(:,1) * shg(:,aa,2)
      &                      + t2(:,2) * shg(:,aa,1)
-         xKebe(:,2,aa,b) = xKebe(:,2,aa,b) + tmp1 
-         xKebe(:,4,b,aa) = xKebe(:,4,b,aa) + tmp1 
+         xKebe(:,2,aa,b) = xKebe(:,2,aa,b) + tmp1
+         xKebe(:,4,b,aa) = xKebe(:,4,b,aa) + tmp1
 c
          tmp1               = t1(:,1) * shg(:,aa,3)
      &                      + t2(:,3) * shg(:,aa,1)
-         xKebe(:,3,aa,b) = xKebe(:,3,aa,b) + tmp1 
-         xKebe(:,7,b,aa) = xKebe(:,7,b,aa) + tmp1 
+         xKebe(:,3,aa,b) = xKebe(:,3,aa,b) + tmp1
+         xKebe(:,7,b,aa) = xKebe(:,7,b,aa) + tmp1
 c
          tmp1               = t1(:,2) * shg(:,aa,3)
      &                      + t2(:,3) * shg(:,aa,2)
-         xKebe(:,6,aa,b) = xKebe(:,6,aa,b) + tmp1 
-         xKebe(:,8,b,aa) = xKebe(:,8,b,aa) + tmp1 
+         xKebe(:,6,aa,b) = xKebe(:,6,aa,b) + tmp1
+         xKebe(:,8,b,aa) = xKebe(:,8,b,aa) + tmp1
 c
 c.... now the off-diagonal (nodal) blocks
 c
@@ -6214,15 +6214,15 @@ c
 c
 c.... compute G   Nai Nbp,j
 c
-      
+
       do b = 1, nshl
          t1(:,1) = tlW * shg(:,b,1)
          t1(:,2) = tlW * shg(:,b,2)
          t1(:,3) = tlW * shg(:,b,3)
          do aa = 1, nshl
-            xGoC(:,1,aa,b) = xGoC(:,1,aa,b) + t1(:,1) * shpfun(:,aa)  
-            xGoC(:,2,aa,b) = xGoC(:,2,aa,b) + t1(:,2) * shpfun(:,aa)  
-            xGoC(:,3,aa,b) = xGoC(:,3,aa,b) + t1(:,3) * shpfun(:,aa)  
+            xGoC(:,1,aa,b) = xGoC(:,1,aa,b) + t1(:,1) * shpfun(:,aa)
+            xGoC(:,2,aa,b) = xGoC(:,2,aa,b) + t1(:,2) * shpfun(:,aa)
+            xGoC(:,3,aa,b) = xGoC(:,3,aa,b) + t1(:,3) * shpfun(:,aa)
          enddo
       enddo
 c
@@ -6236,13 +6236,13 @@ c
          t1(:,2) = tauM * shg(:,b,2)
          t1(:,3) = tauM * shg(:,b,3)
          do aa = b, nshl
-            xGoC(:,4,aa,b) = xGoC(:,4,aa,b) 
+            xGoC(:,4,aa,b) = xGoC(:,4,aa,b)
      &                      + t1(:,1) * shg(:,aa,1)
      &                      + t1(:,2) * shg(:,aa,2)
      &                      + t1(:,3) * shg(:,aa,3)
          enddo
       enddo
-      
+
 c
 c.... return
 c
@@ -6252,7 +6252,7 @@ c
 !> Calculate the tangent matrix for the advection-diffusion equation
 
       subroutine e3LHSSclr ( uMod,      giju,       dcFct,
-     &                       Sclr,      Sdot,       gradS,  
+     &                       Sclr,      Sdot,       gradS,
      &                       WdetJ,     rLS,        tauS,
      &                       shpfun,    shg,        src,
      &                       diffus,
@@ -6277,11 +6277,11 @@ C
 C
       real*8    uMod(npro,nsd),
      &          Sclr(npro),       Sdot(npro),   gradS(npro,nsd),
-     &          WdetJ(npro),      rLS(npro),        rho(npro), 
-     &          tauS(npro),       shpfun(npro,nshl),  
+     &          WdetJ(npro),      rLS(npro),        rho(npro),
+     &          tauS(npro),       shpfun(npro,nshl),
      &          src(npro),        shg(npro,nshl,3),
      &      xSebe(npro,nshl,nshl)
-      
+
       real*8    diffus(npro),  cp,  kptmp(npro),tauSo(npro)
 
 c
@@ -6291,15 +6291,15 @@ c
      &          tmp(npro),        dcFct(npro),      giju(npro,6)
 
       integer   aa, b
-      
+
       real*8    lhsFct,           tsFct(npro)
-      
+
       lhsFct = alfi * gami * Delt(itseq)
 c
 c.... scale variables for efficiency
-c     
+c
       tauSo     = tauS
-      tauS      = lhsFct * WdetJ * tauS 
+      tauS      = lhsFct * WdetJ * tauS
       kptmp     = lhsFct * WdetJ * diffus
       tsFct     = almi   * WdetJ * (one - flmpl)
       src       = src    * WdetJ * lhsFct
@@ -6325,9 +6325,9 @@ c
       enddo
 c
 c.... compute the rest of S (symmetric terms)
-c      
+c
       do b = 1, nshl
-         tmp     = tauS(:) 
+         tmp     = tauS(:)
      &             * ( uMod(:,1) * shg(:,b,1)
      &               + uMod(:,2) * shg(:,b,2)
      &               + uMod(:,3) * shg(:,b,3) )
@@ -6336,7 +6336,7 @@ c
          t1(:,2) = kptmp * shg(:,b,2) + uMod(:,2) * tmp
          t1(:,3) = kptmp * shg(:,b,3) + uMod(:,3) * tmp
          if (idcsclr(1) .ne. 0) then
-            if ((idcsclr(2).eq.1 .and. isclr.eq.1) .or. 
+            if ((idcsclr(2).eq.1 .and. isclr.eq.1) .or.
      &           (idcsclr(2).eq.2 .and. isclr.eq.2)) then ! scalar with dc
 c
                tmp = WdetJ * dcFct * lhsFct
@@ -6347,23 +6347,23 @@ c
                giju(:,4)  = tmp * giju(:,4)
                giju(:,5)  = tmp * giju(:,5)
                giju(:,6)  = tmp * giju(:,6)
-c       
-               t1(:,1) = t1(:,1) + giju(:,1) * shg(:,b,1) 
-     2                           + giju(:,4) * shg(:,b,2) 
+c
+               t1(:,1) = t1(:,1) + giju(:,1) * shg(:,b,1)
+     2                           + giju(:,4) * shg(:,b,2)
      3               + giju(:,6) * shg(:,b,3)
-               t1(:,2) = t1(:,2) + giju(:,4) * shg(:,b,1) 
-     2                           + giju(:,2) * shg(:,b,2) 
+               t1(:,2) = t1(:,2) + giju(:,4) * shg(:,b,1)
+     2                           + giju(:,2) * shg(:,b,2)
      3               + giju(:,5) * shg(:,b,3)
-               t1(:,3) = t1(:,3) + giju(:,6) * shg(:,b,1) 
-     2                           + giju(:,5) * shg(:,b,2) 
+               t1(:,3) = t1(:,3) + giju(:,6) * shg(:,b,1)
+     2                           + giju(:,5) * shg(:,b,2)
      3               + giju(:,3) * shg(:,b,3)
             endif
          endif                  !end of idcsclr
 c
-c.... first do the (nodal) diagonal blocks         
+c.... first do the (nodal) diagonal blocks
 c
          aa  = b
-         
+
          xSebe(:,aa,b) = xSebe(:,aa,b) + t1(:,1) * shg(:,aa,1)
      &                                 + t1(:,2) * shg(:,aa,2)
      &                                 + t1(:,3) * shg(:,aa,3)
@@ -6381,15 +6381,15 @@ c
 c
          enddo
       enddo
-      
+
 c
 c.... return
 c
       return
       end
 
-!> Compute the metrics of the mapping from global to local 
-!! coordinates and the jacobian of the mapping (weighted by 
+!> Compute the metrics of the mapping from global to local
+!! coordinates and the jacobian of the mapping (weighted by
 !! the quadrature weight
 
       subroutine e3metric(  xl,      shgl,     dxidx,
@@ -6404,9 +6404,9 @@ C
 C     Local variables
 C
       INTEGER             n
-C      
+C
       real*8     xl(npro,nenl,nsd),    shgl(npro,nsd,nshl),
-     &           dxidx(npro,nsd,nsd),  shg(npro,nshl,nsd), 
+     &           dxidx(npro,nsd,nsd),  shg(npro,nshl,nsd),
      &           WdetJ(npro)
 
       real*8     dxdxi(npro,nsd,nsd),  tmp(npro)
@@ -6430,29 +6430,29 @@ c
 c
 c.... compute the inverse of deformation gradient
 c
-       dxidx(:,1,1) =   dxdxi(:,2,2) * dxdxi(:,3,3) 
+       dxidx(:,1,1) =   dxdxi(:,2,2) * dxdxi(:,3,3)
      &                - dxdxi(:,3,2) * dxdxi(:,2,3)
-       dxidx(:,1,2) =   dxdxi(:,3,2) * dxdxi(:,1,3) 
+       dxidx(:,1,2) =   dxdxi(:,3,2) * dxdxi(:,1,3)
      &                - dxdxi(:,1,2) * dxdxi(:,3,3)
-       dxidx(:,1,3) =  dxdxi(:,1,2) * dxdxi(:,2,3) 
+       dxidx(:,1,3) =  dxdxi(:,1,2) * dxdxi(:,2,3)
      &                - dxdxi(:,1,3) * dxdxi(:,2,2)
-       tmp          = one / ( dxidx(:,1,1) * dxdxi(:,1,1) 
-     &                       + dxidx(:,1,2) * dxdxi(:,2,1)  
+       tmp          = one / ( dxidx(:,1,1) * dxdxi(:,1,1)
+     &                       + dxidx(:,1,2) * dxdxi(:,2,1)
      &                       + dxidx(:,1,3) * dxdxi(:,3,1) )
        dxidx(:,1,1) = dxidx(:,1,1) * tmp
        dxidx(:,1,2) = dxidx(:,1,2) * tmp
        dxidx(:,1,3) = dxidx(:,1,3) * tmp
-       dxidx(:,2,1) = (dxdxi(:,2,3) * dxdxi(:,3,1) 
+       dxidx(:,2,1) = (dxdxi(:,2,3) * dxdxi(:,3,1)
      &                - dxdxi(:,2,1) * dxdxi(:,3,3)) * tmp
-       dxidx(:,2,2) = (dxdxi(:,1,1) * dxdxi(:,3,3) 
+       dxidx(:,2,2) = (dxdxi(:,1,1) * dxdxi(:,3,3)
      &                - dxdxi(:,3,1) * dxdxi(:,1,3)) * tmp
-       dxidx(:,2,3) = (dxdxi(:,2,1) * dxdxi(:,1,3) 
+       dxidx(:,2,3) = (dxdxi(:,2,1) * dxdxi(:,1,3)
      &                - dxdxi(:,1,1) * dxdxi(:,2,3)) * tmp
-       dxidx(:,3,1) = (dxdxi(:,2,1) * dxdxi(:,3,2) 
+       dxidx(:,3,1) = (dxdxi(:,2,1) * dxdxi(:,3,2)
      &                - dxdxi(:,2,2) * dxdxi(:,3,1)) * tmp
-       dxidx(:,3,2) = (dxdxi(:,3,1) * dxdxi(:,1,2) 
+       dxidx(:,3,2) = (dxdxi(:,3,1) * dxdxi(:,1,2)
      &                - dxdxi(:,1,1) * dxdxi(:,3,2)) * tmp
-       dxidx(:,3,3) = (dxdxi(:,1,1) * dxdxi(:,2,2) 
+       dxidx(:,3,3) = (dxdxi(:,1,1) * dxdxi(:,2,2)
      &                - dxdxi(:,1,2) * dxdxi(:,2,1)) * tmp
 c
        WdetJ = Qwt(lcsyst,intp) / tmp
@@ -6460,21 +6460,21 @@ c
 c.... compute the global gradient of shape-functions
 c
        do n = 1, nshl
-          shg(:,n,1) = shgl(:,1,n) * dxidx(:,1,1) + 
+          shg(:,n,1) = shgl(:,1,n) * dxidx(:,1,1) +
      &                 shgl(:,2,n) * dxidx(:,2,1) +
      &                 shgl(:,3,n) * dxidx(:,3,1)
-          shg(:,n,2) = shgl(:,1,n) * dxidx(:,1,2) + 
+          shg(:,n,2) = shgl(:,1,n) * dxidx(:,1,2) +
      &                 shgl(:,2,n) * dxidx(:,2,2) +
-     &                 shgl(:,3,n) * dxidx(:,3,2) 
-          shg(:,n,3) = shgl(:,1,n) * dxidx(:,1,3) + 
+     &                 shgl(:,3,n) * dxidx(:,3,2)
+          shg(:,n,3) = shgl(:,1,n) * dxidx(:,1,3) +
      &                 shgl(:,2,n) * dxidx(:,2,3) +
-     &                 shgl(:,3,n) * dxidx(:,3,3) 
+     &                 shgl(:,3,n) * dxidx(:,3,3)
        enddo
 
        return
        end
 
-!> This routine computes the element contribution to the 
+!> This routine computes the element contribution to the
 !! diffusive flux vector and the lumped mass matrix.
 !!
 !! input:<BR>
@@ -6482,13 +6482,13 @@ c
 !! @param[in] shp(nen,ngauss) Element shape-functions
 !! @param[in] shgl(nsd,nen,ngauss) Element local-grad-shape-functions
 !! @param[in] xl(npro,nshl,nsd) Nodal coordinates at current step
-!!  
+!!
 !! output:<BR>
-!! @param[out] ql(npro,nshl,idflx) Element RHS diffusion residual 
+!! @param[out] ql(npro,nshl,idflx) Element RHS diffusion residual
 !! @param[out] rmassl(npro,nshl) Element lumped mass matrix
 
         subroutine e3q (yl,      dwl,     shp,     shgl,
-     &                  xl,      ql,      rmassl, 
+     &                  xl,      ql,      rmassl,
      &                  xmudmi,  sgn )
 c
         include "global.h"
@@ -6525,7 +6525,7 @@ c
         dimension g1yi(npro,nflow),           g2yi(npro,nflow),
      &            g3yi(npro,nflow),           shg(npro,nshl,nsd),
      &            dxidx(npro,nsd,nsd),       WdetJ(npro),
-     &            rmu(npro) 
+     &            rmu(npro)
 c
         dimension qdi(npro,idflx),alph1(npro),alph2(npro)
 c
@@ -6535,24 +6535,24 @@ c
         real*8 tmp(npro)
 c
 c.... for surface tension
-c     
+c
         dimension g1yti(npro),          g2yti(npro),
      &            g3yti(npro)
         integer idflow
 c
 c.... loop through the integration points
 c
-        
-        
+
+
         alph1 = 0.d0
         alph2 = 0.d0
-        
+
         do intp = 1, ngauss
         if (Qwt(lcsyst,intp) .eq. zero) cycle          ! precaution
-c     
-        call getshp(shp,          shgl,      sgn, 
+c
+        call getshp(shp,          shgl,      sgn,
      &              shape,        shdrv)
-        
+
 c
 c.... initialize
 c
@@ -6563,17 +6563,17 @@ c.... calculate the integration variables necessary for the
 c     formation of q
 c
 
-        call e3qvar   (yl,        shdrv,   
+        call e3qvar   (yl,        shdrv,
      &                 xl,           g1yi,
      &                 g2yi,      g3yi,         shg,
-     &                 dxidx,     WdetJ )      
-c  
-        idflow = 9   ! we ALWAYS save space for tau_{ij} in q_i 
+     &                 dxidx,     WdetJ )
+c
+        idflow = 9   ! we ALWAYS save space for tau_{ij} in q_i
                      ! even if idiff is not greater than 1
 
         if(idiff >= 1) then   !so taking care of all the idiff=1,3
 c
-c.... compute diffusive fluxes 
+c.... compute diffusive fluxes
 c
 c.... compute the viscosity
 c
@@ -6584,13 +6584,13 @@ c
         qdi(:,1) =  two * rmu *  g1yi(:,2)
         qdi(:,4) =        rmu * (g1yi(:,3) + g2yi(:,2))
         qdi(:,7) =        rmu * (g1yi(:,4) + g3yi(:,2))
-c     
+c
 c.... diffusive flux in x2-direction
 c
         qdi(:,2) =        rmu * (g1yi(:,3) + g2yi(:,2))
         qdi(:,5) =  two * rmu *  g2yi(:,3)
         qdi(:,8) =        rmu * (g2yi(:,4) + g3yi(:,3))
-c     
+c
 c.... diffusive flux in x3-direction
 c
         qdi(:,3) =        rmu * (g1yi(:,4) + g3yi(:,2))
@@ -6598,9 +6598,9 @@ c
         qdi(:,9)=  two * rmu *  g3yi(:,4)
 c
 c
-c.... assemble contribution of qdi to ql,i.e., contribution to 
+c.... assemble contribution of qdi to ql,i.e., contribution to
 c     each element node
-c     
+c
         do i=1,nshl
            ql(:,i,1 ) = ql(:,i,1 )+ shape(:,i)*WdetJ*qdi(:,1 )
            ql(:,i,2 ) = ql(:,i,2 )+ shape(:,i)*WdetJ*qdi(:,2 )
@@ -6639,7 +6639,7 @@ c
            alph1 = alph1+WdetJ
            alph2 = alph2+shpsum*WdetJ
         endif
-      endif                     ! end of idiff=1 .or. 3 
+      endif                     ! end of idiff=1 .or. 3
 c
       if(isurf .eq. 1) then
 c
@@ -6652,8 +6652,8 @@ c
 c.... calculate the integration variables necessary for the
 c     formation of q
 c
-c.... compute the global gradient of Yt-variables, assuming 6th entry as 
-c.... the phase indicator function 
+c.... compute the global gradient of Yt-variables, assuming 6th entry as
+c.... the phase indicator function
 c
 c  Yt_{,x_i}=SUM_{a=1}^nshl (N_{a,x_i}(int) Yta)
 c
@@ -6666,15 +6666,15 @@ c
 c    computing N_{b}*N_{a,x_i)*yta*WdetJ
 c
         do i=1,nshl
-           ql(:,i,idflow+1)  = ql(:,i,idflow+1)  
+           ql(:,i,idflow+1)  = ql(:,i,idflow+1)
      &                       + shape(:,i)*WdetJ*g1yti
-           ql(:,i,idflow+2)  = ql(:,i,idflow+2)  
+           ql(:,i,idflow+2)  = ql(:,i,idflow+2)
      &                       + shape(:,i)*WdetJ*g2yti
-           ql(:,i,idflow+3)  = ql(:,i,idflow+3)  
+           ql(:,i,idflow+3)  = ql(:,i,idflow+3)
      &                       + shape(:,i)*WdetJ*g3yti
            rmassl(:,i) = rmassl(:,i) + shape(:,i)*WdetJ
         enddo
-      endif  !end of the isurf  
+      endif  !end of the isurf
 c
 c.... end of the loop over integration points
 c
@@ -6687,7 +6687,7 @@ c
             rmassl(:,i) = rmassl(:,i)*alph1/alph2
          enddo
       endif
-      
+
 
 c
 c.... return
@@ -6695,11 +6695,11 @@ c
        return
        end
 
-!> This routine computes the element contribution to the 
+!> This routine computes the element contribution to the
 !! diffusive flux vector and the lumped mass matrix.
 
         subroutine e3qSclr (yl,      dwl,     shp,     shgl,
-     &                      xl,      ql,      rmassl, 
+     &                      xl,      ql,      rmassl,
      &                      sgn )
 c
         include "global.h"
@@ -6730,7 +6730,7 @@ c
 c
 c local arrays
 c
-        dimension gradT(npro,nsd),     
+        dimension gradT(npro,nsd),
      &            dxidx(npro,nsd,nsd),       WdetJ(npro)
 c
         dimension qdi(npro,nsd),alph1(npro),alph2(npro)
@@ -6742,17 +6742,17 @@ c
 c
 c.... loop through the integration points
 c
-        
-        
+
+
         alph1 = 0.d0
         alph2 = 0.d0
-        
+
         do intp = 1, ngauss
         if (Qwt(lcsyst,intp) .eq. zero) cycle          ! precaution
-c     
-        call getshp(shp,          shgl,      sgn, 
+c
+        call getshp(shp,          shgl,      sgn,
      &              shape,        shdrv)
-        
+
 c
 c.... initialize
 c
@@ -6760,11 +6760,11 @@ c
 c
 c
 c.... calculate the integration variables necessary for the
-c     formation of q 
+c     formation of q
 c
-        call e3qvarSclr   (yl,        shdrv,   
+        call e3qvarSclr   (yl,        shdrv,
      &                     xl,        gradT,
-     &                     dxidx,     WdetJ )        
+     &                     dxidx,     WdetJ )
 
 c
 c.... compute diffusive flux vector at this integration point
@@ -6772,16 +6772,16 @@ c
         call getdiffsclr(shape, dwl, yl, diffus)
 
 c
-c.... diffusive flux 
+c.... diffusive flux
 c
         qdi(:,1) =  diffus * gradT(:,1)
         qdi(:,2) =  diffus * gradT(:,2)
         qdi(:,3) =  diffus * gradT(:,3)
 c
 c
-c.... assemble contribution of qdi to ql,i.e., contribution to 
+c.... assemble contribution of qdi to ql,i.e., contribution to
 c     each element node
-c     
+c
         do i=1,nshl
            ql(:,i,1 ) = ql(:,i,1 )+ shape(:,i)*WdetJ*qdi(:,1 )
            ql(:,i,2 ) = ql(:,i,2 )+ shape(:,i)*WdetJ*qdi(:,2 )
@@ -6830,7 +6830,7 @@ c
        return
        end
 
-!> This routine computes the local diffusive flux vector using a 
+!> This routine computes the local diffusive flux vector using a
 !! local projection algorithm
 !!
 !! input:<BR>
@@ -6839,15 +6839,15 @@ c
 !! @param[in] shgl(nsd,nen,ngauss) Element local-grad-shape-functions
 !! @param[in] xl(npro,nshape,nsd) Nodal coordinates at current step
 !! @param[in] sgn(npro,nshl) Signs for reversed shape functions
-!!  
+!!
 !! output:<BR>
-!! @param[out]  ql(npro,nshl,nsd*nsd) Element RHS diffusion residual 
+!! @param[out]  ql(npro,nshl,nsd*nsd) Element RHS diffusion residual
 
       subroutine e3ql (yl,      dwl,     shp,     shgl,
      &                 xl,      ql,      xmudmi,
      &                 sgn )
       use local_mass
-      
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/elmpar.h"
@@ -6898,17 +6898,17 @@ c
       rminv = zero
       rmass = zero
       qrl   = zero
-        
+
       do intp = 1, ngauss
 
          call getshp(shp, shgl, sgn, shape, shdrv)
 
          qdi = zero
 c
-c.... calculate the integration variables 
-c    
+c.... calculate the integration variables
 c
-         call e3qvar   (yl,           shdrv,   
+c
+         call e3qvar   (yl,           shdrv,
      &                  xl,           g1yi,
      &                  g2yi,         g3yi,         shg,
      &                  dxidx,        WdetJ )
@@ -6926,7 +6926,7 @@ c
          qdi(:,2) =        rmu * (g1yi(:,3) + g2yi(:,2))
          qdi(:,5) =  two * rmu *  g2yi(:,3)
          qdi(:,8) =        rmu * (g2yi(:,4) + g3yi(:,3))
-c     
+c
 c.... diffusive flux in x3-direction
 c
          qdi(:,3) =        rmu * (g1yi(:,4) + g3yi(:,2))
@@ -6934,22 +6934,22 @@ c
          qdi(:,9)=  two * rmu *  g3yi(:,4)
 c
 c
-c.... assemble contribution of qdi to qrl,i.e., contribution to 
+c.... assemble contribution of qdi to qrl,i.e., contribution to
 c     each element shape function
 c
          tmp = Qwt(lcsyst,intp)
-         if (lcsyst .eq. 1) then 
+         if (lcsyst .eq. 1) then
             tmp = tmp*(three/four)
          endif
 c
 c reconsider this when hierarchic wedges come into code WDGCHECK
 c
-        
+
          do i=1,nshl
             qrl(:,i,1 ) = qrl(:,i,1 )+ shape(:,i)*tmp*qdi(:,1 )
             qrl(:,i,2 ) = qrl(:,i,2 )+ shape(:,i)*tmp*qdi(:,2 )
             qrl(:,i,3 ) = qrl(:,i,3 )+ shape(:,i)*tmp*qdi(:,3 )
-            
+
             qrl(:,i,4 ) = qrl(:,i,4 )+ shape(:,i)*tmp*qdi(:,4 )
             qrl(:,i,5 ) = qrl(:,i,5 )+ shape(:,i)*tmp*qdi(:,5 )
             qrl(:,i,6 ) = qrl(:,i,6 )+ shape(:,i)*tmp*qdi(:,6 )
@@ -6988,14 +6988,14 @@ c.... find the inverse of the local mass matrix for each element
                   enddo
                   lmassinv(iblock)%p(iel,i,i)=1.0
                enddo
-c     
+c
 c.... LU factor the mass matrix
 c
 c               call ludcmp(rmass(iel,:,:),nshl,nshl,indx,d)
-c     
+c
 c.... back substitute with the identy matrix to find the
 c     matrix inverse
-c          
+c
                do j=1,nshl
 c                  call lubksb(rmass(iel,:,:),nshl,nshl,indx,
 c     &                        lmassinv(iblock)%p(iel,:,j))
@@ -7021,15 +7021,15 @@ c
       return
       end
 
-!> This routine computes the local diffusive flux vector using a 
-!! local projection algorithm: 
+!> This routine computes the local diffusive flux vector using a
+!! local projection algorithm:
 !! diffus * phi,i
 
       subroutine e3qlSclr (yl,      dwl,     shp,     shgl,
      &                     xl,      ql,      sgn )
 
       use local_mass
-      
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/elmpar.h"
@@ -7075,17 +7075,17 @@ c
       rminv = zero
       rmass = zero
       qrl   = zero
-        
+
       do intp = 1, ngauss
 
          call getshp(shp, shgl, sgn, shape, shdrv)
 
          qdi = zero
 c
-c.... calculate the integration variables 
-c    
+c.... calculate the integration variables
 c
-         call e3qvarSclr  (yl,           shdrv,        xl,           
+c
+         call e3qvarSclr  (yl,           shdrv,        xl,
      &                     gradT,        dxidx,        WdetJ )
 c
 c....  call function to sort out diffusivity (at end of this file)
@@ -7099,14 +7099,14 @@ c
          qdi(:,3) =  diffus * gradT(:,3)
 
 c
-c.... assemble contribution of qdi to qrl,i.e., contribution to 
+c.... assemble contribution of qdi to qrl,i.e., contribution to
 c     each element shape function
 c
          tmp = Qwt(lcsyst,intp)
-         if (lcsyst .eq. 1) then 
+         if (lcsyst .eq. 1) then
             tmp = tmp*(three/four)
          endif
-        
+
          do i=1,nshl
             qrl(:,i,1 ) = qrl(:,i,1 )+ shape(:,i)*tmp*qdi(:,1 )
             qrl(:,i,2 ) = qrl(:,i,2 )+ shape(:,i)*tmp*qdi(:,2 )
@@ -7133,7 +7133,7 @@ c
        qrl   = qrl/6.d0
 c
 c.... Assuming that lmassinv was already computed for flow equations
-c     
+c
        rmass = rmass/6.0
 c
 c.... for cubics, it cannot be precomputed, so compute and
@@ -7149,14 +7149,14 @@ c
                   enddo
                   lmassinv(iblock)%p(iel,i,i)=1.0
                enddo
-c     
+c
 c.... LU factor the mass matrix
 c
 c               call ludcmp(rmass(iel,:,:),nshl,nshl,indx,d)
-c     
+c
 c.... back substitute with the identy matrix to find the
 c     matrix inverse
-c          
+c
                do j=1,nshl
 c                  call lubksb(rmass(iel,:,:),nshl,nshl,indx,
 c     &                        lmassinv(iblock)%p(iel,:,j))
@@ -7200,7 +7200,7 @@ c
 !! @param[out]  u2(npro) X2-velocity component
 !! @param[out]  u3(npro) X3-velocity component
 
-        subroutine e3qvar (yl,          shgl,    
+        subroutine e3qvar (yl,          shgl,
      &                     xl,          g1yi,
      &                     g2yi,        g3yi,        shg,
      &                     dxidx,       WdetJ )
@@ -7226,10 +7226,10 @@ C
 C
 c  passed arrays
 c
-        dimension yl(npro,nshl,ndof), 
+        dimension yl(npro,nshl,ndof),
      &            shgl(npro,nsd,nshl), xl(npro,nenl,nsd),
      &            g1yi(npro,nflow),       g2yi(npro,nflow),
-     &            g3yi(npro,nflow),       shg(npro,nshl,nsd), 
+     &            g3yi(npro,nflow),       shg(npro,nshl,nsd),
      &            dxidx(npro,nsd,nsd),   WdetJ(npro)
 c
 c  local arrays
@@ -7255,29 +7255,29 @@ c
 c
 c.... compute the inverse of deformation gradient
 c
-        dxidx(:,1,1) =   dxdxi(:,2,2) * dxdxi(:,3,3) 
+        dxidx(:,1,1) =   dxdxi(:,2,2) * dxdxi(:,3,3)
      &                 - dxdxi(:,3,2) * dxdxi(:,2,3)
-        dxidx(:,1,2) =   dxdxi(:,3,2) * dxdxi(:,1,3) 
+        dxidx(:,1,2) =   dxdxi(:,3,2) * dxdxi(:,1,3)
      &                 - dxdxi(:,1,2) * dxdxi(:,3,3)
-        dxidx(:,1,3) =   dxdxi(:,1,2) * dxdxi(:,2,3) 
+        dxidx(:,1,3) =   dxdxi(:,1,2) * dxdxi(:,2,3)
      &                 - dxdxi(:,1,3) * dxdxi(:,2,2)
-        tmp          = one / ( dxidx(:,1,1) * dxdxi(:,1,1) 
-     &                       + dxidx(:,1,2) * dxdxi(:,2,1)  
+        tmp          = one / ( dxidx(:,1,1) * dxdxi(:,1,1)
+     &                       + dxidx(:,1,2) * dxdxi(:,2,1)
      &                       + dxidx(:,1,3) * dxdxi(:,3,1) )
         dxidx(:,1,1) = dxidx(:,1,1) * tmp
         dxidx(:,1,2) = dxidx(:,1,2) * tmp
         dxidx(:,1,3) = dxidx(:,1,3) * tmp
-        dxidx(:,2,1) = (dxdxi(:,2,3) * dxdxi(:,3,1) 
+        dxidx(:,2,1) = (dxdxi(:,2,3) * dxdxi(:,3,1)
      &                - dxdxi(:,2,1) * dxdxi(:,3,3)) * tmp
-        dxidx(:,2,2) = (dxdxi(:,1,1) * dxdxi(:,3,3) 
+        dxidx(:,2,2) = (dxdxi(:,1,1) * dxdxi(:,3,3)
      &                - dxdxi(:,3,1) * dxdxi(:,1,3)) * tmp
-        dxidx(:,2,3) = (dxdxi(:,2,1) * dxdxi(:,1,3) 
+        dxidx(:,2,3) = (dxdxi(:,2,1) * dxdxi(:,1,3)
      &                - dxdxi(:,1,1) * dxdxi(:,2,3)) * tmp
-        dxidx(:,3,1) = (dxdxi(:,2,1) * dxdxi(:,3,2) 
+        dxidx(:,3,1) = (dxdxi(:,2,1) * dxdxi(:,3,2)
      &                - dxdxi(:,2,2) * dxdxi(:,3,1)) * tmp
-        dxidx(:,3,2) = (dxdxi(:,3,1) * dxdxi(:,1,2) 
+        dxidx(:,3,2) = (dxdxi(:,3,1) * dxdxi(:,1,2)
      &                - dxdxi(:,1,1) * dxdxi(:,3,2)) * tmp
-        dxidx(:,3,3) = (dxdxi(:,1,1) * dxdxi(:,2,2) 
+        dxidx(:,3,3) = (dxdxi(:,1,1) * dxdxi(:,2,2)
      &                - dxdxi(:,1,2) * dxdxi(:,2,1)) * tmp
 c
         WdetJ = Qwt(lcsyst,intp)/ tmp
@@ -7296,15 +7296,15 @@ c.... compute the global gradient of shape-function
 c
 c            ! N_{a,x_i}= N_{a,xi_i} xi_{i,x_j}
 c
-          shg(:,n,1) = shgl(:,1,n) * dxidx(:,1,1) + 
+          shg(:,n,1) = shgl(:,1,n) * dxidx(:,1,1) +
      &                 shgl(:,2,n) * dxidx(:,2,1) +
      &                 shgl(:,3,n) * dxidx(:,3,1)
-          shg(:,n,2) = shgl(:,1,n) * dxidx(:,1,2) + 
+          shg(:,n,2) = shgl(:,1,n) * dxidx(:,1,2) +
      &                 shgl(:,2,n) * dxidx(:,2,2) +
-     &                 shgl(:,3,n) * dxidx(:,3,2) 
-          shg(:,n,3) = shgl(:,1,n) * dxidx(:,1,3) + 
+     &                 shgl(:,3,n) * dxidx(:,3,2)
+          shg(:,n,3) = shgl(:,1,n) * dxidx(:,1,3) +
      &                 shgl(:,2,n) * dxidx(:,2,3) +
-     &                 shgl(:,3,n) * dxidx(:,3,3) 
+     &                 shgl(:,3,n) * dxidx(:,3,3)
 c
 c.... compute the global gradient of Y-variables
 c
@@ -7334,7 +7334,7 @@ c
 
 !> Compute the variables for the local scalar diffusion
 
-      subroutine e3qvarSclr  (yl,       shgl,         xl, 
+      subroutine e3qvarSclr  (yl,       shgl,         xl,
      &                        gradT,    dxidx,        WdetJ )
 
         include "global.h"
@@ -7360,13 +7360,13 @@ c
       real*8   shg(npro,nshl,nsd)
 
 
-      call e3metric( xl,         shgl,       dxidx,  
+      call e3metric( xl,         shgl,       dxidx,
      &               shg,        WdetJ)
 
       gradT = zero
       id=5+isclr
 c
-c  later, when there are more models than SA we will need a 
+c  later, when there are more models than SA we will need a
 c  more general function to calculate evisc at a quadrature point
 c
       do n = 1, nshl
@@ -7424,7 +7424,7 @@ c
         include "common_blocks/shpdat.h"
         include "common_blocks/solpar.h"
         include "common_blocks/timdat.h"
- 
+
 C
 C     Argument variables
 C
@@ -7446,19 +7446,19 @@ C
      &          tauC(npro),       tauM(npro),       tauBar(npro),
      &          shpfun(npro,nshl),shg(npro,nshl,nsd), src(npro,nsd),
      &          pres(npro)
-      
+
       dimension rl(npro,nshl,nflow),
      &          acl(npro,nshl,ndof),
      &          rlsli(npro,6)
 c
 c.... local declarations
 c
-      real*8    tmp1(npro),   tmp2(npro),          tmp3(npro), 
+      real*8    tmp1(npro),   tmp2(npro),          tmp3(npro),
      &          tmp(npro),    rGNa(npro,nsd,nsd),  rNa(npro,nsd),
      &          locmass(npro,nshl),omega(3)
 
       integer aa
-c     
+c
 c.... initialize multipliers for Na and Na_{,i}
 c
       rNa  = zero
@@ -7490,7 +7490,7 @@ c
 c
 c no density yet...it comes later
 c
-         
+
          rNa(:,1) = rNa(:,1) + (omega(2)-omega(3)) * tauM * rLui(:,1)
          rNa(:,2) = rNa(:,2) + (omega(3)-omega(1)) * tauM * rLui(:,2)
          rNa(:,3) = rNa(:,3) + (omega(1)-omega(2)) * tauM * rLui(:,3)
@@ -7505,12 +7505,12 @@ c
       tmp2 =  rmu * ( g3yi(:,3) + g2yi(:,4) )
       tmp3 =  rmu * ( g1yi(:,4) + g3yi(:,2) )
 
-    
+
       if(iconvflow.eq.2) then  ! advective form (NO IBP either)
 c
 c no density yet...it comes later
 c
-         rNa(:,1) = rNa(:,1) 
+         rNa(:,1) = rNa(:,1)
      &            + ubar(:,1) * g1yi(:,2)
      &            + ubar(:,2) * g2yi(:,2)
      &            + ubar(:,3) * g3yi(:,2)
@@ -7548,11 +7548,11 @@ c                                                      vvvvv
          rGNa(:,3,3) = two * rmu * g3yi(:,4) + tmp - u3(:)*u3(:)*rho(:)
       endif
 
-      tmp1        = tauM * rLui(:,1) 
-      tmp2        = tauM * rLui(:,2) 
+      tmp1        = tauM * rLui(:,1)
+      tmp2        = tauM * rLui(:,2)
       tmp3        = tauM * rLui(:,3)
-      
-      rGNa(:,1,1) = rGNa(:,1,1) + tmp1 * u1 
+
+      rGNa(:,1,1) = rGNa(:,1,1) + tmp1 * u1
       rGNa(:,1,2) = rGNa(:,1,2) + tmp1 * u2
       rGNa(:,1,3) = rGNa(:,1,3) + tmp1 * u3
       rGNa(:,2,1) = rGNa(:,2,1) + tmp2 * u1
@@ -7562,11 +7562,11 @@ c                                                      vvvvv
       rGNa(:,3,2) = rGNa(:,3,2) + tmp3 * u2
       rGNa(:,3,3) = rGNa(:,3,3) + tmp3 * u3
 
-      if(iconvflow.eq.1) then  
+      if(iconvflow.eq.1) then
 c
 c... get the u_j w_{i,i} term in there to match A_j^T w_{i,j} tau L_i
 c    to match the SUPG of incompressible limit
-c 
+c
          rGNa(:,1,1) = rGNa(:,1,1) + tmp1 * u1
          rGNa(:,1,2) = rGNa(:,1,2) + tmp2 * u1
          rGNa(:,1,3) = rGNa(:,1,3) + tmp3 * u1
@@ -7619,8 +7619,8 @@ c
 c.... continuity
 c
          rl(:,aa,4) = rl(:,aa,4) + WdetJ
-     &              * ( shg(:,aa,1) * uBar(:,1) 
-     &                + shg(:,aa,2) * uBar(:,2) 
+     &              * ( shg(:,aa,1) * uBar(:,1)
+     &                + shg(:,aa,2) * uBar(:,2)
      &                + shg(:,aa,3) * uBar(:,3) )
 c
 c.... momentum
@@ -7640,8 +7640,8 @@ c
      &                + shg(:,aa,1) * rGNa(:,3,1)
      &                + shg(:,aa,2) * rGNa(:,3,2)
      &                + shg(:,aa,3) * rGNa(:,3,3) )
-      
-      enddo                 
+
+      enddo
 c
 c.... return
 c
@@ -7651,7 +7651,7 @@ c
 !> Calculate the residual for the advection-diffusion equation
 
       subroutine e3ResSclr ( uMod,              gGradS,
-     &                       Sclr,    Sdot, gradS,  
+     &                       Sclr,    Sdot, gradS,
      &                       WdetJ,   rLS,  tauS,
      &                       shpfun,            shg,    src,
      &                       diffus,
@@ -7671,9 +7671,9 @@ C
       real*8    uMod(npro,nsd),   gGradS(npro, nsd),
      &          Sclr(npro),       Sdot(npro), gradS(npro,nsd),
      &          WdetJ(npro),      rLS(npro),  rho(npro),
-     &          tauS(npro),       shpfun(npro,nshl), src(npro), 
+     &          tauS(npro),       shpfun(npro,nshl), src(npro),
      &          shg(npro,nshl,3), rl(npro,nshl)
-      
+
       real*8    diffus(npro)
 c
 c.... local declarations
@@ -7681,7 +7681,7 @@ c
       real*8    rGNa(npro,nsd),   rNa(npro),  rcp(npro), tmp(npro)
 
       integer   aa
-c     
+c
 c.... initialize multipliers for Na and Na_{,i}
 c
       rNa  = zero
@@ -7691,11 +7691,11 @@ c.... Na multiplier
 c
       tmps     = one-flmpr  ! consistant mass factor
       rcp = one ! rho * cp
-      
+
 
          rNa = rcp*(tmps*Sdot + uMod(:,1) * gradS(:,1)
      &                         + uMod(:,2) * gradS(:,2)
-     &                         + uMod(:,3) * gradS(:,3) ) 
+     &                         + uMod(:,3) * gradS(:,3) )
      &        - src
 
 
@@ -7709,12 +7709,12 @@ c
       rGNa(:,3) = diffus * gradS(:,3) + uMod(:,3) * tmp
 c
       if (idcsclr(1) .ne. 0) then
-         if ((idcsclr(2).eq.1 .and. isclr.eq.1) .or. 
+         if ((idcsclr(2).eq.1 .and. isclr.eq.1) .or.
      &        (idcsclr(2).eq.2 .and. isclr.eq.2)) then ! scalar with dc
 c
 c.... add the contribution of DC to residual
 c
-            rGNa(:,1) = rGNa(:,1) + gGradS(:,1) ! gGradS is 
+            rGNa(:,1) = rGNa(:,1) + gGradS(:,1) ! gGradS is
             rGNa(:,2) = rGNa(:,2) + gGradS(:,2) ! g^{ij}*Y_{j}*dcFct
             rGNa(:,3) = rGNa(:,3) + gGradS(:,3) ! calculated in e3dc.f
 c
@@ -7741,8 +7741,8 @@ c
 !> Calculate the strong PDE residual.
 
       subroutine e3resStrongPDE(
-     &     aci,  u1,   u2,   u3,   Temp, rho,  xx,
-     &     g1yi, g2yi, g3yi,
+     &     aci,  u1,   u2,   u3,   Temp,  rho,
+     &     xx, g1yi, g2yi, g3yi,
      &     rLui, src, divqi)
 
         include "global.h"
@@ -7759,7 +7759,7 @@ C
 c     INPUTS
       double precision  aci(npro,nsd)
       double precision   xx(npro,nsd)
-      double precision g1yi(npro,nflow) 
+      double precision g1yi(npro,nflow)
       double precision g2yi(npro,nflow)
       double precision g3yi(npro,nflow)
       double precision u1(npro)
@@ -7767,7 +7767,6 @@ c     INPUTS
       double precision u3(npro)
       double precision Temp(npro)
       double precision rho(npro)
-
 c     OUTPUTS
       double precision rLui(npro,nsd)
       double precision src(npro,nsd)
@@ -7798,7 +7797,7 @@ c        body force contribution to src
             call e3source(xx, src)
          end select
       endif
-c     
+c
       if(matflg(6,1).eq.1) then
 c        coriolis force contribution to src
          omega(1)=datmat(1,6,1)
@@ -7858,7 +7857,7 @@ c
       end subroutine e3resStrongPDE
 
 !> This routine computes the body force term.
-!!  Currently this computes a swirl body with the axis alligned with 
+!!  Currently this computes a swirl body with the axis alligned with
 !!  the z-coordinate
 
       subroutine e3source(xx, src)
@@ -7877,31 +7876,31 @@ C
       REAL*8                t7,          t8,          x,           y
       REAL*8                z
 C
-      
+
       real*8   xx(npro,nsd), src(npro,nsd)
 
       real*8   nu
 
       real*8   r, Stheta, dpdz, rP5
-      if(datmat(2,5,1).eq. 0) then  ! calc swirl 
+      if(datmat(2,5,1).eq. 0) then  ! calc swirl
 c
 c  This is the body force which will drive a swirl in a pipe flow
-c     
+c
          bigR    = 0.5d0
          dpdz    = datmat(1,5,1)
          do iel = 1, npro
-            
+
             r   = sqrt( xx(iel,1)**2 + xx(iel,2)**2)
             rP5 = (r/bigR)**5
-            
+
             Stheta = dpdz * sin(0.5*pi*rP5)
-            
+
             src(iel,1) = -xx(iel,2)/r * Stheta
             src(iel,2) =  xx(iel,1)/r * Stheta
             src(iel,3) =  dpdz
          enddo
       else  ! contrived test problem
-   
+
       do iel = 1, npro
             x = xx(iel,1)
             y = xx(iel,2)
@@ -7931,12 +7930,12 @@ c
             src(iel,2) = t54
             src(iel,3) = 0.0
          enddo
-   
+
       endif
       return
       end
 
-!> This routine computes the diagonal Tau for least-squares operator.  
+!> This routine computes the diagonal Tau for least-squares operator.
 !!
 !! input:<BR>
 !! @param[in] u1(npro) X1-velocity component
@@ -7952,9 +7951,9 @@ c
 !! @param[out] uBar(npro,nsd) Modified velocity
 
       subroutine e3stab (rho,          u1,       u2,
-     &                   u3,           dxidx,    rLui,   
-     &                   rmu,          tauC,     tauM,   
-     &                   tauBar,       uBar )  
+     &                   u3,           dxidx,    rLui,
+     &                   rmu,          tauC,     tauM,
+     &                   tauBar,       uBar )
 c
         include "global.h"
         include "common_blocks/genpar.h"
@@ -7978,7 +7977,7 @@ C
 C
         dimension rho(npro),                 u1(npro),
      &            u2(npro),                  u3(npro),
-     &            dxidx(npro,nsd,nsd), 
+     &            dxidx(npro,nsd,nsd),
      &            rLui(npro,nsd),
      &            tauC(npro),    tauM(npro), tauBar(npro),
      &            rmu(npro),     uBar(npro,3), unorm(npro)
@@ -7989,7 +7988,7 @@ c
 c
 c
 c.... get the metric tensor
-c      
+c
       call e3gijd( dxidx, gijd )
 c
 c... higher order element diffusive correction
@@ -8014,7 +8013,7 @@ c     fff = 144.0d0
       if(itau.eq.0)  then  ! original tau
 c
 c...  momentum tau
-c 
+c
          dts=  Dtgl*dtsfct  ! Dtgl = (time step)^-1
          tauM = ( (two*dts)**2
      3          + ( u1 * ( gijd(:,1) * u1
@@ -8033,9 +8032,9 @@ c
      6          + 2.
      7          * ( gijd(:,4) ** 2
      8            + gijd(:,5) ** 2
-     9            + gijd(:,6) ** 2 ) 
+     9            + gijd(:,6) ** 2 )
      b              +omegasq)
-        
+
          fact = sqrt(tauM)
          dtsi=one/dts
          ff=taucfct/dtsfct
@@ -8051,16 +8050,16 @@ c
      &        - gijd(:,1) * gijd(:,5) * gijd(:,5)
      &        - gijd(:,3) * gijd(:,4) * gijd(:,4)
      &        + gijd(:,6) * gijd(:,4) * gijd(:,5) * two
-        
+
 c
 c put 1/2u*h1 = sqrt(u_i g^{ij} u_j) into tau_M  note inverse is calculated
-c on the fly here from cofactors over the determinent dotted from left and 
+c on the fly here from cofactors over the determinent dotted from left and
 c right with u
 c
-         
-         tauM = 
+
+         tauM =
      1       u1 * ( (gijd(:,2)*gijd(:,3)-gijd(:,5)*gijd(:,5))  * u1
-     2     +  two * (gijd(:,5)*gijd(:,6)-gijd(:,4)*gijd(:,3))  * u2 
+     2     +  two * (gijd(:,5)*gijd(:,6)-gijd(:,4)*gijd(:,3))  * u2
      3     +  two * (gijd(:,4)*gijd(:,5)-gijd(:,6)*gijd(:,2))  * u3)
      1     + u2 * ( (gijd(:,1)*gijd(:,3)-gijd(:,6)*gijd(:,6))  * u2
      3     +  two * (gijd(:,4)*gijd(:,6)-gijd(:,1)*gijd(:,5))  * u3)
@@ -8078,9 +8077,9 @@ c...  momentum tau
 c
 c
 c     this tau needs a u/h instead of a u*h so we contract with g_{ij} as
-c     follows  (i.e. u_i g_{ij} u_j approx u^2/(h^2)/4) 
+c     follows  (i.e. u_i g_{ij} u_j approx u^2/(h^2)/4)
 c
-         fact = 
+         fact =
      3          u1 * ( gijd(:,1) * u1
      4               + gijd(:,4) * u2
      5               + gijd(:,6) * u3 )
@@ -8089,8 +8088,8 @@ c
      8               + gijd(:,5) * u3 )
      9        + u3 * ( gijd(:,6) * u1
      a               + gijd(:,5) * u2
-     1               + gijd(:,3) * u3 ) 
-c 
+     1               + gijd(:,3) * u3 )
+c
 c first limit dt effect on tau from causing trouble if user drops CFL below
 c .05 (this could cause loss of spatial stability)
 c
@@ -8100,8 +8099,8 @@ c
          dt=one/Dtgl
          taubar=  dtsfsq/( dt*dt + .01*unorm/fact)  ! never gets above (C_1 20*u_inf/h)^2
 c
-c  this means tau will never get below h/(20*C_1*u) no matter what time step 
-c  you choose.  The 0.01 constant comes from minCFL=.05=> .05*.05*4 (where the 
+c  this means tau will never get below h/(20*C_1*u) no matter what time step
+c  you choose.  The 0.01 constant comes from minCFL=.05=> .05*.05*4 (where the
 c  4 comes from the bi-unit mapping). If you want to limit sooner the formula
 c  would be  ".01-factor"=minCFL^2*4
 c
@@ -8115,16 +8114,16 @@ c
      6          + 2.
      7          * ( gijd(:,4) ** 2
      8            + gijd(:,5) ** 2
-     9            + gijd(:,6) ** 2 ) ) 
+     9            + gijd(:,6) ** 2 ) )
      b              +omegasq)
          fact=sqrt(tauM)
 cdebugcheck         tauBar = pt125*fact/(gijd(:,1)+gijd(:,2)+gijd(:,3)) !*dtsi
-      
+
         tauM=one/fact           ! turn it right side up.
       else if(itau.eq.2)  then  ! new tau different continuity h
 
          unorm = (u1*u1+u2*u2+u3*u3)
-         
+
          tauM=(gijd(:,1)+gijd(:,2)+gijd(:,3))/unorm ! here we have  4/u^2h^2
 c
 c  we can calculate tauC more efficiently now
@@ -8138,9 +8137,9 @@ c...  momentum tau
 c
 c
 c     this tau needs a u/h instead of a u*h so we contract with g_{ij} as
-c     follows  (i.e. u_i g_{ij} u_j approx u^2/(h^2)/4) 
+c     follows  (i.e. u_i g_{ij} u_j approx u^2/(h^2)/4)
 c
-         fact = 
+         fact =
      3          u1 * ( gijd(:,1) * u1
      4               + gijd(:,4) * u2
      5               + gijd(:,6) * u3 )
@@ -8149,8 +8148,8 @@ c
      8               + gijd(:,5) * u3 )
      9        + u3 * ( gijd(:,6) * u1
      a               + gijd(:,5) * u2
-     1               + gijd(:,3) * u3 ) 
-c 
+     1               + gijd(:,3) * u3 )
+c
 c first limit dt effect on tau from causing trouble if user drops CFL below
 c .05 (this could cause loss of spatial stability)
 c
@@ -8160,8 +8159,8 @@ c
          unorm=unorm/velsq
          taubar=  dtsfsq/( dt*dt + .01*unorm/fact)  ! never gets above (C_1 20*u_inf/h)^2
 c
-c  this means tau will never get below h/(20*C_1*u) no matter what time step 
-c  you choose.  The 0.01 constant comes from minCFL=.05=> .05*.05*4 (where the 
+c  this means tau will never get below h/(20*C_1*u) no matter what time step
+c  you choose.  The 0.01 constant comes from minCFL=.05=> .05*.05*4 (where the
 c  4 comes from the bi-unit mapping). If you want to limit sooner the formula
 c  would be  ".01-factor"=minCFL^2*4
 c
@@ -8175,11 +8174,11 @@ c
      6          + 2.
      7          * ( gijd(:,4) ** 2
      8            + gijd(:,5) ** 2
-     9            + gijd(:,6) ** 2 ) ) 
+     9            + gijd(:,6) ** 2 ) )
      b              +omegasq)
          fact=sqrt(tauM)
 c         tauBar = pt125*fact/(gijd(:,1)+gijd(:,2)+gijd(:,3)) !*dtsi
-      
+
         tauM=one/fact           ! turn it right side up.
       else if(itau.eq.3)  then  ! compressible tau
 
@@ -8191,16 +8190,16 @@ c
      &        - gijd(:,1) * gijd(:,5) * gijd(:,5)
      &        - gijd(:,3) * gijd(:,4) * gijd(:,4)
      &        + gijd(:,6) * gijd(:,4) * gijd(:,5) * two
-        
+
 c
 c put 1/2u*h1 = sqrt(u_i g^{ij} u_j) into tau_M  note inverse is calculated
-c on the fly here from cofactors over the determinent dotted from left and 
+c on the fly here from cofactors over the determinent dotted from left and
 c right with u
 c
-         
-         tauM = 
+
+         tauM =
      1       u1 * ( (gijd(:,2)*gijd(:,3)-gijd(:,5)*gijd(:,5))  * u1
-     2     +  two * (gijd(:,5)*gijd(:,6)-gijd(:,4)*gijd(:,3))  * u2 
+     2     +  two * (gijd(:,5)*gijd(:,6)-gijd(:,4)*gijd(:,3))  * u2
      3     +  two * (gijd(:,4)*gijd(:,5)-gijd(:,6)*gijd(:,2))  * u3)
      1     + u2 * ( (gijd(:,1)*gijd(:,3)-gijd(:,6)*gijd(:,6))  * u2
      3     +  two * (gijd(:,4)*gijd(:,6)-gijd(:,1)*gijd(:,5))  * u3)
@@ -8216,9 +8215,9 @@ c...  momentum tau
 c
 c
 c     this tau needs a u/h instead of a u*h so we contract with g_{ij} as
-c     follows  (i.e. u_i g_{ij} u_j approx u^2/(h^2)/4) 
+c     follows  (i.e. u_i g_{ij} u_j approx u^2/(h^2)/4)
 c
-         fact = 
+         fact =
      3          u1 * ( gijd(:,1) * u1
      4               + gijd(:,4) * u2
      5               + gijd(:,6) * u3 )
@@ -8227,7 +8226,7 @@ c
      8               + gijd(:,5) * u3 )
      9        + u3 * ( gijd(:,6) * u1
      a               + gijd(:,5) * u2
-     1               + gijd(:,3) * u3 ) 
+     1               + gijd(:,3) * u3 )
          fact=one/sqrt(fact)
 
          unorm = (u1*u1+u2*u2+u3*u3)
@@ -8243,11 +8242,11 @@ c
      &                       + gijd(:,6) * rLui(:,3) )
      &         + rLui(:,2) * ( gijd(:,4) * rLui(:,1)
      &                       + gijd(:,2) * rLui(:,2)
-     &                       + gijd(:,5) * rLui(:,3) ) 
+     &                       + gijd(:,5) * rLui(:,3) )
      &         + rLui(:,3) * ( gijd(:,6) * rLui(:,1)
      &                       + gijd(:,5) * rLui(:,2)
      &                       + gijd(:,3) * rLui(:,3) )
-      where ( tauBar .ne. 0.0 ) 
+      where ( tauBar .ne. 0.0 )
          tauBar = tauM / sqrt(tauBar)
       endwhere
 
@@ -8257,7 +8256,7 @@ c
         uBar(:,1) = u1 - tauM * rLui(:,1)*rhoinv
         uBar(:,2) = u2 - tauM * rLui(:,2)*rhoinv
         uBar(:,3) = u3 - tauM * rLui(:,3)*rhoinv
-c     
+c
 c.... return
 c
         return
@@ -8265,8 +8264,8 @@ c
 
 !> Compute Momentum tau
 
-      subroutine e3uBar (rho,          ui,         dxidx,     
-     &                   rLui,         rmu,        uBar )         
+      subroutine e3uBar (rho,          ui,         dxidx,
+     &                   rLui,         rmu,        uBar )
 
         include "global.h"
         include "common_blocks/genpar.h"
@@ -8285,7 +8284,7 @@ C
 
 c
 c.... get the metric tensor
-c      
+c
       call e3gijd( dxidx, gijd )
 c
 c.... higher order element diffusive correction
@@ -8318,7 +8317,7 @@ c
      7          * ( gijd(:,4) ** 2
      8            + gijd(:,5) ** 2
      9            + gijd(:,6) ** 2 ) )
-        
+
       tauM = one/sqrt(tauM)
 c
 c.... compute the modified velocity, uBar
@@ -8330,10 +8329,10 @@ c
       return
       end
 
-!> Get the metric tensor g_{ij}=xi_{k,i} xi_{k,j}.  
+!> Get the metric tensor g_{ij}=xi_{k,i} xi_{k,j}.
 
       subroutine e3gijd( dxidx,  gijd )
-      
+
         include "global.h"
         include "common_blocks/elmpar.h"
         include "common_blocks/propar.h"
@@ -8341,7 +8340,7 @@ C
 C     Local variables
 C
       REAL*8                c1,          c2
-C     
+C
       real*8  dxidx(npro,nsd,nsd),  gijd(npro,6),
      &        tmp1(npro),           tmp2(npro),
      &        tmp3(npro)
@@ -8378,8 +8377,8 @@ c
 c
       else   if (lcsyst .eq. 1) then
 c
-c  There is an invariance problem with tets 
-c  It is fixed by the following modifications to gijd 
+c  There is an invariance problem with tets
+c  It is fixed by the following modifications to gijd
 c
 
          c1 = 1.259921049894873D+00
@@ -8438,7 +8437,7 @@ c
         include "common_blocks/sclrs.h"
         include "common_blocks/solpar.h"
         include "common_blocks/timdat.h"
- 
+
 C
 C     Local variables
 C
@@ -8449,7 +8448,7 @@ C
      &            tauT(npro),                srcP(npro)
 
 c
-        real*8    gijd(npro,6),       giju(npro,6),   
+        real*8    gijd(npro,6),       giju(npro,6),
      &            tmp1(npro),         tmp2(npro),
      &            tmp3(npro),         fact(npro),
      &            srcRat(npro)
@@ -8461,11 +8460,11 @@ c
         endif
 c
 c.... get the metric tensor
-c      
+c
       call e3gijd( dxidx, gijd )
 c
 c...  momentum tau
-c 
+c
 c
 c... higher order element diffusive correction
 c
@@ -8480,8 +8479,8 @@ c
         dts=  (Dtgl*dtsfct)
 c       DES - MODIFIED AFTER NATHAN TURBULENCE CLEANUP
         srcRat=srcP
-        tauT = 
-     1         (two*dts)**2 
+        tauT =
+     1         (two*dts)**2
      2       + srcRat ** 2
      3       + uMod(:,1) * ( gijd(:,1) * uMod(:,1)
      4                     + gijd(:,4) * uMod(:,2)
@@ -8500,27 +8499,27 @@ c       DES - MODIFIED AFTER NATHAN TURBULENCE CLEANUP
      7          * ( gijd(:,4) ** 2
      8            + gijd(:,5) ** 2
      9            + gijd(:,6) ** 2 ) )
-        
+
         tauT = one/sqrt(tauT)
 c
-        if(idcsclr(1) .ne. 0) then 
-           if ((idcsclr(2).eq.1 .and. isclr.eq.1) .or. 
+        if(idcsclr(1) .ne. 0) then
+           if ((idcsclr(2).eq.1 .and. isclr.eq.1) .or.
      &          (idcsclr(2).eq.2 .and. isclr.eq.2)) then ! scalar with dc
-c     
+c
 c     determinant of gijd
-c     
+c
               fact = one/(gijd(:,1) * gijd(:,2) * gijd(:,3)
      &             - gijd(:,2) * gijd(:,6) * gijd(:,6)
      &             - gijd(:,1) * gijd(:,5) * gijd(:,5)
      &             - gijd(:,3) * gijd(:,4) * gijd(:,4)
      &             + gijd(:,6) * gijd(:,4) * gijd(:,5) * two)
 c
-c ... note between compressible and incompressible 5 and 6 of giju 
-c     are switched        
+c ... note between compressible and incompressible 5 and 6 of giju
+c     are switched
 c
-              giju(:,1) = fact * (gijd(:,2)*gijd(:,3) 
+              giju(:,1) = fact * (gijd(:,2)*gijd(:,3)
      &                  - gijd(:,5)**2)
-              giju(:,2) = fact * (gijd(:,1)*gijd(:,3) 
+              giju(:,2) = fact * (gijd(:,1)*gijd(:,3)
      &                  - gijd(:,6)**2)
               giju(:,3) = fact * (gijd(:,1)*gijd(:,2)
      &                  - gijd(:,4)**2)
@@ -8534,30 +8533,30 @@ c
 c
            endif
         endif                   ! end of idcsclr.ne.0
-c     
+c
 c.... return
 c
         return
         end
 
-!> Compute the terms needed for the left hand side matrices 
-!! needed for the conservative projection       
+!> Compute the terms needed for the left hand side matrices
+!! needed for the conservative projection
 
       subroutine e3StsLhs( xl,  lStsVec )
 
       use     stats
-      
+
         include "global.h"
         include "common_blocks/elmpar.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
-C      
+C
       integer i
       real*8  lDir(npro,nshl,3), lStsVec(npro,nshl,nResDims),
      &        xl(npro,nenl,3)
 
       call e3StsDir( xl,  lDir )
-      
+
       do i = 1, nshl
          lStsVec(:,i,1) = lDir(:,i,1) * lDir(:,i,1)
          lStsVec(:,i,2) = lDir(:,i,2) * lDir(:,i,2)
@@ -8573,7 +8572,7 @@ C
          lStsVec(:,i,10) = 0.0
          lStsVec(:,i,11) = 0.0
       enddo
-      
+
       return
       end
 
@@ -8582,7 +8581,7 @@ C
       subroutine e3StsRes( xl, rl, lStsVec )
 
       use     stats
-      
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/elmpar.h"
@@ -8593,21 +8592,21 @@ C     Local variables
 C
       INTEGER             i
 
-C      
+C
       real*8  xl(npro,nenl,3),  rl(npro,nshl,ndof)
       real*8  lDir(npro,nshl,3), lStsVec(npro,nshl,nResDims)
-      
+
       call e3StsDir( xl,  lDir )
-      
+
       do i = 1, nshl
          lStsVec(:,i,1) = lDir(:,i,1) * rl(:,i,4)
          lStsVec(:,i,2) = lDir(:,i,2) * rl(:,i,4)
          lStsVec(:,i,3) = lDir(:,i,3) * rl(:,i,4)
-      
+
          lStsVec(:,i,4) = lDir(:,i,1) * rl(:,i,1)
          lStsVec(:,i,5) = lDir(:,i,2) * rl(:,i,2)
          lStsVec(:,i,6) = lDir(:,i,3) * rl(:,i,3)
-      
+
          lStsVec(:,i,7) = lDir(:,i,1) * rl(:,i,2)
      &                  + lDir(:,i,2) * rl(:,i,1)
          lStsVec(:,i,8) = lDir(:,i,2) * rl(:,i,3)
@@ -8617,7 +8616,7 @@ C
          lStsVec(:,i,10) = 0
          lStsVec(:,i,11) = 0
       enddo
-      
+
 
       return
       end
@@ -8655,7 +8654,7 @@ C
       REAL*8                z61,         z63,         z68,         z72
       REAL*8                z74,         z75,         z81,         z83
       REAL*8                z86
-C      
+C
       real*8  xl(npro,nenl,3), lDir(npro,nshl,3)
       integer e
 
@@ -8686,15 +8685,15 @@ c
             z23         = xl(e,3,3) - xl(e,2,3)
             z24         = xl(e,4,3) - xl(e,2,3)
             z34         = xl(e,4,3) - xl(e,3,3)
-            
+
 c
 c.. The calculation of the direction of a vertex is based on the average of
 c.. the normals of the neighbor faces(3); And the calculation of the direction
 c.. of the edge is based on the neighbor faces(2);
 c
-          lDir(e,1,1) = fct * (y14*(z12 - z13) + y12*(z13 - z14) 
+          lDir(e,1,1) = fct * (y14*(z12 - z13) + y12*(z13 - z14)
      &                         + y13*(-z12 + z14))
-          lDir(e,1,2) = fct * ( x14*(-z12 + z13) + x13*(z12 - z14) 
+          lDir(e,1,2) = fct * ( x14*(-z12 + z13) + x13*(z12 - z14)
      &                          + x12*(-z13 + z14))
           lDir(e,1,3) = fct * ( x14*(y12 - y13)
      &                          + x12*(y13 - y14) + x13*(-y12 + y14))
@@ -8748,13 +8747,13 @@ c
             z23         = xl(e,3,3) - xl(e,2,3)
             z24         = xl(e,4,3) - xl(e,2,3)
             z34         = xl(e,4,3) - xl(e,3,3)
-            
+
 c
 c.... vertex modes
-c            
-          lDir(e,1,1) = fct * (y14*(z12 - z13) + y12*(z13 - z14) 
+c
+          lDir(e,1,1) = fct * (y14*(z12 - z13) + y12*(z13 - z14)
      &                         + y13*(-z12 + z14))
-          lDir(e,1,2) = fct * ( x14*(-z12 + z13) + x13*(z12 - z14) 
+          lDir(e,1,2) = fct * ( x14*(-z12 + z13) + x13*(z12 - z14)
      &                          + x12*(-z13 + z14))
           lDir(e,1,3) = fct * ( x14*(y12 - y13)
      &                          + x12*(y13 - y14) + x13*(-y12 + y14))
@@ -8835,13 +8834,13 @@ c$$$            y34         = xl(e,4,2) - xl(e,3,2)
             z23         = xl(e,3,3) - xl(e,2,3)
             z24         = xl(e,4,3) - xl(e,2,3)
 c$$$            z34         = xl(e,4,3) - xl(e,3,3)
-            
+
 c
 c.... vertex modes
-c            
-          lDir(e,1,1) = fct * (y14*(z12 - z13) + y12*(z13 - z14) 
+c
+          lDir(e,1,1) = fct * (y14*(z12 - z13) + y12*(z13 - z14)
      &                         + y13*(-z12 + z14))
-          lDir(e,1,2) = fct * ( x14*(-z12 + z13) + x13*(z12 - z14) 
+          lDir(e,1,2) = fct * ( x14*(-z12 + z13) + x13*(z12 - z14)
      &                          + x12*(-z13 + z14))
           lDir(e,1,3) = fct * ( x14*(y12 - y13)
      &                          + x12*(y13 - y14) + x13*(-y12 + y14))
@@ -8933,7 +8932,7 @@ c
          enddo
 c
 c.... hexes
-c     
+c
       else if (nenl .eq. 8) then
          fct = 1.d0 / 12.d0
          do e = 1, npro
@@ -9013,55 +9012,55 @@ c
       z75= -z57
       z86= -z68
 
-          lDir(e,1,1) = fct * (-y24 * z45 + y36 * z24 - y68 * z45 
+          lDir(e,1,1) = fct * (-y24 * z45 + y36 * z24 - y68 * z45
      1                + z24 * y45 - z36 * y24 + z68 * y45 )
-          lDir(e,2,1) = fct * (-y16 * z63 + y54 * z16 - y47 * z63 
+          lDir(e,2,1) = fct * (-y16 * z63 + y54 * z16 - y47 * z63
      1                + z16 * y63 - z54 * y16 + z47 * y63 )
-          lDir(e,3,1) = fct * (-y42 * z27 + y18 * z42 - y86 * z27 
+          lDir(e,3,1) = fct * (-y42 * z27 + y18 * z42 - y86 * z27
      1                + z42 * y27 - z18 * y42 + z86 * y27 )
-          lDir(e,4,1) = fct * (-y38 * z81 + y72 * z38 - y25 * z81 
+          lDir(e,4,1) = fct * (-y38 * z81 + y72 * z38 - y25 * z81
      1                + z38 * y81 - z72 * y38 + z25 * y81 )
-          lDir(e,5,1) = fct * (-y61 * z18 + y27 * z61 - y74 * z18 
+          lDir(e,5,1) = fct * (-y61 * z18 + y27 * z61 - y74 * z18
      1                + z61 * y18 - z27 * y61 + z74 * y18 )
-          lDir(e,6,1) = fct * (-y57 * z72 + y81 * z57 - y13 * z72 
+          lDir(e,6,1) = fct * (-y57 * z72 + y81 * z57 - y13 * z72
      1                + z57 * y72 - z81 * y57 + z13 * y72 )
-          lDir(e,7,1) = fct * (-y83 * z36 + y45 * z83 - y52 * z36 
+          lDir(e,7,1) = fct * (-y83 * z36 + y45 * z83 - y52 * z36
      1                + z83 * y36 - z45 * y83 + z52 * y36 )
-          lDir(e,8,1) = fct * (-y75 * z54 + y63 * z75 - y31 * z54 
+          lDir(e,8,1) = fct * (-y75 * z54 + y63 * z75 - y31 * z54
      1                + z75 * y54 - z63 * y75 + z31 * y54 )
 c
-          lDir(e,1,2) = fct * (-z24 * x45 + z36 * x24 - z68 * x45 
+          lDir(e,1,2) = fct * (-z24 * x45 + z36 * x24 - z68 * x45
      1                + x24 * z45 - x36 * z24 + x68 * z45 )
-          lDir(e,2,2) = fct * (-z16 * x63 + z54 * x16 - z47 * x63 
+          lDir(e,2,2) = fct * (-z16 * x63 + z54 * x16 - z47 * x63
      1                + x16 * z63 - x54 * z16 + x47 * z63 )
-          lDir(e,3,2) = fct * (-z42 * x27 + z18 * x42 - z86 * x27 
+          lDir(e,3,2) = fct * (-z42 * x27 + z18 * x42 - z86 * x27
      1                + x42 * z27 - x18 * z42 + x86 * z27 )
-          lDir(e,4,2) = fct * (-z38 * x81 + z72 * x38 - z25 * x81 
+          lDir(e,4,2) = fct * (-z38 * x81 + z72 * x38 - z25 * x81
      1                + x38 * z81 - x72 * z38 + x25 * z81 )
-          lDir(e,5,2) = fct * (-z61 * x18 + z27 * x61 - z74 * x18 
+          lDir(e,5,2) = fct * (-z61 * x18 + z27 * x61 - z74 * x18
      1                + x61 * z18 - x27 * z61 + x74 * z18 )
-          lDir(e,6,2) = fct * (-z57 * x72 + z81 * x57 - z13 * x72 
+          lDir(e,6,2) = fct * (-z57 * x72 + z81 * x57 - z13 * x72
      1                + x57 * z72 - x81 * z57 + x13 * z72 )
-          lDir(e,7,2) = fct * (-z83 * x36 + z45 * x83 - z52 * x36 
+          lDir(e,7,2) = fct * (-z83 * x36 + z45 * x83 - z52 * x36
      1                + x83 * z36 - x45 * z83 + x52 * z36 )
-          lDir(e,8,2) = fct * (-z75 * x54 + z63 * x75 - z31 * x54 
+          lDir(e,8,2) = fct * (-z75 * x54 + z63 * x75 - z31 * x54
      1                + x75 * z54 - x63 * z75 + x31 * z54 )
 c
-          lDir(e,1,3) = fct * (-x24 * y45 + x36 * y24 - x68 * y45 
+          lDir(e,1,3) = fct * (-x24 * y45 + x36 * y24 - x68 * y45
      1                + y24 * x45 - y36 * x24 + y68 * x45 )
-          lDir(e,2,3) = fct * (-x16 * y63 + x54 * y16 - x47 * y63 
+          lDir(e,2,3) = fct * (-x16 * y63 + x54 * y16 - x47 * y63
      1                + y16 * x63 - y54 * x16 + y47 * x63 )
-          lDir(e,3,3) = fct * (-x42 * y27 + x18 * y42 - x86 * y27 
+          lDir(e,3,3) = fct * (-x42 * y27 + x18 * y42 - x86 * y27
      1                + y42 * x27 - y18 * x42 + y86 * x27 )
-          lDir(e,4,3) = fct * (-x38 * y81 + x72 * y38 - x25 * y81 
+          lDir(e,4,3) = fct * (-x38 * y81 + x72 * y38 - x25 * y81
      1                + y38 * x81 - y72 * x38 + y25 * x81 )
-          lDir(e,5,3) = fct * (-x61 * y18 + x27 * y61 - x74 * y18 
+          lDir(e,5,3) = fct * (-x61 * y18 + x27 * y61 - x74 * y18
      1                + y61 * x18 - y27 * x61 + y74 * x18 )
-          lDir(e,6,3) = fct * (-x57 * y72 + x81 * y57 - x13 * y72 
+          lDir(e,6,3) = fct * (-x57 * y72 + x81 * y57 - x13 * y72
      1                + y57 * x72 - y81 * x57 + y13 * x72 )
-          lDir(e,7,3) = fct * (-x83 * y36 + x45 * y83 - x52 * y36 
+          lDir(e,7,3) = fct * (-x83 * y36 + x45 * y83 - x52 * y36
      1                + y83 * x36 - y45 * x83 + y52 * x36 )
-          lDir(e,8,3) = fct * (-x75 * y54 + x63 * y75 - x31 * y54 
+          lDir(e,8,3) = fct * (-x75 * y54 + x63 * y75 - x31 * y54
      1                + y75 * x54 - y63 * x75 + y31 * x54 )
 c
          enddo
@@ -9069,10 +9068,10 @@ c
          write(*,*) 'Error in e3sts: elt type not impl.'
          stop
       endif
-      
+
       return
       end
-         
+
 !> Compute the necessary terms for the statistics projection
 !! matrices.
 
@@ -9080,7 +9079,7 @@ c
 
       use     stats
       use     pointer_data
-      
+
         include "global.h"
         include "common_blocks/blkdat.h"
         include "common_blocks/conpar.h"
@@ -9096,7 +9095,7 @@ C
 C
       real*8  x(numnp,3)
       integer iBC(nshg), iper(nshg), ilwork(nlwork)
-      
+
       real*8, allocatable :: xl(:,:,:)
       real*8, allocatable :: lStsVec(:,:,:)
 
@@ -9104,14 +9103,14 @@ c
 c.... loop over element blocks
 c
       stsVec = zero
-      
+
       do iblk = 1, nelblk
          iel    = lcblk(1,iblk)
          lcsyst = lcblk(3,iblk)
          nenl   = lcblk(5,iblk) ! no. of vertices per element
          nshl   = lcblk(10,iblk)
          ndofl  = lcblk(8,iblk)
-         npro   = lcblk(1,iblk+1) - iel 
+         npro   = lcblk(1,iblk+1) - iel
 
          allocate ( xl(npro,nenl,3)             )
          allocate ( lStsVec(npro,nshl,nResDims) )
@@ -9127,7 +9126,7 @@ c
 c.... assemble
 c
          call local (stsVec, lStsVec, mien(iblk)%p,
-     &               nResDims, 'scatter ' ) 
+     &               nResDims, 'scatter ' )
 
          deallocate ( xl       )
          deallocate ( lStsVec  )
@@ -9158,28 +9157,28 @@ c
 
       return
       end
-      
+
 !> Assemble the residual for the statistics
 
-      subroutine elmStatsRes( y,        ac,    x,      shp,     shgl, 
-     &                        shpb,     shglb,       iBC,     BC, 
+      subroutine elmStatsRes( y,        ac,    x,      shp,     shgl,
+     &                        shpb,     shglb,       iBC,     BC,
      &                        iper,     ilwork,      rowp,    colm,
      &                        lhsK,     lhsP )
-      
+
       use     stats
-      
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/fronts.h"
         include "common_blocks/genpar.h"
-  
+
 C
 C     Local variables
 C
       INTEGER ierrcalctmp
 C
       REAL*8                rjunk
-C      
+C
       real*8  y(nshg,ndof),             ac(nshg,ndof), x(numnp,nsd),
      &        shp(MAXTOP,maxsh,MAXQPT),  shgl(MAXTOP,nsd,maxsh,MAXQPT),
      &        shpb(MAXTOP,maxsh,MAXQPT),
@@ -9190,23 +9189,23 @@ C
       integer iBC(nshg),                iper(nshg),
      &        ilwork(nlwork),           rowp(nshg,nnz),
      &        colm(nshg+1)
-      
+
 
       lhs    = 0
       stsVec = zero
-      
+
       stsResFlg = 1
 
       call ElmGMR (y,         ac,         x,
-     &             shp,       shgl,       iBC,       
+     &             shp,       shgl,       iBC,
      &             BC,        shpb,       shglb,
-     &             res,       iper,       ilwork,   
-     &             rowp,      colm,       lhsK,      
+     &             res,       iper,       ilwork,
+     &             rowp,      colm,       lhsK,
      &             lhsP,      rjunk   )
 
       stsResFlg = 0
 
-      return 
+      return
       end
 
 !> This utility routine prints out the error and stops the program.
@@ -9264,15 +9263,15 @@ c
         if (numpe > 1) then
            call MPI_ABORT(MPI_COMM_WORLD)
         endif
-        
- 
+
+
 1000    format(' ',a80,//,
      &         ' ****** Error occurred in routine <',a8,'>',/,
      &          '  Error code :',a8,:,' : ',i8,//)
         end
 
 
-      subroutine errsmooth(rerr,   x,     iper,   ilwork, 
+      subroutine errsmooth(rerr,   x,     iper,   ilwork,
      &                     shp,    shgl,  iBC)
 c
         use pointer_data
@@ -9300,14 +9299,14 @@ C
 
 C
 c
-        dimension shp(MAXTOP,maxsh,MAXQPT),  
-     &            shgl(MAXTOP,nsd,maxsh,MAXQPT), 
+        dimension shp(MAXTOP,maxsh,MAXQPT),
+     &            shgl(MAXTOP,nsd,maxsh,MAXQPT),
      &            shpb(MAXTOP,maxsh,MAXQPT),
-     &            shglb(MAXTOP,nsd,maxsh,MAXQPT) 
+     &            shglb(MAXTOP,nsd,maxsh,MAXQPT)
 c
-        dimension rerrsm(nshg, 10), 
-     &            rerr(nshg,10), 
-     &            x(numnp,nsd), 
+        dimension rerrsm(nshg, 10),
+     &            rerr(nshg,10),
+     &            x(numnp,nsd),
      &            rmass(nshg)
 c
         dimension ilwork(nlwork), iBC(nshg), iper(nshg)
@@ -9321,7 +9320,7 @@ c of the smoothed error and lumped mass matrix, rmass
 c
         rerrsm = zero
         rmass = zero
-        
+
         do iblk = 1, nelblk
 c
 c.... set up the parameters
@@ -9348,22 +9347,22 @@ c     and lumped mass matrix, rmass
           tmpshp(1:nshl,:) = shp(lcsyst,1:nshl,:)
           tmpshgl(:,1:nshl,:) = shgl(lcsyst,:,1:nshl,:)
 
-          call smooth (rerr,  
-     &                 x,                       
-     &                 tmpshp,              
+          call smooth (rerr,
+     &                 x,
+     &                 tmpshp,
      &                 tmpshgl,
      &                 mien(iblk)%p,
-     &                 rerrsm,                   
+     &                 rerrsm,
      &                 rmass)
 
           deallocate ( tmpshp )
-          deallocate ( tmpshgl ) 
+          deallocate ( tmpshgl )
        enddo
 c
        if (numpe > 1) then
           call commu (rerrsm , ilwork,  10   , 'in ')
           call commu (rmass  , ilwork,  1    , 'in ')
-       endif       
+       endif
 c
 c.... take care of periodic boundary conditions
 c
@@ -9386,18 +9385,18 @@ c
 c.... invert the diagonal mass matrix and find q
 c
         rmass = one/rmass
-       
+
        do i=1, 10
           rerrsm(:,i) = rmass*rerrsm(:,i)
        enddo
        if(numpe > 1) then
-          call commu (rerrsm, ilwork, 10, 'out')    
+          call commu (rerrsm, ilwork, 10, 'out')
        endif
 c
 c      copy the smoothed error overwriting the original error.
 c
 
-       rerr = rerrsm 
+       rerr = rerrsm
 
        return
        end
@@ -9418,7 +9417,7 @@ c
 !! @param[out] rmass(nshg) Lumped mass matrix
 
         subroutine smooth (rerr,       x,       shp,
-     &                     shgl,       ien,          
+     &                     shgl,       ien,
      &                     rerrsm,     rmass    )
 c
         include "global.h"
@@ -9445,15 +9444,15 @@ C
       REAL*8                rmassl,      sgn,         shape,      shdrv
       REAL*8                shg,         wdetj,       xl
 C
-        dimension rerr(nshg,10),               x(numnp,nsd),     
-     &            shp(nshl,maxsh),  
+        dimension rerr(nshg,10),               x(numnp,nsd),
+     &            shp(nshl,maxsh),
      &            shgl(nsd,nshl,maxsh),
      &            ien(npro,nshl),
      &            rerrsm(nshg,10),    rmass(nshg)
 c
 c.... element level declarations
 c
-        dimension rerrl(npro,nshl,10),        xl(npro,nenl,nsd),         
+        dimension rerrl(npro,nshl,10),        xl(npro,nenl,nsd),
      &            rerrsml(npro,nshl,10),       rmassl(npro,nshl)
 c
         dimension sgn(npro,nshl),          shape(npro,nshl),
@@ -9462,8 +9461,8 @@ c
 c
         dimension error(npro,10)
 c
-c.... create the matrix of mode signs for the hierarchic basis 
-c     functions. 
+c.... create the matrix of mode signs for the hierarchic basis
+c     functions.
 c
         if (ipord .gt. 1) then
            call getsgn(ien,sgn)
@@ -9475,7 +9474,7 @@ c
         call local(rerr,   rerrl,  ien,    10,   'gather  ')
         call localx(x,      xl,     ien,    nsd,    'gather  ')
 c
-c.... get the element residuals 
+c.... get the element residuals
 c
         rerrsml     = zero
         rmassl      = zero
@@ -9483,19 +9482,19 @@ c
 c
 c.... loop through the integration points
 c
-        
-                
+
+
         do intp = 1, ngauss
         if (Qwt(lcsyst,intp) .eq. zero) cycle          ! precaution
 c
 c.... create a matrix of shape functions (and derivatives) for each
-c     element at this quadrature point. These arrays will contain 
+c     element at this quadrature point. These arrays will contain
 c     the correct signs for the hierarchic basis
 c
-        call getshp(shp,          shgl,      sgn, 
+        call getshp(shp,          shgl,      sgn,
      &              shape,        shdrv)
 c
-        call e3metric( xl,         shdrv,        dxidx,  
+        call e3metric( xl,         shdrv,        dxidx,
      &                 shg,        WdetJ)
         error=zero
         do n = 1, nshl
@@ -9505,18 +9504,18 @@ c
         enddo
         do i=1,nshl
            do j=1,10
-              rerrsml(:,i,j)  = rerrsml(:,i,j)  
+              rerrsml(:,i,j)  = rerrsml(:,i,j)
      &                       + shape(:,i)*WdetJ*error(:,j)
            enddo
 
            rmassl(:,i) = rmassl(:,i) + shape(:,i)*WdetJ
         enddo
- 
+
 c.... end of the loop over integration points
 c
       enddo
 c
-c.... assemble the diffusive flux residual 
+c.... assemble the diffusive flux residual
 c
         call local (rerrsm,   rerrsml,  ien,  10,'scatter ')
         call local (rmass,   rmassl,  ien,  1,  'scatter ')
@@ -9525,9 +9524,9 @@ c
       return
       end
 
-!> This subroutine computes the element LHS matrix and the normal 
-!! to the boundary for computation of (output) boundary fluxes. 
-!! 
+!> This subroutine computes the element LHS matrix and the normal
+!! to the boundary for computation of (output) boundary fluxes.
+!!
 !! input:<BR>
 !! @param[in] shpb(nen,nintg) Boundary element shape-functions
 !! @param[in] shglb(nsd,nen,nintg) Boundary element grad-shape-functions
@@ -9539,9 +9538,9 @@ c
 !! @param[out] flhsl(npro,nenl,1) Element lumped lhs on flux boundary
 !! @param[out] fnrml(npro,nenl,nsd) RHS of LS projection of normal to flux boundary
 !!
-!! Note: Special lumping technique is used to compute the LHS. 
-!!       See T.J.R. Hughes, "The Finite Element Method: Linear 
-!!       Static and Dynamic Finite Element Analysis", page 445.  
+!! Note: Special lumping technique is used to compute the LHS.
+!!       See T.J.R. Hughes, "The Finite Element Method: Linear
+!!       Static and Dynamic Finite Element Analysis", page 445.
 !!
 !! Note: Least-squares projection is used to compute the normal to
 !!       the boundary at the nodes.  This routine provides the element
@@ -9588,39 +9587,39 @@ c
       fmstot = zero
 c
 c
-c.... compute the normal to the boundary 
+c.... compute the normal to the boundary
 c
 
       v1 = xlb(:,2,:) - xlb(:,1,:)
       v2 = xlb(:,3,:) - xlb(:,1,:)
-      
+
       if (lcsyst .eq. 1) then
          temp1 = v1(:,2) * v2(:,3) - v2(:,2) * v1(:,3)
          temp2 = v2(:,1) * v1(:,3) - v1(:,1) * v2(:,3)
          temp3 = v1(:,1) * v2(:,2) - v2(:,1) * v1(:,2)
-      else 
+      else
          temp1 = - v1(:,2) * v2(:,3) + v2(:,2) * v1(:,3)
          temp2 = - v2(:,1) * v1(:,3) + v1(:,1) * v2(:,3)
          temp3 = - v1(:,1) * v2(:,2) + v2(:,1) * v1(:,2)
       endif
-c     
+c
       temp       = one / sqrt ( temp1**2 + temp2**2 + temp3**2 )
       bnorm(:,1) = temp1 * temp
       bnorm(:,2) = temp2 * temp
       bnorm(:,3) = temp3 * temp
-      
+
       do intp = 1, ngaussb
 c
 c.... get the hierarchic shape functions at this int point
 c
 c        BUG FIX - DES - 30JAN2014 was getshp
-         call getshpb(shpb,        shglb,        sgn, 
+         call getshpb(shpb,        shglb,        sgn,
      &               shape,       shdrv)
 c
          WdetJb     = Qwtb(lcsyst,intp) / (four*temp)
 c
 c.... compute the lumped LHS and normal
-c          
+c
          do n = 1, nenl ! when changed to nshl solution degraded ipord 10
             flhsl(:,n,1) = flhsl(:,n,1) + WdetJb * shape(:,n)
 
@@ -9633,13 +9632,13 @@ c for curved geometries the below construct for the normals has to be used
      &                                           * shape(:,n)
           enddo
 c
-c  To best represent this case it should be assigned to the vertex 
+c  To best represent this case it should be assigned to the vertex
 c  modes and higher entities should get zero as is done below
 c
           fmstot = fmstot + WdetJb
 c
         enddo
-        
+
 c$$$        do i=1,nenl
 c$$$           fnrml(:,i,:)=bnorm(:,:)
 c$$$        enddo
@@ -9667,7 +9666,7 @@ c
 c
 c
 c
-      use LagrangeMultipliers 
+      use LagrangeMultipliers
 c
         include "global.h"
         include "common_blocks/conpar.h"
@@ -9690,7 +9689,7 @@ c higher rather than inline abs on pointer as in past versions
 c iens is the signed ien array ien is unsigned
 c
       ien=abs(iens)
-c       
+c
 c.... Accumulate the lhs
 c
       do e = 1, npro ! loop over the elements
@@ -9735,9 +9734,9 @@ c
       if(Lagrange.gt.zero) then
          do e = 1, npro ! loop over the elements
            do aa = 1, nshlb ! loop over the local equation numbers
-                      i = ien(e,aa) 
-                      c = col(i)    
-                      n = col(i+1) - c  
+                      i = ien(e,aa)
+                      c = col(i)
+                      n = col(i+1) - c
                       do b = 1, nshlb
                          k = sparseloc( row(c), n, ien(e,b) ) + c-1
 c
@@ -9783,7 +9782,7 @@ c
 
       real*8 xSebe(npro,nshl,nshl)
       integer ien(npro,nshl), col(nshg+1), row(nshg*nnz)
-      real*8  lhsS(nnz_tot) 
+      real*8  lhsS(nnz_tot)
 c
       integer      aa,      b,      c,      e,      i,      k,      n
 c
@@ -9818,7 +9817,7 @@ c
       end
 
 !> This function finds the location of the non-zero elements
-!! of the LHS matrix in the sparsely stored matrix 
+!! of the LHS matrix in the sparsely stored matrix
 !! lhsK(nflow*nflow,nnz*numnp)
 !!
 !! Nahid Razmara, Spring 2000.       (Sparse Matrix)
@@ -9855,9 +9854,9 @@ c
       end
 
       subroutine genadj (colm,         rowp, icnt )
-c     
+c
       use pointer_data
-c     
+c
         include "global.h"
         include "common_blocks/blkdat.h"
         include "common_blocks/conpar.h"
@@ -9865,7 +9864,7 @@ c
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
         include "common_blocks/workfc.h"
-c   
+c
 C
 C     Argument variables
 C
@@ -9876,7 +9875,7 @@ C
       INTEGER             i,           ibig,        iblk,        iel
       INTEGER             imin,        j,           maxfill
       INTEGER             ncol,        nnonzero,    nnza
-C  
+C
       integer rowp(nshg*nnz),         colm(nshg+1)
       integer adjcnt(nshg),    row_fill_list(nshg,6*nnz), mloc(1)
 c                                          change ^ if overflow
@@ -9885,42 +9884,42 @@ c                                   also change overflow check in asadj TWICE
       real*8, allocatable, dimension(:) :: tmpr
 
       adjcnt=0
-      
+
       do iblk = 1, nelblk
-c     
+c
 c.... set up the parameters
-c     
+c
          iel    = lcblk(1,iblk)
          lelCat = lcblk(2,iblk)
          lcsyst = lcblk(3,iblk)
          iorder = lcblk(4,iblk)
          nenl   = lcblk(5,iblk) ! no. of vertices per element
          nshl   = lcblk(10,iblk)
-         npro   = lcblk(1,iblk+1) - iel 
-         
-c     
+         npro   = lcblk(1,iblk+1) - iel
+
+c
 c.... compute sparse matrix data structures
-c     
-         call Asadj (row_fill_list,                       
+c
+         call Asadj (row_fill_list,
      &               mien(iblk)%p,  adjcnt )
-         
+
       enddo
-      
+
       call sumgatInt ( adjcnt, nshg, nnonzero)
       if ( myrank .eq. master) then
          write (*,*) 'Number of global nonzeros ',nnonzero
       endif
 
-c     
+c
 c     build the colm array
-c     
+c
       colm(1)=1
       do i=1,nshg
          colm(i+1)=colm(i)+adjcnt(i)
       enddo
-c     
+c
 c     sort the rowp into increasing order
-c     
+c
       ibig=10*nshg
       icnt=0
       tmprdim=maxval(adjcnt)
@@ -9945,8 +9944,8 @@ c     NEED TO CLARIFY THIS !!!
          write(*,*) 'increase nnz in genmat to',nnza
          stop
       else
-         write(*,*) 'nnz ok  nnz=',nnz,' actually needed',nnza   
-         write(*,*) myrank,' is my rank and my nnz_tot is: ',icnt   
+         write(*,*) 'nnz ok  nnz=',nnz,' actually needed',nnza
+         write(*,*) myrank,' is my rank and my nnz_tot is: ',icnt
       endif
       return
       end
@@ -9958,11 +9957,11 @@ c     NEED TO CLARIFY THIS !!!
 !! @param[in] nBC(nshg) Boundary condition mapping array
 !!
 !! output:<BR>
-!! @param[out] BC(nshg,ndofBC) The constraint data for prescribed BC 
+!! @param[out] BC(nshg,ndofBC) The constraint data for prescribed BC
 !!
 !! <B>Note</B>: genBC1 reduces the input data for the velocity. In the
-!!       case of varying velocity direction in the generation, the 
-!!       results may not be correct. (since a linearity assumption is 
+!!       case of varying velocity direction in the generation, the
+!!       results may not be correct. (since a linearity assumption is
 !!       made in the generation).
 
       subroutine genBC (iBC,  BC,   x,   ilwork, iper)
@@ -10004,7 +10003,7 @@ c Remember, ndof=nsd+2+nsclr
 c
 c Arrays in the following 1 line are now dimensioned in readnblk
 c        dimension BCinp(numpbc,ndof+7)
-c  
+c
       dimension BCtmp(nshg,ndof+7)
 c
 c ndof+7= 3(thermos) + (nsd-1)*(nsd+1) + nscalars + 1 (theta)
@@ -10016,23 +10015,23 @@ c.... convert boundary condition data
 c
       BCtmp = zero
 c
-      if(numpbc.ne.0) then  
+      if(numpbc.ne.0) then
          do i = 1, ndof+7
             where (nBC(:) .ne. 0) BCtmp(:,i) = BCinp(nBC(:),i)
          enddo
          deallocate(BCinp)
       endif
-            
+
 c
       if(any(BCtmp(:,12).ne.0)) then
          iabc=1
          allocate (acs(nshg,2))
          where (btest(iBC,10))
-            acs(:,1) = cos(BCtmp(:,12)) 
-            acs(:,2) = sin(BCtmp(:,12)) 
+            acs(:,1) = cos(BCtmp(:,12))
+            acs(:,2) = sin(BCtmp(:,12))
          endwhere
       endif
-           
+
 c
 c.... ------------------------>  Conversion  <-------------------------
 c
@@ -10051,13 +10050,13 @@ c
          do n = 1, nshg
             if (nBC(n) .ne. 0) then
                nn = nn + 1
-               if(mod(nn,50).eq.1) 
+               if(mod(nn,50).eq.1)
      &              write(iecho,1000)ititle,(j,j=1,ndofBC)
                write (iecho,1100) n, (BC(n,i),i=1,ndofBC)
             endif
          enddo
       endif
-c     
+c
 c.... return
 c
       return
@@ -10070,7 +10069,7 @@ c
 c
       end
 
-!> This subroutine adjusts the boundary conditions to accommodate for 
+!> This subroutine adjusts the boundary conditions to accommodate for
 !! the velocity constraints in the non-axes directions. It copies the
 !! reduced constraint parameters in BC.
 !!
@@ -10089,7 +10088,7 @@ c
         include "common_blocks/conpar.h"
         include "common_blocks/genpar.h"
         include "common_blocks/sclrs.h"
-        
+
 C
 C     Argument variables
 C
@@ -10141,11 +10140,11 @@ c
 c.... if the two velocities are specified (x1 & x2-direction)
 c
 c
-c  Protect against user flipping the order of x1 and x2 in 
+c  Protect against user flipping the order of x1 and x2 in
 c  the vector 1 and vector 2.  Without this it will blow up.
 c
         do i=1,nshg
-          if(ibits(iBC(i),3,3) .eq. 3 .and. 
+          if(ibits(iBC(i),3,3) .eq. 3 .and.
      &       (BCtmp(i,4).eq.0 .or. BCtmp(i,9).eq.0)) then !flip them
               tmpbc(1:4)=BCtmp(i,4:7)
               BCtmp(i,4:7)=BCtmp(i,8:11)
@@ -10176,7 +10175,7 @@ c
           BC(:,3)     = BCtmp(:, 7) / BCtmp(:, 4)
           BC(:,4)     = BCtmp(:, 6) / BCtmp(:, 4)
 c
-          BCtmp(:, 9) = BCtmp(:, 4) * BCtmp(:, 9) 
+          BCtmp(:, 9) = BCtmp(:, 4) * BCtmp(:, 9)
           BCtmp(:,10) = BCtmp(:, 4) * BCtmp(:,10)
      &                - BCtmp(:, 8) * BCtmp(:, 6)
           BCtmp(:,11) = BCtmp(:, 4) * BCtmp(:,11)
@@ -10200,7 +10199,7 @@ c.... if two velocities are specified (x1 & x3-direction)
 c
         if (nsd .eq. 3) then
 c
-c  Protect against user flipping the order of x1 and x3 in 
+c  Protect against user flipping the order of x1 and x3 in
 c  the vector 1 and vector 2.  Without this it will blow up.
 c
         do i=1,nshg
@@ -10249,7 +10248,7 @@ c.... if two velocities are specified (x2 & x3-direction)
 c
         if (nsd .eq. 3) then
 c
-c  Protect against user flipping the order of x2 and x3 in 
+c  Protect against user flipping the order of x2 and x3 in
 c  the vector 1 and vector 2.  Without this it will blow up.
 c
         do i=1,nshg
@@ -10285,7 +10284,7 @@ c
           BC(:,4)     = BCtmp(:, 4) / BCtmp(:, 5)
 c
           BCtmp(:, 8) = BCtmp(:, 5) * BCtmp(:, 8)
-     &                - BCtmp(:, 9) * BCtmp(:, 4) 
+     &                - BCtmp(:, 9) * BCtmp(:, 4)
           BCtmp(:,10) = BCtmp(:, 5) * BCtmp(:,10)
           BCtmp(:,11) = BCtmp(:, 5) * BCtmp(:,11)
      &                - BCtmp(:, 9) * BCtmp(:, 7)
@@ -10325,6 +10324,7 @@ c
         include "common_blocks/outpar.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
+        include "common_blocks/nomodule.h"
 c
 C
 C     Argument variables
@@ -10373,7 +10373,7 @@ c           read(igeom) ientp
            call readdatablock(igeom,fname1,ientp,iientpsiz,
      &                     'integer'//CHAR(0), iotype)
 
-           do n=1,neltp,ibksz 
+           do n=1,neltp,ibksz
               nelblk=nelblk+1
               npro= min(IBKSZ, neltp - n + 1)
 c
@@ -10385,7 +10385,7 @@ c              lcblk(2,nelblk)  = iopen ! available for later use
               lcblk(6,nelblk)  = nfacel
               lcblk(7,nelblk)  = mattyp
               lcblk(8,nelblk)  = ndofl
-              lcblk(9,nelblk)  = nsymdl 
+              lcblk(9,nelblk)  = nsymdl
               lcblk(10,nelblk) = nshl ! # of shape functions per elt
 
 c             ELEMENT BLOCK ALLOCATION EXCEEDED
@@ -10408,6 +10408,17 @@ c
 c
               allocate (mien(nelblk)%p(npro,nshl))
               allocate (mxmudmi(nelblk)%p(npro,maxsh))
+
+c....  penalty method for porous media wgyang 2021/5
+              IF (iporouspen .eq. 1) THEN
+
+                npermprop = 1
+
+                allocate (permpropelem(nelblk)%p(npro,npermprop))
+
+              ENDIF
+
+
 c
 c.... save the element block
 c
@@ -10442,8 +10453,8 @@ c
         subroutine gendat (y,       ac,       x, lgmapping,  iBC,   BC,
      &                     iper,    ilwork,
      &                     shp,     shgl,    shpb,    shglb
-     &                    ) 
-      
+     &                    )
+
         use readarrays          ! used to acess nBC
         use dtnmod
         use pointer_data
@@ -10487,11 +10498,11 @@ c
      &            iper(nshg),    lgmapping(numnp)
 c
 c.... shape function declarations
-c     
-        dimension shp(MAXTOP,maxsh,MAXQPT),  
-     &            shgl(MAXTOP,nsd,maxsh,MAXQPT), 
+c
+        dimension shp(MAXTOP,maxsh,MAXQPT),
+     &            shgl(MAXTOP,nsd,maxsh,MAXQPT),
      &            shpb(MAXTOP,maxsh,MAXQPT),
-     &            shglb(MAXTOP,nsd,maxsh,MAXQPT) 
+     &            shglb(MAXTOP,nsd,maxsh,MAXQPT)
 c
 c.... ---------------------------->  Nodes  <--------------------------
 c
@@ -10547,8 +10558,8 @@ c  We now take care of Direchlet to Neumann BC's.  It had to move here
 c  so that the IBC array was of size nshg and ready to be marked.
 c
 
-        if(nsclr.gt.0) then 
-           call initDtN         ! Dirichlet to Neumann module: 
+        if(nsclr.gt.0) then
+           call initDtN         ! Dirichlet to Neumann module:
                                      ! initialize this once only
            do iblk = 1, nelblb  ! number of blocks
               iel    = lcblkb(1,iblk)
@@ -10560,12 +10571,12 @@ c
 c
 c if this element has the BCB AND it has not been found yet then mark it
 c
-                 if(miBCB(iblk)%p(i,2).lt.0) then  
+                 if(miBCB(iblk)%p(i,2).lt.0) then
                     idtn = 1    !set the flag for dtn bc's
                     do j=1,nshapeb
                        do isclr=1,nsclr
                           ignd=mienb(iblk)%p(i,j)
-                             ifeature(ignd) = abs(miBCB(iblk)%p(i,2))       
+                             ifeature(ignd) = abs(miBCB(iblk)%p(i,2))
                              iBC(ignd)=ior(iBC(ignd),2**13)
                                 ! must mark this as a Neumann BC now
                              miBCB(iblk)%p(i,1)=
@@ -10585,11 +10596,11 @@ c.... --------------------->  Initial Conditions  <--------------------
 c
 c.... generate the initial conditions and initialize time varying BC
 c
-        call genini (iBC,      BC,         y, 
-     &               ac,       iper, 
-     &               ilwork,  
+        call genini (iBC,      BC,         y,
+     &               ac,       iper,
+     &               ilwork,
      &               x,  lgmapping,
-     &               shp,     shgl,    shpb,    shglb) 
+     &               shp,     shgl,    shpb,    shglb)
 c
 c.... close the geometry, boundary condition and material files
 c
@@ -10616,7 +10627,7 @@ c
 c
         end
 
-!> Compute the bounding box for the 
+!> Compute the bounding box for the
 !! computational domain
 
         subroutine xyzbound(x)
@@ -10698,8 +10709,8 @@ C
 !!        + 64 * iBC_7 + 128 * iBC_8 + 256 * iBC_9 + 512 * iBC_10
 !!          sclr1         sclr2        sclr3         sclr4
 !!
-!!        + 1024 * iBC_11  + 2048* iBC_12 
-!!          perioidicity     spebc          
+!!        + 1024 * iBC_11  + 2048* iBC_12
+!!          perioidicity     spebc
 !!
 !!  @params[out] nBC(nshg) Boundary Condition mapping array
 
@@ -10784,13 +10795,13 @@ C     Local variables
 C
       INTEGER             nerr
 C
-      real*8, allocatable :: tmpQpt (:,:), tmpQwt (:) 
-      real*8, allocatable :: tmpQptb(:,:), tmpQwtb(:) 
+      real*8, allocatable :: tmpQpt (:,:), tmpQwt (:)
+      real*8, allocatable :: tmpQptb(:,:), tmpQwtb(:)
 
 c
 c.... compute the shape function parameters
 c
-        
+
 c
 c.... linear tets only
 c
@@ -10799,7 +10810,7 @@ c
         call error ('genint  ','tetsonly', nen)
       endif
 
-c 
+c
 c.... get quadrature data for interior and boundary elements
 c
 c
@@ -10810,8 +10821,8 @@ c 2014-01-01:  does the original genint.f contain a bug?
 c it seems like this routine would do the wrong thing for
 c all cases where nen.ne.4
 c due to misplaced endif -NMW
-             
-c      if (nen.eq.4) then 
+
+c      if (nen.eq.4) then
          nshape  = (ipord+1)*(ipord+2)*(ipord+3)/6
          nshapeb = (ipord+1)*(ipord+2)/2
 c      endif
@@ -10836,33 +10847,33 @@ c      endif
       case (4)
          nintb(1) = 12
       end select
-      
-      allocate (tmpQpt (4,nint(1)))           
-      allocate (tmpQwt (nint(1)))           
-      allocate (tmpQptb(4,nintb(1)))           
-      allocate (tmpQwtb(nintb(1)))           
-      
+
+      allocate (tmpQpt (4,nint(1)))
+      allocate (tmpQwt (nint(1)))
+      allocate (tmpQptb(4,nintb(1)))
+      allocate (tmpQwtb(nintb(1)))
+
       call symtet(nint(1),tmpQpt,tmpQwt,nerr) ! interior elements
       Qpt(1,1:4,1:nint(1)) = tmpQpt(1:4,1:nint(1))
       Qwt(1,1:nint(1))     = tmpQwt(1:nint(1))
-      
-      
+
+
       call symtri(nintb(1),tmpQptb,tmpQwtb,nerr) ! boundary elements
       Qptb(1,1:4,1:nintb(1)) = tmpQptb(1:4,1:nintb(1))
       Qwtb(1,1:nintb(1))     = tmpQwtb(1:nintb(1))
-      
+
       deallocate (tmpQpt)
       deallocate (tmpQwt)
       deallocate (tmpQptb)
       deallocate (tmpQwtb)
-        
+
 c
 c.... adjust quadrature weights to be consistent with the
-c     design of tau. 
+c     design of tau.
 c
       Qwt(1,:) = (four/three)*Qwt(1,:)
       Qwtb(1,:) = two*Qwtb(1,:)
-        
+
       return
       end
 
@@ -10885,17 +10896,17 @@ C
 C
         real*8 x(numnp,nsd)
 c
-        real*8 shp(MAXTOP,maxsh,MAXQPT),   
-     &            shgl(MAXTOP,nsd,maxsh,MAXQPT) 
+        real*8 shp(MAXTOP,maxsh,MAXQPT),
+     &            shgl(MAXTOP,nsd,maxsh,MAXQPT)
 c
         real*8, allocatable :: tmpshp(:,:), tmpshgl(:,:,:)
-        
+
 c
-c gmass came in via pointer_data and will 
+c gmass came in via pointer_data and will
 c be available wherever it is included  (allocate it now).
 c
 
-        allocate (gmass(nshg))  
+        allocate (gmass(nshg))
         gmass=zero
 c
 c.... loop over the element-blocks
@@ -10908,7 +10919,7 @@ c
           nenl   = lcblk(5,iblk) ! no. of vertices per element
           nshl   = lcblk(10,iblk)
           mattyp = lcblk(7,iblk)
-          npro   = lcblk(1,iblk+1) - iel 
+          npro   = lcblk(1,iblk+1) - iel
           inum   = iel + npro - 1
           ngauss = nint(lcsyst)
 c
@@ -10919,9 +10930,9 @@ c
           allocate (tmpshgl(nsd,nshl,MAXQPT))
           tmpshp(1:nshl,:) = shp(lcsyst,1:nshl,:)
           tmpshgl(:,1:nshl,:) = shgl(lcsyst,:,1:nshl,:)
-         
 
-          call AsImass (x,       tmpshp,     
+
+          call AsImass (x,       tmpshp,
      &                  tmpshgl, mien(iblk)%p,
      &                  gmass)
 
@@ -10939,7 +10950,7 @@ c
 !! each node.
 
         subroutine AsImass (x,      shp,
-     &                     shgl,    ien,     
+     &                     shgl,    ien,
      &                     gmass)
 c
         include "global.h"
@@ -10950,32 +10961,32 @@ c
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
 c
-        real*8 x(numnp,nsd),              
+        real*8 x(numnp,nsd),
      &         shp(nshl,maxsh),       shgl(nsd,nshl,ngauss),
      &         gmass(nshg)
 
         integer ien(npro,nshl)
 
 c
-        real*8    xl(npro,nenl,nsd),    WdetJ(npro), 
-     &            sgn(npro,nshl),       shape(npro,nshl),          
+        real*8    xl(npro,nenl,nsd),    WdetJ(npro),
+     &            sgn(npro,nshl),       shape(npro,nshl),
      &            locmass(npro,nshl),   shg(npro,nshl,nsd),
      &            fmstot(npro),         temp(npro),
      &            dxidx(npro,nsd,nsd),  shdrv(npro,nsd,nshl)
 
         integer aa
-c        
+c
 c
 c
 c.... gather the variables
 c
 c
-c.... get the matrix of mode signs for the hierarchic basis functions. 
+c.... get the matrix of mode signs for the hierarchic basis functions.
 c
         if (ipord .gt. 1) then
            call getsgn(ien,sgn)
         endif
-        
+
         call localx(x,      xl,     ien,    nsd,    'gather  ')
 c
 c.... zero the matrices if they are being recalculated
@@ -10990,27 +11001,27 @@ c
 c
 c.... get the hierarchic shape functions at this int point
 c
-           call getshp(shp,          shgl,      sgn, 
+           call getshp(shp,          shgl,      sgn,
      &                 shape,        shdrv)
 
 c
 c.... --------------------->  Element Metrics  <-----------------------
 c
-           call e3metric( xl,         shdrv,       dxidx,  
+           call e3metric( xl,         shdrv,       dxidx,
      &                    shg,        WdetJ)
 
 c
-c  get this quad points contribution to the integral of the square of  the 
+c  get this quad points contribution to the integral of the square of  the
 c  shape function
 c
            do aa = 1,nshl
-              locmass(:,aa)= locmass(:,aa) 
+              locmass(:,aa)= locmass(:,aa)
      &             + shape(:,aa)*shape(:,aa)*WdetJ
            enddo
 c
 c also accumulate this quad points contribution to the integral of the element
 c volume (integral Na^2 d Omega)
-c 
+c
            fmstot= fmstot + WdetJ ! intregral  d Omega
 c
 c.... end of integration loop
@@ -11049,15 +11060,15 @@ c
         end
 
       subroutine lmassadd ( ac,       res,
-     &                      rowp,     colm,    
+     &                      rowp,     colm,
      &                      lhsK,     gmass)
-c     
+c
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/genpar.h"
         include "common_blocks/matdat.h"
         include "common_blocks/timdat.h"
-c     
+c
       real*8 ac(nshg,ndof), res(nshg,4), tmp,tmp1
       real*8 lhsK(9,nnz_tot), gmass(nshg), rho(nshg)
       integer rowp(nnz*nshg),  colm(nshg+1)
@@ -11090,20 +11101,20 @@ c
          res(:,2)=res(:,2)-ac(:,2)*rho(:)
          res(:,3)=res(:,3)-ac(:,3)*rho(:)
       endif
-     
+
       return
       end
 
       subroutine lmassaddSclr ( ac,       res,
-     &                          rowp,     colm,    
+     &                          rowp,     colm,
      &                          lhsS,     gmass)
-c     
+c
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/genpar.h"
         include "common_blocks/matdat.h"
         include "common_blocks/timdat.h"
-c     
+c
       real*8 ac(nshg),       res(nshg), tmp, tmp1
       real*8 lhsS(nnz_tot), gmass(nshg), rho(nshg)
       integer rowp(nnz*nshg),  colm(nshg+1)
@@ -11131,14 +11142,14 @@ c
          rho=rho*gmass*tmp1  ! reuse rho
          res(:)=res(:)-ac(:)*rho(:)
       endif
-     
+
       return
       end
 
 !> This routine saves the element block data.
 !!
 !! input:<BR>
-!! @param[in] ientmp(npro,nshl) Nodal connectivity 
+!! @param[in] ientmp(npro,nshl) Nodal connectivity
 !! @param[in] mattmp(npro) Material type flag
 !!
 !! output:<BR>
@@ -11179,7 +11190,7 @@ c
 
 !> This subroutine generates shape functions for tetra elements
 
-        subroutine genshp (shp,    shgl, nshp, nblk)  
+        subroutine genshp (shp,    shgl, nshp, nblk)
 c
         include "global.h"
         include "common_blocks/blkdat.h"
@@ -11198,7 +11209,7 @@ C     Local variables
 C
       INTEGER             i,           iblk
 C
-        dimension shp(MAXTOP,maxsh,MAXQPT), 
+        dimension shp(MAXTOP,maxsh,MAXQPT),
      &            shgl(MAXTOP,nsd,maxsh,MAXQPT)
 c
 c.... loop through element blocks
@@ -11206,7 +11217,7 @@ c
         maxnint=1
           do iblk = 1, nblk
 c
-c.... get coord. system and element type 
+c.... get coord. system and element type
 c
             lcsyst = lcblk(3,iblk)
             nshl   = lcblk(10,iblk)
@@ -11216,14 +11227,14 @@ c
             select case ( lcsyst )
             case ( 1 )          ! tets
                maxnint=max(maxnint,nint(lcsyst))
-            do i=1,nint(lcsyst)  
+            do i=1,nint(lcsyst)
                call shpTet(ipord,Qpt(1,1:3,i),shp(1,:,i),shgl(1,:,:,i))
             enddo
-            shgl(1,:,1:nshl,1:nint(lcsyst)) = 
+            shgl(1,:,1:nshl,1:nint(lcsyst)) =
      &      shgl(1,:,1:nshl,1:nint(lcsyst))/two
-c     
+c
 c            case ( 2 )          ! hexes
-c     
+c
 
 c
 c            case ( 3 )          ! wedges
@@ -11231,7 +11242,7 @@ c
 
 c
 c            case ( 5 )          ! pyramids
-c            
+c
 
 c
 c.... nonexistent element
@@ -11253,7 +11264,7 @@ c
 
 !> This subroutine generates shape functions for tetra elements
 
-      subroutine genshpb (shpb,    shglb, nshpb, nblk)  
+      subroutine genshpb (shpb,    shglb, nshpb, nblk)
         include "global.h"
         include "common_blocks/blkdat.h"
         include "common_blocks/elmpar.h"
@@ -11271,14 +11282,14 @@ C     Local variables
 C
       INTEGER             i,           iblk
 c
-      dimension shpb(MAXTOP,maxsh,MAXQPT), 
+      dimension shpb(MAXTOP,maxsh,MAXQPT),
      &          shglb(MAXTOP,nsd,maxsh,MAXQPT)
 c
 c.... loop through element blocks
 c
       do iblk = 1, nblk
 c
-c.... get coord. system and element type 
+c.... get coord. system and element type
 c
 
          lcsyst = lcblkb(3,iblk)
@@ -11288,31 +11299,31 @@ c
          select case ( lcsyst )
          case ( 1 )             ! tets
             nshl=lcblkb(9,iblk)
-            do i=1,nintb(lcsyst)  
+            do i=1,nintb(lcsyst)
                call shpTet(ipord,Qptb(1,1:3,i),shpb(1,:,i),
      &              shglb(1,:,:,i))
             enddo
-            shglb(1,:,1:nshl,1:nintb(lcsyst)) = 
+            shglb(1,:,1:nshl,1:nintb(lcsyst)) =
      &           shglb(1,:,1:nshl,1:nintb(lcsyst))/two
-c     
+c
 c         case ( 2 )             ! hexes
-c     
+c
 
-c     
+c
 c         case ( 3 )             ! wedges with tri bd face
-c            
+c
 
-c     
+c
 c         case ( 4 )             ! wedges with quad bd face
-c     
+c
 
 c
 c         case ( 5 )             ! pyramids with quad bd face
-c     
+c
 
 c
 c         case ( 6 )             ! pyramids with quad bd face
-c     
+c
 
 c
 c.... nonexistent element
@@ -11415,7 +11426,7 @@ c
         include "common_blocks/matdat.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
- 
+
 C
 C     Local variables
 C
@@ -11432,22 +11443,22 @@ C
       real*8  kay, epsilon
      &        h_param, prop_blend(npro),test_it(npro)
 c
-c    
+c
 c.... get the material properties (2 fluid models will need to determine
 c     the "interpolated in phase space" properties....constant for now.
-c     two options exist in the interpolation 1) smooth (recommended) 
-c     interpolation of nodal data, 2) discontinuous "sampling" phase at 
+c     two options exist in the interpolation 1) smooth (recommended)
+c     interpolation of nodal data, 2) discontinuous "sampling" phase at
 c     quadrature points.
 c
 CAD
-CAD    prop_blend is a smoothing function to avoid possible large density 
+CAD    prop_blend is a smoothing function to avoid possible large density
 CAD   gradients, e.g., water and air flows where density ratios can approach
 CAD   1000.
 CAD
 CAD    epsilon_ls is an adjustment to control the width of the band over which
-CAD    the properties are blended. 
+CAD    the properties are blended.
 
-c      DES - ONLY ONE FLUID PROPERTY CONSIDERED    
+c      DES - ONLY ONE FLUID PROPERTY CONSIDERED
        rho  = datmat(1,1,1) ! single fluid model, i.e., only 1 density
        rmu = datmat(1,2,1)
 c      DES ------------------------------------
@@ -11457,9 +11468,9 @@ CAD   density 1, datmat(1,1,1), the fluid,  and density 2, datmat(1,1,2)
 CAD     the gas
 
 c
-c  The above approach evaluates all intermediate quantities at the 
+c  The above approach evaluates all intermediate quantities at the
 c  quadrature point, then combines them to form the needed quantities there.
-c  1 alternative is calculating all quanties (only rho here) at the nodes and 
+c  1 alternative is calculating all quanties (only rho here) at the nodes and
 c  then interpolating the result to the quadrature points.  If this is done,
 c  do not forget to do the same thing for rou in e3b!!!
 c  ^^^^^^^^^^
@@ -11467,11 +11478,11 @@ c  ||||||||||
 c  WARNING
 c
 c.... dynamic model
-c      
+c
 c
       return
       end
-       
+
       subroutine getdiffsclr(shape, dwl, yl, diffus)
 
         include "global.h"
@@ -11481,7 +11492,7 @@ c
         include "common_blocks/shpdat.h"
         include "common_blocks/matdat.h"
 C
-C      
+C
       real*8   diffus(npro), rho(npro)
       real*8   yl(npro,nshl,ndof), dwl(npro,nshl), shape(npro,nshl)
       integer n, e
@@ -11511,7 +11522,7 @@ c$$$        B=5.5
          chi3=chi3*chi3*chi3
          cv1_3=cv1**3
          denom=chi3+cv1_3
-         
+
          f=ev2sa*chi3/denom - xmut
          dfds=chi3*(chi3+4.0*cv1_3)/(denom**2)
          rat=-f/dfds
@@ -11523,9 +11534,9 @@ c$$$        B=5.5
       write(*,*) dfds,rat,ev2sa,rm
  20   continue
       return
-      end  
+      end
 
-!> This subroutine compute the total number of 
+!> This subroutine compute the total number of
 !! nodes in the model
 
       subroutine gtnods
@@ -11555,11 +11566,11 @@ c
       if (myrank .eq. master) then
         write(6,*) 'Total number of nodes = ',nshgt
       endif
-c     
+c
       return
       end
 
-!> This file contains functions for dealing with higher order shape 
+!> This file contains functions for dealing with higher order shape
 !! functions at the element level.
 !! Returns the matrix of mode signs used for negating higher order
 !! basis functions. Connectivity array is assumed to have negative
@@ -11583,7 +11594,7 @@ C
       INTEGER             i
 C
       dimension ien(npro,nshl),  sgn(npro,nshl)
-      
+
       do i=nenl+1,nshl
          where ( ien(:,i) < 0 )
             sgn(:,i) = -one
@@ -11591,13 +11602,13 @@ C
             sgn(:,i) = one
          endwhere
       enddo
-      
-      return 
+
+      return
       end
- 
+
 !> Returns the matrix of element shape functions with the higher
 !! order modes correctly negated at the current quadrature point.
-     
+
       subroutine getshp(shp, shgl, sgn, shape, shdrv)
 c
         include "global.h"
@@ -11615,12 +11626,12 @@ C
 C     Local variables
 C
       INTEGER             i,           j
-C      
+C
       dimension shp(nshl,ngauss),   shgl(nsd,nshl,ngauss),
      &          sgn(npro,nshl),     shape(npro,nshl),
      &          shdrv(npro,nsd,nshl)
-      
-      
+
+
       do i=1,nenl
          shape(:,i) = shp(i,intp)
          do j=1,3
@@ -11631,17 +11642,17 @@ C
          do i=nenl+1,nshl
             shape(:,i) = sgn(:,i) * shp(i,intp)
             do j=1,3
-               shdrv(:,j,i) = shgl(j,i,intp)*sgn(:,i) 
+               shdrv(:,j,i) = shgl(j,i,intp)*sgn(:,i)
             enddo
          enddo
       endif
-      
-      return 
+
+      return
       end
 
 !> Returns the matrix of element shape functions with the higher
 !! order modes correctly negated at the current quadrature point.
-     
+
       subroutine getshpb(shp, shgl, sgn, shape, shdrv)
 c
         include "global.h"
@@ -11663,8 +11674,8 @@ C
       dimension shp(nshl,ngaussb),  shgl(nsd,nshl,ngaussb),
      &          sgn(npro,nshl),     shape(npro,nshl),
      &          shdrv(npro,nsd,nshl)
-      
-      
+
+
       do i=1,nenl
          shape(:,i) = shp(i,intp)
          do j=1,3
@@ -11675,17 +11686,17 @@ C
          do i=nenl+1,nshl
             shape(:,i) = sgn(:,i) * shp(i,intp)
             do j=1,3
-               shdrv(:,j,i) = shgl(j,i,intp)*sgn(:,i) 
+               shdrv(:,j,i) = shgl(j,i,intp)*sgn(:,i)
             enddo
          enddo
       endif
-      
-      return 
+
+      return
       end
- 
-!> Compute the higher order modes that lie on the boundary of the 
+
+!> Compute the higher order modes that lie on the boundary of the
 !! element.
-     
+
       subroutine getbnodes(lnode)
 c
         include "global.h"
@@ -11700,7 +11711,7 @@ C
 C     Local variables
 C
       INTEGER             n,           nem,         nfm
-C      
+C
       dimension lnode(27)
 
 c
@@ -11721,8 +11732,8 @@ c
             do n=1,nfm
                lnode(3+3*nem+n) = 4+6*nem+n
             enddo
-         endif       
-c     
+         endif
+c
 c.... other element types deleted or need to be implemented
 c
       else
@@ -11730,10 +11741,10 @@ c
      &        ,lcsyst
          stop
       endif
-      
-      return 
+
+      return
       end
-      
+
 !> Evaluate coefficient vector at its interpolation points
 
       subroutine evalAtInterp( ycoeff,  yvals,  x,   nvars, npts )
@@ -11753,13 +11764,13 @@ C     Local variables
 C
       INTEGER             i,           iblk,        iel,         j
 
-C      
+C
       integer nvars, npts, nHits(nshg)
-      
+
       real*8  ycoeff(nshg,ndof),   yvals(nshg,nvars),
      &        shp(nshl,npts),      shgl(nsd,nshl,npts),
      &        intpnt(3,npts),      x(numnp,nsd)
-      
+
       real*8, allocatable :: ycl(:,:,:)
       real*8, allocatable :: xl(:,:,:)
       real*8, allocatable :: yvl(:,:,:)
@@ -11783,29 +11794,29 @@ c
          nenl   = lcblk(5,iblk) ! no. of vertices per element
          nshl   = lcblk(10,iblk)
          ndofl  = lcblk(8,iblk)
-         npro   = lcblk(1,iblk+1) - iel 
+         npro   = lcblk(1,iblk+1) - iel
 
          allocate ( ycl(npro,nshl,ndof ) )
          allocate ( yvl(npro,nshl,nvars) )
          allocate ( xl(npro,nenl,nsd   ) )
          allocate ( sgn(npro,nshl)       )
-         
+
          call getsgn(mien(iblk)%p,sgn)
-         
+
          call localy( ycoeff, ycl, mien(iblk)%p, ndof,  'gather  ')
          call localx( x,      xl,  mien(iblk)%p, nsd,   'gather  ')
 
-         call eval  ( xl,       ycl,      yvl,      
-     &                shp,      shgl,     sgn,      
+         call eval  ( xl,       ycl,      yvl,
+     &                shp,      shgl,     sgn,
      &                nvars,    npts    )
 
 c
 c.... average coefficients since stresses may be discontinuous
-c         
-         call localSum( yvals,    yvl,    mien(iblk)%p,  
-     &                  nHits,    nVars)  
-         
-         
+c
+         call localSum( yvals,    yvl,    mien(iblk)%p,
+     &                  nHits,    nVars)
+
+
          deallocate ( ycl )
          deallocate ( yvl )
          deallocate ( sgn )
@@ -11821,16 +11832,16 @@ c
             yvals(i,j) = yvals(i,j)/nHits(i) !(real(nHits(i),8))
          enddo
       enddo
-      
+
       return
       end
 
 !> Evaluate in element coordinate system
 
-      subroutine eval( xl,      ycl,     yvl,     
+      subroutine eval( xl,      ycl,     yvl,
      &                 shp,     shgl,    sgn,
-     &                 nvars,   npts ) 
-      
+     &                 nvars,   npts )
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/elmpar.h"
@@ -11848,7 +11859,7 @@ C
       INTEGER             i,           j,           n
 C
       REAL*8                rmu
-C      
+C
       integer nvars
 c
       real*8  ycl(npro,nshl,ndof),   yvl(npro,nshl,nvars),
@@ -11857,15 +11868,15 @@ c
      &        shgl(nsd,nshl,npts),   xl(npro,nenl,nsd),
      &        shg(npro,nshl,nsd),    gradV(npro,nsd,nsd),
      &        dxidx(npro,nsd,nsd),   tmp(npro), wtmp
-      
+
       yvl = zero
 c
 c.... loop over interpolation points
 c
       do intp = 1, npts
-         call getshp(shp,          shgl,      sgn, 
+         call getshp(shp,          shgl,      sgn,
      &               shape,        shdrv)
-      
+
 c
 c.... pressure and velocity
 c
@@ -11877,7 +11888,7 @@ c
 c
 c.... viscous stress
 c
-         call e3metric( xl,         shdrv,      dxidx,  
+         call e3metric( xl,         shdrv,      dxidx,
      &                  shg,        tmp)
 
          gradV = zero
@@ -11885,18 +11896,18 @@ c
             gradV(:,1,1) = gradV(:,1,1) + shg(:,n,1) * ycl(:,n,2)
             gradV(:,2,1) = gradV(:,2,1) + shg(:,n,1) * ycl(:,n,3)
             gradV(:,3,1) = gradV(:,3,1) + shg(:,n,1) * ycl(:,n,4)
-c     
+c
             gradV(:,1,2) = gradV(:,1,2) + shg(:,n,2) * ycl(:,n,2)
             gradV(:,2,2) = gradV(:,2,2) + shg(:,n,2) * ycl(:,n,3)
             gradV(:,3,2) = gradV(:,3,2) + shg(:,n,2) * ycl(:,n,4)
-c     
+c
             gradV(:,1,3) = gradV(:,1,3) + shg(:,n,3) * ycl(:,n,2)
             gradV(:,2,3) = gradV(:,2,3) + shg(:,n,3) * ycl(:,n,3)
             gradV(:,3,3) = gradV(:,3,3) + shg(:,n,3) * ycl(:,n,4)
          enddo
 
          rmu = datmat(1,2,1)
-            
+
          yvl(:,intp,6 ) = two * rmu * gradV(:,1,1)
          yvl(:,intp,7 ) = two * rmu * gradV(:,2,2)
          yvl(:,intp,8 ) = two * rmu * gradV(:,3,3)
@@ -11907,13 +11918,13 @@ c
 
 c
 c.... loop over interpolation points
-c         
+c
       enddo
-      
+
       return
       end
 
-!> This routine inputs all the necessary data, allocates required array 
+!> This routine inputs all the necessary data, allocates required array
 !! storage, and sets up the appropriate parameters for the processing.
 
         subroutine input(npe,mrank)
@@ -11964,7 +11975,7 @@ c
 c
 c.... open the echo file (echo closed at exit)
 c
-        if (myrank == master) 
+        if (myrank == master)
      &  open (unit=iecho, file=fecho, status='unknown',   err=996)
 
 c
@@ -11973,7 +11984,7 @@ c
 c.... echo the global information
 c
 
-        title = 'Default Ensa Case'     
+        title = 'Default Ensa Case'
         call date_and_time (date)
         title  = title(1:69) // ' ' // date(7:8) // '/' // date(5:6)
      &                                           // '/' // date(3:4)
@@ -12005,10 +12016,10 @@ c.... check the input parameters
 c
           if (ntseq  .gt. 100) call error ('input   ','ntseq   ',ntseq)
 c
-          if (ivart  .lt. 1 .or. ivart .gt. 3) 
+          if (ivart  .lt. 1 .or. ivart .gt. 3)
      &                       call error ('input   ','ivart   ',ivart)
 c
-          if (iDC    .lt. 0 .or. iDC   .gt. 4) 
+          if (iDC    .lt. 0 .or. iDC   .gt. 4)
      &                       call error ('input   ','iDC     ',iDC)
 c
           if (Kspace .lt. 1)   call error ('input   ','Kspace  ',Kspace)
@@ -12016,7 +12027,7 @@ c
           if (nGMRES .lt. 1)   call error ('input   ','nGMRES  ',nGMRES)
         endif
 c
-c.... allocate memory for the Q-R algorithm of GMRES 
+c.... allocate memory for the Q-R algorithm of GMRES
 c
         mHBrg = mpoint ('H-Berg  ', Kspace+1,Kspace,  0)
         meBrg = mpoint ('e-Berg  ', Kspace+1,0,       0)
@@ -12030,10 +12041,10 @@ c.... echo the solver information
 c
         iprev = 0
         do i = 1, ntseq
-          if (mod(i,50).eq.1 .and. myrank .eq. master) 
+          if (mod(i,50).eq.1 .and. myrank .eq. master)
      &      write(iecho,1400) ititle
 
-          if (myrank .eq. master) 
+          if (myrank .eq. master)
      &      write (iecho,1500)      i, nstep(i),  niter(i),  impl(i),
      &                                 LHSupd(i), epstol(i)
 c
@@ -12043,19 +12054,19 @@ c
 c.... echo the spatial and time integration information
 c
         do i = 1, ntseq
-          if (mod(i,50).eq.1 .and. myrank .eq. master) 
+          if (mod(i,50).eq.1 .and. myrank .eq. master)
      &      write(iecho,1600) ititle
-          if (myrank .eq. master) 
+          if (myrank .eq. master)
      &      write (iecho,1700)      i, intg(1,i), intg(2,i), rhoinf(i),
      &                                 loctim(i), Delt(i),   CFLfl(i),
      &                                 CFLsl(i)
 c
         enddo
 c
-        if (myrank .eq. master) 
-     &    write (iecho,1800) ititle, ntout,  ioform, ro,     vel,    
+        if (myrank .eq. master)
+     &    write (iecho,1800) ititle, ntout,  ioform, ro,     vel,
      &                               temper, press,  entrop
-        
+
         if (myrank .eq. master) then
            write (*,*) 'Element block size = ',ibksiz
         endif
@@ -12101,7 +12112,7 @@ c
           s0sh(i) = s0sh(i) + Rh * ( one - log(sigs(i)*Trot(i)) )
         enddo
 c
-        Rgas  = one / ( xN2 / Rs(1) + xO2 / Rs(2) ) 
+        Rgas  = one / ( xN2 / Rs(1) + xO2 / Rs(2) )
 c        Rgas  = 0.4*716.5
         yN2   = xN2 * Rgas / Rs(1)
         yO2   = xO2 * Rgas / Rs(2)
@@ -12182,7 +12193,7 @@ c
 !> This program satisfies the boundary conditions on the Y-variables.
 !!
 !! input:<BR>
-!! @param[in] y(nshg,nflow) y variables 
+!! @param[in] y(nshg,nflow) y variables
 !! @param[in] iBC(nshg) Boundary Condition Code
 !! @param[in] BC(nshg,ndofBC) Boundary condition constraint parameters
 !!
@@ -12265,7 +12276,7 @@ c
           where (ibits(iBC,3,3) .eq. 7)
             y(:,1) =  BC(:,3)
             y(:,2) =  BC(:,4)
-            y(:,3) =  BC(:,5) 
+            y(:,3) =  BC(:,5)
           endwhere
 c
 c       endif
@@ -12285,14 +12296,14 @@ c
         endif
 c
 c.... local periodic (and axisymmetric) boundary conditions (no communications)
-c 
+c
       do i = 1,nflow
            y(:,i) = y(iper(:),i)
            ac(:,i) = ac(iper(:),i)
       enddo
 c
 c.... communications
-c 
+c
         if (numpe > 1) then
            call commu (y, ilwork, nflow, 'out')
            call commu (ac, ilwork, nflow, 'out')
@@ -12304,7 +12315,7 @@ c
            call rotabc(y, iBC, 'out')
            call rotabc(ac, iBC, 'out')
         endif
-     
+
 c
 c.... return
 c
@@ -12361,14 +12372,14 @@ c
         endwhere
 c
 c.... local periodic (and axisymmetric) boundary conditions (no communications)
-c 
+c
       do i = 1,nshg
           y(i,id) = y(iper(i),id)
           ac(i,id) = ac(iper(i),id)
       enddo
 c
 c.... communications
-c 
+c
         if (numpe > 1) then
            T=y(:,id)
            call commu (T, ilwork, 1, 'out')
@@ -12377,23 +12388,23 @@ c
            call commu (T, ilwork, 1, 'out')
            ac(:,id)=T
         endif
-     
+
         return
         end
 
 !> Initialize the predictor multicorrector (set up parameters)
 
-      subroutine itrSetup ( y,  acold ) 
-      
+      subroutine itrSetup ( y,  acold )
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/genpar.h"
         include "common_blocks/inpdat.h"
         include "common_blocks/nomodule.h"
         include "common_blocks/timdat.h"
-C    
+C
       real*8     y(nshg,ndof),     acold(nshg,ndof)
-      
+
 c
 c  Define the Hulbert parameters
 c  second order if between (and including) 0 and 1 otherwise backward Euler
@@ -12413,17 +12424,17 @@ c
             betai=0.0
          endif
       endif
-c     
+c
 c.... set the jacobian type
-c     
+c
       Jactyp=0
       if (impl(itseq) .eq. 3) then
          Jactyp = 1
          impl(itseq) = 2
       endif
-c     
+c
 c.... same_Dy predictor special case
-c     
+c
       if (ipred.eq.4 .and. itseq .eq. 1 ) then
          y=y-(one-alfi)*Delt(1)*acold
          if ( rhoinf(itseq) .eq. 0.0 ) then
@@ -12436,15 +12447,15 @@ c
       Dtgl   = one / Delt(itseq)  ! caution: inverse of time step
       CFLfld = CFLfl(itseq)
       CFLsld = CFLsl(itseq)
-      
+
       return
       end
 
 !> Predict solution at time n+1
 
       subroutine itrPredict (yold,  y,  acold,   ac,   uold,   u)
-      
-      use LagrangeMultipliers 
+
+      use LagrangeMultipliers
 
         include "global.h"
         include "common_blocks/conpar.h"
@@ -12456,32 +12467,32 @@ C
 C     Local variables
 C
       REAL*8                fct,         fct1,        fct2,        fct3
-C   
+C
       real*8        y(nshg,ndof),               ac(nshg,ndof),
      &              u(nshg,nsd),                yold(nshg,ndof),
      &              acold(nshg,ndof),           uold(nshg,nsd)
 
-      
+
       if ( ipred.eq.1) then     ! yn+1_pred=yn
          fct = (gami-one)/gami
          y  = yold
          ac = acold * fct
-         if(ideformwall.eq.1) 
-     &          u(:,1:3) = uold(:,1:3) + Delt(itseq)*yold(:,1:3) + 
+         if(ideformwall.eq.1)
+     &          u(:,1:3) = uold(:,1:3) + Delt(itseq)*yold(:,1:3) +
      &              pt5*((gami-two*betai)/gami)*
      &              Delt(itseq)*Delt(itseq)*acold(:,1:3)
       endif
-c     
+c
       if ( ipred.eq.2) then     ! an+1_pred=0
          y  = yold + (one - gami)/Dtgl * acold
          ac = 0.0
       endif
-c     
+c
       if(ipred.eq.3 ) then      ! an+1_pred=an
          y  = yold+alfi*Delt(itseq)*acold
          ac = acold
       endif
-c     
+c
       if ( ipred.eq.4 ) then    ! protect from DC=4 rho=0, same dV
          fct1 = alfi/(one-alfi)
          fct2 = one-almi/gami
@@ -12489,19 +12500,19 @@ c
          y    = yold+fct1*(yold-y)
          ac   = acold*fct2+(y-yold)*fct3
       endif
-c     
+c
       if (Lagrange .gt. 0) then
          Lag = Lagold
       endif
-      
+
       return
       end
 
 !> Correct solution at time n+1
 
       subroutine itrCorrect ( y,     ac,   u,   solinc )
-      
-      use LagrangeMultipliers 
+
+      use LagrangeMultipliers
 
         include "global.h"
         include "common_blocks/conpar.h"
@@ -12512,23 +12523,23 @@ C
 C     Local variables
 C
       REAL*8                fct1,        fct2
-C   
-      real*8      y(nshg,ndof),               ac(nshg,ndof),  
+C
+      real*8      y(nshg,ndof),               ac(nshg,ndof),
      &            u(nshg,nsd),                solinc(nshg,4)
-      
+
       fct1 = gami*Delt(itseq)
       fct2 = gami*alfi*Delt(itseq)
-      
+
       y(:,1:3)  = y(:,1:3)  + fct1 * solinc(:,1:3)
       y(:,4  )  = y(:,4  )  + fct2 * solinc(:,4  )
       ac(:,1:3) = ac(:,1:3) + solinc(:,1:3)
 
-      if(ideformwall.eq.1) 
-     &   u(:,1:3)  = u(:,1:3)  + 
+      if(ideformwall.eq.1)
+     &   u(:,1:3)  = u(:,1:3)  +
      &            Delt(itseq)*Delt(itseq)*betai*solinc(:,1:3)
-c     
+c
       if (Lagrange .gt. 0) then
-         Lag(:,1:3) = Lag(:,1:3) + fct2 * Lagincr(:,1:3) 
+         Lag(:,1:3) = Lag(:,1:3) + fct2 * Lagincr(:,1:3)
       endif
       return
       end
@@ -12536,7 +12547,7 @@ c
 !> Correct solution at time n+1
 
       subroutine itrCorrectSclr ( y,     ac,   solinc )
-      
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/inpdat.h"
@@ -12549,25 +12560,25 @@ C
 C
       REAL*8                fct1
 C
-      real*8      y(nshg,ndof),               ac(nshg,ndof),  
+      real*8      y(nshg,ndof),               ac(nshg,ndof),
      &            solinc(nshg)
-      
+
       fct1 = gami*Delt(itseq)
       is=5+isclr
       y(:,is)  = y(:,is)  + fct1 * solinc(:)
       ac(:,is) = ac(:,is) + solinc(:)
-c     
+c
       return
       end
 
 !> Compute solution and acceleration at n+alpha
 
-      subroutine itrYAlpha ( uold,        yold,        acold,        
+      subroutine itrYAlpha ( uold,        yold,        acold,
      &                       u,           y,           ac,
      &                       uAlpha,      yAlpha,      acAlpha )
 
-c      use readarrays       !reads in uold and acold     
-      use LagrangeMultipliers 
+c      use readarrays       !reads in uold and acold
+      use LagrangeMultipliers
 
       include "global.h"
       include "common_blocks/nomodule.h"
@@ -12582,7 +12593,7 @@ c      use readarrays       !reads in uold and acold
 
       acAlpha(:,4) = zero  !pressure acceleration is never used but....
 
-      yAlpha (:,1:3) = yold(:,1:3) 
+      yAlpha (:,1:3) = yold(:,1:3)
      &                  + alfi * (y(:,1:3) - yold(:,1:3))
 
       acAlpha(:,1:3) = acold(:,1:3)
@@ -12590,18 +12601,18 @@ c      use readarrays       !reads in uold and acold
 
       yAlpha (:,4  ) = y(:,4)
 
-      if(ideformwall.eq.1) uAlpha (:,1:3) = uold(:,1:3) 
+      if(ideformwall.eq.1) uAlpha (:,1:3) = uold(:,1:3)
      &                  + alfi * (u(:,1:3) - uold(:,1:3))
-      
+
       if(ndof.ge.5) then
 c
 c  Now take care of temperature, turbulence, what have you
 c
-      
 
-         yAlpha (:,5:ndof  ) = yold(:,5:ndof) 
+
+         yAlpha (:,5:ndof  ) = yold(:,5:ndof)
      &                       + alfi * (y(:,5:ndof) - yold(:,5:ndof))
-         acAlpha(:,5:ndof  ) = acold(:,5:ndof) 
+         acAlpha(:,5:ndof  ) = acold(:,5:ndof)
      &                       + almi * (ac(:,5:ndof) - acold(:,5:ndof))
 
       endif
@@ -12618,7 +12629,7 @@ c
      &                      y,             ac,           u )
 
 c      use readarrays            !reads in uold and acold
-      use LagrangeMultipliers 
+      use LagrangeMultipliers
 
         include "global.h"
         include "common_blocks/nomodule.h"
@@ -12651,7 +12662,7 @@ c      use readarrays            !reads in uold and acold
 !! @param[in] n Number of d.o.f.'s to be copied
 !! @param[in] code The transfer code
 !! - .eq. 'gather  ', from global to local
-!! - .eq. 'scatter ', add  local to global 
+!! - .eq. 'scatter ', add  local to global
 !! - .eq. 'globaliz', from local to global
 
         subroutine local (global, rlocal, ientmp, n, code)
@@ -12677,7 +12688,7 @@ C
      &            ien(npro,nshl),           ientmp(npro,nshl)
 c
         character*8 code
-        
+
 c
 c.... cubic basis has negatives in ien
 c
@@ -12720,7 +12731,7 @@ c
           do j = 1, n
             do i = 1, nshl
               do nel = 1,npro
-                global(ien(nel,i),j) = global(ien(nel,i),j) 
+                global(ien(nel,i),j) = global(ien(nel,i),j)
      &                               + rlocal(nel,i,j)
               enddo
             enddo
@@ -12774,7 +12785,7 @@ c
 !! @param[in] n Number of d.o.f.'s to be copied
 !! @param[in] code The transfer code
 !! - .eq. 'gather  ', from global to local
-!! - .eq. 'scatter ', add  local to global 
+!! - .eq. 'scatter ', add  local to global
 !!
 
         subroutine localx (global, rlocal, ien, n, code)
@@ -12834,7 +12845,7 @@ c
           do j = 1, n
             do i = 1, nenl
               do nel = 1,npro
-                global(ien(nel,i),j) = global(ien(nel,i),j) 
+                global(ien(nel,i),j) = global(ien(nel,i),j)
      &                               + rlocal(nel,i,j)
               enddo
             enddo
@@ -12926,9 +12937,9 @@ c
 !! @param[in] n Number of d.o.f.'s to be copied
 !! @param[in] code The transfer code
 !! - .eq. 'gather  ', from global to local
-!! - .eq. 'scatter ', add  local to global 
+!! - .eq. 'scatter ', add  local to global
 !! - .eq. 'globaliz', from local to global
- 
+
       subroutine localb (global, rlocal, ientmp, n, code)
 c
         include "global.h"
@@ -12952,7 +12963,7 @@ C
      &            ien(npro,nshl),           ientmp(npro,nshl)
 c
         character*8 code
-        
+
 c
 c.... cubic basis has negatives in ien
 c
@@ -13004,7 +13015,7 @@ c
           do j = 1, n
             do i = 1, nshlb
               do nel = 1,npro
-                global(ien(nel,i),j) = global(ien(nel,i),j) 
+                global(ien(nel,i),j) = global(ien(nel,i),j)
      &                               + rlocal(nel,i,j)
               enddo
             enddo
@@ -13060,7 +13071,7 @@ c
 !! @param[in] n Number of d.o.f.'s to be copied
 !! @param[in] code The transfer code
 !! - .eq. 'gather  ', from global to local
-!! - .eq. 'scatter ', add  local to global 
+!! - .eq. 'scatter ', add  local to global
 !! - .eq. 'globaliz', from local to global
 !!
 
@@ -13087,7 +13098,7 @@ C
      &            ien(npro,nshl),           ientmp(npro,nshl)
 c
         character*8 code
-        
+
 c
 c.... cubic basis has negatives in ien
 c
@@ -13105,13 +13116,13 @@ c.... set timer
 c
 c          call timer ('Gather  ')
 c
-c.... gather the data to the current block 
+c.... gather the data to the current block
 c
 
 CAD      rlocal = yl={P, u, v, w, T, scalar1, ...}
 CAD  global = y = {u, v, w, P, T, scalar1, ...}
 
-CAD      Put u,v,w in the slots 2,3,4 of yl 
+CAD      Put u,v,w in the slots 2,3,4 of yl
 
           do j = 1, 3
             do i = 1, nshl
@@ -13126,7 +13137,7 @@ CAD      Put Pressure in the first slot of yl
           enddo
 
 CAD      Fill in the remaining slots with T, and additional scalars
-          
+
           if(n.gt.4) then
              do j = 5, n
                 do i = 1, nshl
@@ -13165,17 +13176,17 @@ c.... end
 c
         end
 
-c     
+c
 c--------------
 c     drvAllreduce
 c--------------
-c     
+c
       subroutine drvAllreduce ( eachproc, result, m )
-c     
+c
       include "global.h"
       include "mpif.h"
       include "common_blocks/workfc.h"
-c   
+c
 C     Argument variables
 C
       INTEGER             m
@@ -13186,16 +13197,16 @@ C     Local variables
 C
       INTEGER             ierr
 
-C  
+C
       dimension eachproc(m), result(m)
-c     
+c
       if (numpe > 1) then
-         call MPI_ALLREDUCE ( eachproc, result, m, 
+         call MPI_ALLREDUCE ( eachproc, result, m,
      &        MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD, ierr )
       else
          result = eachproc
       endif
-c     
+c
       return
       end
 
@@ -13222,7 +13233,7 @@ C
 C
       REAL*8                sumvec
 C
-      dimension u(nshg,n), ilwork(nlwork) 
+      dimension u(nshg,n), ilwork(nlwork)
       dimension sumvec(numpe), irecvcount(numpe)
 
       summed = sum(u)
@@ -13230,7 +13241,7 @@ C
       if (numpe > 1) then
          irecvcount = 1
          sumvec = summed
-         call MPI_REDUCE_SCATTER (sumvec, summed, irecvcount, 
+         call MPI_REDUCE_SCATTER (sumvec, summed, irecvcount,
      &        MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD, ierr)
 
       endif
@@ -13260,7 +13271,7 @@ C
 C
       REAL*8                sumvec
 C
-      dimension u(nnp,n), ilwork(nlwork) 
+      dimension u(nnp,n), ilwork(nlwork)
       dimension sumvec(numpe), irecvcount(numpe)
 
 c protect against underflow
@@ -13270,7 +13281,7 @@ c     summed = sum(u)
       if (numpe > 1) then
          irecvcount = 1
          sumvec = summed
-         call MPI_REDUCE_SCATTER (sumvec, summed, irecvcount, 
+         call MPI_REDUCE_SCATTER (sumvec, summed, irecvcount,
      &        MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD, ierr)
 
       endif
@@ -13306,7 +13317,7 @@ c$$$      ttim(62) = ttim(62) - tmr()
       if (numpe > 1) then
          irecvcount = 1
          sumvec = summed
-         call MPI_REDUCE_SCATTER (sumvec, summed, irecvcount, 
+         call MPI_REDUCE_SCATTER (sumvec, summed, irecvcount,
      &        MPI_INTEGER, MPI_SUM, MPI_COMM_WORLD, ierr)
 
       endif
@@ -13319,8 +13330,8 @@ c$$$      ttim(62) = ttim(62) + tmr()
 !!
 !! input:<BR>
 !! @param[in] name Name of the array
-!! @param[in] ndim1 first dimension of the array 
-!! @param[in] ndim2 second dimension of the array  
+!! @param[in] ndim1 first dimension of the array
+!! @param[in] ndim2 second dimension of the array
 !! @param[in] ndim3 third dimension of the array
 !!
 !! output:<BR>
@@ -13352,7 +13363,7 @@ c.... store the array information
 c
         mpoint = mbeg
 c
-c.... set the memory pointer 
+c.... set the memory pointer
 c
         mbeg   = mpoint + max(1,idim1) * max(1,idim2) * max(1,idim3)
 c
@@ -13366,7 +13377,7 @@ c
         end
 
       subroutine setper (nshg)
-       
+
       use periodicity
 C
 C     Argument variables
@@ -13374,14 +13385,14 @@ C
       INTEGER             nshg
 C
        allocate (rcount(nshg))
-       
+
        return
        end
 
        subroutine perprep (iBC, iper,nshg)
-       
+
        use periodicity
-C       
+C
 C     Argument variables
 C
       INTEGER             ibc,         iper,        nshg
@@ -13393,8 +13404,8 @@ C
       REAL*8                one
 C
        dimension iBC(nshg),
-     &           iper(nshg)       
-  
+     &           iper(nshg)
+
 c
 c..... calculate the inverse of the number of slaves + 1
 c
@@ -13411,7 +13422,7 @@ c
              rcount(k)=one/rcount(k)
           endif
        enddo
-      
+
 c
 c.... return
 c
@@ -13419,15 +13430,15 @@ c
        end
 
 !> Natural pressure boundary condition can be calculated with p, the pressure,
-!!  related (in some prescribed manner) to Q, the flow rate, through the same 
-!!  boundary.  To do this efficiently requires us to precompute the integral 
+!!  related (in some prescribed manner) to Q, the flow rate, through the same
+!!  boundary.  To do this efficiently requires us to precompute the integral
 !!  of N_A over the boundary for each node A and store it in a vector of length
 !!  nshg (a bit wasteful since only the nodes on the boundary will be non zero
-!!  in this vector but it is probably slower to index it than to multiply and 
+!!  in this vector but it is probably slower to index it than to multiply and
 !!  add the extra zeros....check later).
 
       subroutine initNABI( x, shpb )
-      
+
       use     pointer_data
       use     pvsQbi
 
@@ -13447,18 +13458,18 @@ C
 C     Local variables
 C
       INTEGER             iblk,        iel
-C      
+C
       real*8   x(numnp,nsd)
 c
 c use is like
-c 
+c
 c      NABI=pvsQbi -> NABI
 c
         dimension   shpb(MAXTOP,maxsh,MAXQPT)
         real*8, allocatable :: tmpshpb(:,:)
-        allocate ( NABI(nshg,3) ) 
+        allocate ( NABI(nshg,3) )
         allocate ( NASC(nshg)   )
-        allocate ( ndsurf(nshg) ) 
+        allocate ( ndsurf(nshg) )
 
 c
 c....  calculate NABI
@@ -13496,7 +13507,7 @@ c
           nshlb  = lcblkb(10,iblk)
           mattyp = lcblkb(7,iblk)
           ndofl  = lcblkb(8,iblk)
-          npro   = lcblkb(1,iblk+1) - iel 
+          npro   = lcblkb(1,iblk+1) - iel
 
 
           if(lcsyst.eq.3) lcsyst=nenbl
@@ -13506,13 +13517,13 @@ c
           else
              ngaussb = nintb(lcsyst)
           endif
-          
+
 c
-c.... compute and assemble the residuals corresponding to the 
+c.... compute and assemble the residuals corresponding to the
 c     boundary integral
 c
           allocate (tmpshpb(nshl,MAXQPT))
-          
+
           tmpshpb(1:nshl,:) = shpb(lcsyst,1:nshl,:)
 
           call AsBNABI (                       x,
@@ -13524,17 +13535,17 @@ c
      &                 tmpshpb,
      &                 mienb(iblk)%p,
      &                 miBCB(iblk)%p)
-          
-          if (Lagrange .gt. 0) then 
+
+          if (Lagrange .gt. 0) then
              call AsBPNABI(             x,
      &                 tmpshpb,
      &                 mienb(iblk)%p,
-     &                 miBCB(iblk)%p) 
-          endif    
+     &                 miBCB(iblk)%p)
+          endif
 
           deallocate (tmpshpb)
 
-      enddo 
+      enddo
 
 c
 c     note that NABI has NOT been communicated.  It
@@ -13552,10 +13563,10 @@ c
 !! input:<BR>
 !! @param[in] rmass(nshg) Mass matrix
 !! @param[in] qres(nshg,(nflow-1)*nsd) Diffusive flux vector
-!! 
+!!
 !! output:<BR>
-!! @param[out] qres 
-!! @param[out] rmass 
+!! @param[out] qres
+!! @param[out] rmass
 !!
 
       subroutine qpbc( rmass, qres, iBC, iper, ilwork )
@@ -13577,7 +13588,7 @@ C
       INTEGER             i,           idflow,      istrt,       j
 C
       REAL*8                tmp,         tmpvec,      uv
-C      
+C
       dimension rmass(nshg), qres(nshg,idflx),
      &          iBC(nshg), iper(nshg),uv(nshg,2),
      &          tmpvec(nshg,4), tmp(nshg),
@@ -13631,7 +13642,7 @@ c
 c.... invert the diagonal mass matrix and find q
 c
         rmass = one/rmass
-       
+
        do i=1, idflx
           qres(:,i) = rmass*qres(:,i)
        enddo
@@ -13650,11 +13661,11 @@ c
 
           do i=1, nsd
              qres(:,idflow+i) = tmp*qres(:,idflow+i)
-          enddo 
+          enddo
        endif
 
        if(numpe > 1) then
-          call commu (qres, ilwork, idflx, 'out')    
+          call commu (qres, ilwork, idflx, 'out')
        endif
 
        if(iabc==1) then         !are there any axisym bc's
@@ -13673,10 +13684,10 @@ c
              enddo
           enddo
        endif
-       
+
 c
 c.... return
-c    
+c
         return
         end
 
@@ -13686,10 +13697,10 @@ c
 !! input:<BR>
 !! @param[in] rmass(nshg) Mass matrix
 !! @param[in] qres(nshg, nsd) Diffusive flux vector
-!! 
+!!
 !! output:<BR>
-!! @param[out] qres 
-!! @param[out] rmass 
+!! @param[out] qres
+!! @param[out] rmass
 !!
 
       subroutine qpbcSclr( rmass, qres, iBC, iper, ilwork )
@@ -13709,7 +13720,7 @@ C
 C     Local variables
 C
       INTEGER             i,           j
-C      
+C
       dimension rmass(nshg), qres(nshg,nsd),
      &          iBC(nshg), iper(nshg),
      &          ilwork(nlwork)
@@ -13747,13 +13758,13 @@ c
 c.... invert the diagonal mass matrix and find q
 c
         rmass = one/rmass
-       
+
        do i=1, nsd
           qres(:,i) = rmass*qres(:,i)
        enddo
 
        if(numpe > 1) then
-          call commu (qres, ilwork, nsd, 'out')    
+          call commu (qres, ilwork, nsd, 'out')
        endif
 
       if(iabc==1) !are there any axisym bc's
@@ -13761,7 +13772,7 @@ c
 
 c
 c.... return
-c    
+c
         return
         end
 
@@ -13833,13 +13844,13 @@ c
            qold(:,2:4) = q(:,1:3)
            qold(:,1)   = q(:,4)
            if(ndof.gt.4) qold(:,5:ndof)   = q(:,5:ndof)
-c 
+c
            acold(:,2:4) = ac(:,1:3)
            acold(:,1)   = ac(:,4)
            if(ndof.gt.4) acold(:,5:ndof)   = ac(:,5:ndof)
 c
            iqoldsiz=nshg*ndof
-           call write_restart(myrank, lstep, nshg, ndof, 
+           call write_restart(myrank, lstep, nshg, ndof,
      &          qold, acold)
 
            deallocate(qold)
@@ -13888,14 +13899,14 @@ c     be restarted from the previous time step.
       end
 
 
-!> This subroutine is responsible for rotating 
+!> This subroutine is responsible for rotating
 !! the residual and solution vectors for axisymmetric BC's.
 !!
 !! input:<BR>
 !! @param[in] global(nshg,n) Global vector to be rotated.
-!! @param[in] code 
+!! @param[in] code
 !! - = 'in' for rotating with the residual
-!! - = 'out' for rotating the solution 
+!! - = 'out' for rotating the solution
 !!
 !! Note that the cos and sin of the rotation angles are preprocessed and
 !! stored in acs(1 and 2) respectively.
@@ -13917,10 +13928,10 @@ c
 c     Local variables
 c
       REAL*8                 tmp
-c 
+c
       dimension global(nshg,2),             iBC(nshg),
      &          tmp(nshg)
- 
+
       character*3 code
 
       if (code .eq. 'in ') then
@@ -13935,7 +13946,7 @@ c
             global(:,2) = -global(:,1)*acs(:,2) + global(:,2)*acs(:,1)
             global(:,1) = tmp
          endwhere
-      else 
+      else
          call error ('rotabc  ','code    ',0)
       endif
 
@@ -13954,7 +13965,7 @@ c
 
         subroutine rstatic (res, y, Dy)
 c
-        use ResidualControl 
+        use ResidualControl
 
         include "global.h"
         include "mpif.h"
@@ -14001,7 +14012,7 @@ c
         rdy2 = zero
         rdy4 = zero
         rdy5 = zero
-        call sumgatN( abs(gami*Delt(itseq) 
+        call sumgatN( abs(gami*Delt(itseq)
      &                * Dy(1:numnp,1:3)),3,rdy1, numnp)
         call sumgatN( abs( y(1:numnp,1:3)),3,rdy2,numnp)
         call sumgatN( abs(gami*alfi*Delt(itseq)
@@ -14009,7 +14020,7 @@ c
         call sumgatN( abs( y(1:numnp,4)),  1,rdy5,numnp)
         rmaxdyU = rdy1/rdy2
         rmaxdyP = rdy4/rdy5
-      
+
 c
 c..... Signal to quit if delta is very small. look in itrdrv.f for the
 c      completion of the hack.
@@ -14032,7 +14043,7 @@ c
         endif
 
         call sumgat (rtmp, 1, resnrm)
-        
+
         resmaxl = maxval(rtmp)
 
         irecvcount = 1
@@ -14066,7 +14077,7 @@ c
 c.... correct the residuals
 c
         if (loctim(itseq) .eq. 0) then
-          resnrm = resnrm 
+          resnrm = resnrm
           resmax = resmax
         else
           resnrm = resnrm
@@ -14081,12 +14092,12 @@ c
         if (resfrt .eq. zero) resfrt = totres
         jtotrs = int  ( 10.d0 * log10 ( totres / resfrt ) )
         jresmx = int  ( 10.d0 * log10 ( resmax / totres ) )
-        
+
         if(rescontrol .gt. 0) then
            controlResidual = totres
            CurrentIter = CurrentIter + 1
         endif
-c  
+c
 c.... if the residual is too large then exit
 c
         if ((totres .gt. restol) .or. isnan(totres) ) then
@@ -14094,7 +14105,7 @@ c
            stop
         endif
 
-c     
+c
 c.... get the CPU-time
 c
 CAD        cputme = (second(0) - ttim(100))
@@ -14104,10 +14115,10 @@ c
 c.... output the result
 c
         if (numpe > 1) call MPI_BARRIER (MPI_COMM_WORLD, ierr)
-        
+
         if (myrank .eq. master) then
 c
-c.... results of continuity and momentum 
+c.... results of continuity and momentum
 c
            print 2000, lstep+1, cputme, totres, jtotrs, rmaxdyU,
      &          rmaxdyP,nrsmax,
@@ -14116,7 +14127,7 @@ c
            open (unit=ihist, file=fhist, status='unknown',
      &            access='append',iostat=ioerr)
            if (ioerr.eq.0) then
-             write (ihist,2000) lstep+1, cputme, totres, jtotrs, 
+             write (ihist,2000) lstep+1, cputme, totres, jtotrs,
      &          rmaxdyU, rmaxdyP, nrsmax,
      &          mproc(1)+1,jresmx,int(statsflow(4)),
      &          int(statsflow(1))
@@ -14183,7 +14194,7 @@ c
         rdy2 = zero
 c
 c.... normalize turbulence with molecular viscosity
-c        
+c
         nrm = zero
         call sumgat( abs(gami*Delt(itseq)*Dy(:)),1,rdy1)
         call sumgat( abs( y(:,icomp)),1,rdy2)
@@ -14202,7 +14213,7 @@ c
 
 c        if (mod(impl(1),100)/10 .eq. 0) then  !not solving flow
            if (myrank .eq. master) then
-c     
+c
 c.... get the CPU-time
 c
               intsec=TMRC()
@@ -14212,14 +14223,14 @@ c
      &                int(statssclr(1))
            open (unit=ihist, file=fhist, status='unknown',iostat=ioerr)
            if (ioerr.eq.0) then
-             write (ihist,802) lstep+1, cputme, totres, 
+             write (ihist,802) lstep+1, cputme, totres,
      &          rmaxdyT,int(statssclr(1))
            else
              write(*,*) 'IO_ERROR file: ',fhist,' code: ',ioerr
            endif
            close(ihist)
            endif
-c        else 
+c        else
 c           if (myrank .eq. master) then
 c              print 803, totres, rmaxdyT, int(statssclr(1))
 c              write(ihist,803) totres, rmaxdyT, int(statssclr(1))
@@ -14227,13 +14238,13 @@ c           endif
 c        endif
 
         return
-        
+
  802    format(1p,i6,e10.3,e10.3,10X,e10.3,31X'[',i6,']')
  803    format(1p,16x,e10.3,10x,e10.3,31X,'[',i10,']')
-    
+
         end
 
-!> This is the 2nd interface routine to the linear equation 
+!> This is the 2nd interface routine to the linear equation
 !! solver library that uses the CGP and GMRES methods.
 !!
 !! input:<BR>
@@ -14262,26 +14273,26 @@ c        endif
 !!
 !! where:<BR>
 !!
-!! xKebe:<BR> 
-!! - K_ab = dRmom_a/du_b    
-!! xTe:<BR> 
-!! - E_ab = dRtemp_a/dT_b 
+!! xKebe:<BR>
+!! - K_ab = dRmom_a/du_b
+!! xTe:<BR>
+!! - E_ab = dRtemp_a/dT_b
 !! - G_ab = dRmom_a/dp_b
 !! xGoC:
-!! - C_ab = dRcon_a/dp_b       
-!! - resf = Rmon Rcon       
+!! - C_ab = dRcon_a/dp_b
+!! - resf = Rmon Rcon
 !! - rest = Rtemp
 !!
 
       subroutine SolFlow(y,          ac,         u,
      &                   yold,       acold,      uold,
      &                   x,          iBC,
-     &                   BC,         res,             
+     &                   BC,         res,
      &                   nPermDims,  nTmpDims,  aperm,
-     &                   atemp,      iper,       
-     &                   ilwork,     shp,        shgl, 
-     &                   shpb,       shglb,      rowp,     
-     &                   colm,       lhsK,       lhsP, 
+     &                   atemp,      iper,
+     &                   ilwork,     shp,        shgl,
+     &                   shpb,       shglb,      rowp,
+     &                   colm,       lhsK,       lhsP,
      &                   solinc,     rerr,       sumtime,
      &                   svLS_lhs,  svLS_ls,   svLS_nFaces)
       use pointer_data
@@ -14312,10 +14323,10 @@ C
       INTEGER              lesid
 C
       REAL*8                rdtmp
-C    
+C
       TYPE(svLS_lhsType) svLS_lhs
       TYPE(svLS_lsType) svLS_ls
-      
+
       real*8    y(nshg,ndof),             ac(nshg,ndof),
      &          yold(nshg,ndof),          acold(nshg,ndof),
      &          u(nshg,nsd),              uold(nshg,nsd),
@@ -14323,24 +14334,24 @@ C
      &          res(nshg,nflow),
      &          flowDiag(nshg,4),
      &          aperm(nshg,nPermDims),    atemp(nshg,nTmpDims),
-     &          sclrDiag(nshg,1),         
-     &          lhsK(9,nnz_tot),          lhsP(4,nnz_tot)          
+     &          sclrDiag(nshg,1),
+     &          lhsK(9,nnz_tot),          lhsP(4,nnz_tot)
 c
-      real*8    shp(MAXTOP,maxsh,MAXQPT),  
-     &          shgl(MAXTOP,nsd,maxsh,MAXQPT), 
+      real*8    shp(MAXTOP,maxsh,MAXQPT),
+     &          shgl(MAXTOP,nsd,maxsh,MAXQPT),
      &          shpb(MAXTOP,maxsh,MAXQPT),
-     &          shglb(MAXTOP,nsd,maxsh,MAXQPT) 
+     &          shglb(MAXTOP,nsd,maxsh,MAXQPT)
 c
       integer   usr(100),                 eqnType,
      &          rowp(nshg*nnz),           colm(nshg+1),
      &          iBC(nshg),                ilwork(nlwork),
-     &          iper(nshg) 
+     &          iper(nshg)
 c
       real*8    yAlpha(nshg,ndof),        acAlpha(nshg,ndof),
-     &          uAlpha(nshg,nsd),         
+     &          uAlpha(nshg,nsd),
      &          lesP(nshg,4),             lesQ(nshg,4),
      &          solinc(nshg,ndof)
-      
+
       real*8    rerr(nshg,10),            rtmp(nshg,4)
       REAL*8 sumtime
       INTEGER dof, svLS_nFaces, i, j, k, l
@@ -14353,24 +14364,24 @@ c
 c.... set the parameters for flux and surface tension calculations
 c
 c
-      idflx = 0 
+      idflx = 0
       if(idiff >= 1 )  idflx= (nflow-1) * nsd
       if (isurf == 1) idflx=nflow*nsd
-c        
+c
 c.... compute solution at n+alpha
 c
-      call itrYAlpha( uold,    yold,    acold,       
-     &                u,       y,       ac,            
+      call itrYAlpha( uold,    yold,    acold,
+     &                u,       y,       ac,
      &                uAlpha,  yAlpha,  acAlpha)
 
 c
 c.... form the LHS matrices, the residual vector (at alpha)
 c
       call ElmGMR (uAlpha,    yAlpha,     acAlpha,    x,
-     &             shp,       shgl,       iBC,       
+     &             shp,       shgl,       iBC,
      &             BC,        shpb,       shglb,
-     &             res,       iper,       ilwork,   
-     &             rowp,      colm,       lhsK,      
+     &             res,       iper,       ilwork,
+     &             rowp,      colm,       lhsK,
      &             lhsP,      rerr)
 
 
@@ -14412,13 +14423,13 @@ c####################################################################
             END DO
          END DO
       END DO
-      CALL svLS_SOLVE(svLS_lhs, svLS_ls, dof, Res4, Val4, incL, 
+      CALL svLS_SOLVE(svLS_lhs, svLS_ls, dof, Res4, Val4, incL,
      2   faceRes)
-      
+
       DO i=1, nshg
          solinc(i,1:dof) = Res4(1:dof,i)
       END DO
- 
+
 c####################################################################
       ELSE
 c
@@ -14431,13 +14442,13 @@ c.... setup the linear algebra solver
 c
       rtmp = res(:,1:4)
       call usrNew ( usr,        eqnType,          aperm,
-     &              atemp,      rtmp,             solinc,          
-     &              flowDiag,   sclrDiag,         lesP,   
+     &              atemp,      rtmp,             solinc,
+     &              flowDiag,   sclrDiag,         lesP,
      &              lesQ,       iBC,              BC,
      &              iper,       ilwork,           numpe,
-     &              nshg,       nshl,             nPermDims,  
-     &              nTmpDims,   rowp,             colm,     
-     &              lhsK,       lhsP,             rdtmp,      
+     &              nshg,       nshl,             nPermDims,
+     &              nTmpDims,   rowp,             colm,
+     &              lhsK,       lhsP,             rdtmp,
      &              nnz_tot )
 c
 c.... solve linear system
@@ -14452,7 +14463,7 @@ c
       if(Lagrange .gt. zero) then
          call CalcNANBLagrange(colm, rowp, solinc(:,1:3))
          call LagMultiplyMatrix(solinc, 0, nsrflistLagrange,
-     &      numLagrangeSrfs)  
+     &      numLagrangeSrfs)
          Lagincr(:,1:3) = (- resL(:,1:3) - AddLag(:,1:3) )
      &      /ScaleFactor(1,1)/alfi/gami/two
       endif
@@ -14460,13 +14471,13 @@ c
       END IF
 
       call rstatic (res, y, solinc) ! output flow stats
-c     
+c
 c.... end
-c     
+c
       return
       end
 
-!> This is the 2nd interface routine to the linear equation 
+!> This is the 2nd interface routine to the linear equation
 !! solver library.
 !!
 !! input:<BR>
@@ -14490,14 +14501,14 @@ c
       subroutine SolSclr(y,          ac,         u,
      &                   yold,       acold,      uold,
      &                   x,          iBC,
-     &                   BC,         nPermDimsS,  nTmpDimsS,  
-     &                   apermS,     atempS,     iper,       
-     &                   ilwork,     shp,        shgl, 
-     &                   shpb,       shglb,      rowp,     
+     &                   BC,         nPermDimsS,  nTmpDimsS,
+     &                   apermS,     atempS,     iper,
+     &                   ilwork,     shp,        shgl,
+     &                   shpb,       shglb,      rowp,
      &                   colm,       lhsS,       solinc)
 c
       use pointer_data
-        
+
         include "global.h"
         include "mpif.h"
         include "auxmpi.h"
@@ -14519,7 +14530,7 @@ C
       INTEGER             lesid,       nsolsc
 C
       REAL*8                rlhsk,       rlhsp
-C   
+C
       real*8    y(nshg,ndof),             ac(nshg,ndof),
      &          yold(nshg,ndof),          acold(nshg,ndof),
      &          u(nshg,nsd),              uold(nshg,nsd),
@@ -14530,10 +14541,10 @@ C
      &          apermS(nshg,nPermDimsS),  atempS(nshg,nTmpDimsS)
 
 c
-      real*8    shp(MAXTOP,maxsh,MAXQPT),  
-     &          shgl(MAXTOP,nsd,maxsh,MAXQPT), 
+      real*8    shp(MAXTOP,maxsh,MAXQPT),
+     &          shgl(MAXTOP,nsd,maxsh,MAXQPT),
      &          shpb(MAXTOP,maxsh,MAXQPT),
-     &          shglb(MAXTOP,nsd,maxsh,MAXQPT) 
+     &          shglb(MAXTOP,nsd,maxsh,MAXQPT)
 c
       integer   usr(100),                 eqnType,
      &          rowp(nshg*nnz),           colm(nshg+1),
@@ -14544,22 +14555,22 @@ c
      &          uAlpha(nshg,nsd),
      &          lesP(nshg,1),               lesQ(nshg,1),
      &          solinc(nshg,1)
-      
-c     
+
+c
 c.... *******************>> Element Data Formation <<******************
 c
 c.... compute solution at n+alpha
 c
-      call itrYAlpha( uold,    yold,    acold, 
-     &                u,       y,       ac,  
+      call itrYAlpha( uold,    yold,    acold,
+     &                u,       y,       ac,
      &                uAlpha,  yAlpha,  acAlpha)
 c
 c.... form the LHS matrices, the residual vector (at alpha)
 c
       call ElmGMRSclr(yAlpha,acAlpha,    x,
-     &             shp,       shgl,       iBC,       
+     &             shp,       shgl,       iBC,
      &             BC,        shpb,       shglb,
-     &             res,       iper,       ilwork,   
+     &             res,       iper,       ilwork,
      &             rowp,      colm,       lhsS   )
 
 c
@@ -14571,13 +14582,13 @@ c
 c.... setup the linear algebra solver
 c
       call usrNew ( usr,        eqnType,          apermS,
-     &              atempS,     res,              solinc,          
-     &              flowDiag,   sclrDiag,         lesP,   
+     &              atempS,     res,              solinc,
+     &              flowDiag,   sclrDiag,         lesP,
      &              lesQ,       iBC,              BC,
      &              iper,       ilwork,           numpe,
-     &              nshg,       nshl,             nPermDimsS,  
-     &              nTmpDimsS,  rowp,             colm,     
-     &              rlhsK,      rlhsP,            lhsS,      
+     &              nshg,       nshl,             nPermDimsS,
+     &              nTmpDimsS,  rowp,             colm,
+     &              rlhsK,      rlhsP,            lhsS,
      &              nnz_tot )
 c
 c.... solve linear system
@@ -14588,19 +14599,19 @@ c
       if (numpe > 1) then
          call commu ( solinc, ilwork, 1, 'out')
       endif
-      
+
       nsolsc=5+isclr
       call rstaticSclr (res, y, solinc, nsolsc) ! output scalar stats
-c     
+c
 c.... end
-c     
+c
       return
       end
 
 !> Create the new statistics arrays
-      
+
       subroutine initStats(x,   iBC,    iper,   ilwork)
-c      
+c
       use stats
 
         include "global.h"
@@ -14611,19 +14622,19 @@ c
 
       real*8  x(numnp,3)
       integer ilwork(nlwork), iper(nshg), iBC(nshg)
-      
+
       if (ipord .eq. 1) then
          stsType      = 1
       else
          stsType      = 2
       endif
-      
+
       stsWriteFreq = 200
-      
+
       nResDims = 11
       nSolDims = 10
       nLhsDims = 19
-      
+
       allocate ( stsVec(nshg,nResDims) )
 
       if (stsType .eq. 1) then
@@ -14640,7 +14651,7 @@ c
       allocate ( stsVelSqr(nshg,6)     )
       allocate ( stsVelReg(nshg,3)     )
       allocate ( stsStress(nshg,6)     )
-      
+
       stsPres    = 0.0
       stsPresSqr = 0.0
       stsVel     = 0.0
@@ -14659,7 +14670,7 @@ c
 
       return
       end
-      
+
 !> Compute the Lhs matrices needed for the conservative projection
 !! of the statistics
 
@@ -14671,24 +14682,24 @@ c
       real*8  res(nResDims), reg, det, r0, r1, r2, r3, r4, r5,
      &        d0, d1, d2, c0, c1, c2, c3, c4, c5
       integer i
-      
+
 c
 c.... build the regularization
-c      
+c
       do i = 1, nshg
          res = stsVec(i,:)
          reg = res(1) * res(2) * res(3)
          det = res(1) * (res(2) * res(3) - res(5) * res(5))
      &       + res(4) * (res(5) * res(6) - res(4) * res(3))
-     &       + res(6) * (res(4) * res(5) - res(2) * res(6)) 
-      
+     &       + res(6) * (res(4) * res(5) - res(2) * res(6))
+
          if ( det .gt. 1.d-10*reg .and. reg .ne. 0 ) then
-          stsReg(i) = 0 
-         else 
-          stsReg(i) = (res(1) + res(2) + res(3)) / 1000. 
+          stsReg(i) = 0
+         else
+          stsReg(i) = (res(1) + res(2) + res(3)) / 1000.
          endif
       enddo
-      
+
 c
 c.... form M and factorize
 c
@@ -14696,17 +14707,17 @@ c
          res   = stsVec(i,:)
          reg   = stsReg(i)
          r0    = res(1) + reg
-         r1    = res(2) + reg         
-         r2    = res(3) + reg         
+         r1    = res(2) + reg
+         r2    = res(3) + reg
          r3    = res(4)
          r4    = res(5)
          r5    = res(6)
-         
+
          det   = r0 * (r1 * r2 - r4 * r4)
      &         + r3 * (r4 * r5 - r3 * r2)
      &         + r5 * (r3 * r4 - r1 * r5)
          det   = 1.0/det
-         
+
          stsMInv(i,1) = det * (r1 * r2 - r4 * r4)
          stsMInv(i,2) = det * (r0 * r2 - r5 * r5)
          stsMInv(i,3) = det * (r0 * r1 - r3 * r3)
@@ -14716,55 +14727,55 @@ c
       enddo
 
 c
-c.... form B, DInv and CInv      
+c.... form B, DInv and CInv
 c
       do i = 1, nshg
       res          = stsVec(i,:)
-      reg          = stsReg(i) 
-      r0           = res(1) 
-      r1           = res(2) 
-      r2           = res(3) 
-      r3           = res(4) 
-      r4           = res(5) 
-      r5           = res(6) 
-      d0           = 1. / ( reg + r0 ) 
-      d1           = 1. / ( reg + r1 ) 
-      d2           = 1. / ( reg + r2 ) 
-      stsDInv(i,1) = d0 
-      stsDInv(i,2) = d1 
-      stsDInv(i,3) = d2 
-      stsB(i,1)    = r3 
-      stsB(i,2)    = r4 
-      stsB(i,3)    = r5 
-      c0           = r0 + r1 - r3 * r3 * (d0 + d1) + reg 
-      c1           = r1 + r2 - r4 * r4 * (d1 + d2) + reg 
-      c2           = r2 + r0 - r5 * r5 * (d2 + d0) + reg 
-      c3           = r5      - r3 * r4 * d1 
-      c4           = r3      - r4 * r5 * d2 
-      c5           = r4      - r5 * r3 * d0 
+      reg          = stsReg(i)
+      r0           = res(1)
+      r1           = res(2)
+      r2           = res(3)
+      r3           = res(4)
+      r4           = res(5)
+      r5           = res(6)
+      d0           = 1. / ( reg + r0 )
+      d1           = 1. / ( reg + r1 )
+      d2           = 1. / ( reg + r2 )
+      stsDInv(i,1) = d0
+      stsDInv(i,2) = d1
+      stsDInv(i,3) = d2
+      stsB(i,1)    = r3
+      stsB(i,2)    = r4
+      stsB(i,3)    = r5
+      c0           = r0 + r1 - r3 * r3 * (d0 + d1) + reg
+      c1           = r1 + r2 - r4 * r4 * (d1 + d2) + reg
+      c2           = r2 + r0 - r5 * r5 * (d2 + d0) + reg
+      c3           = r5      - r3 * r4 * d1
+      c4           = r3      - r4 * r5 * d2
+      c5           = r4      - r5 * r3 * d0
       det          = c0 * (c1 * c2 - c4 * c4)
      &               + c3 * (c4 * c5 - c3 * c2)
-     &               + c5 * (c3 * c4 - c1 * c5) 
-      det          = 1. / det 
-      stsCInv(i,1) = det * (c1 * c2 - c4 * c4) 
-      stsCInv(i,2) = det * (c0 * c2 - c5 * c5) 
-      stsCInv(i,3) = det * (c0 * c1 - c3 * c3) 
-      stsCInv(i,4) = det * (c4 * c5 - c2 * c3) 
-      stsCInv(i,5) = det * (c3 * c5 - c0 * c4) 
-      stsCInv(i,6) = det * (c3 * c4 - c1 * c5) 
+     &               + c5 * (c3 * c4 - c1 * c5)
+      det          = 1. / det
+      stsCInv(i,1) = det * (c1 * c2 - c4 * c4)
+      stsCInv(i,2) = det * (c0 * c2 - c5 * c5)
+      stsCInv(i,3) = det * (c0 * c1 - c3 * c3)
+      stsCInv(i,4) = det * (c4 * c5 - c2 * c3)
+      stsCInv(i,5) = det * (c3 * c5 - c0 * c4)
+      stsCInv(i,6) = det * (c3 * c4 - c1 * c5)
       enddo
-      
+
       return
       end
-               
-!> Collect the desired statistics 
 
-      subroutine stsGetStats( y,      yold,   ac,     acold, 
+!> Collect the desired statistics
+
+      subroutine stsGetStats( y,      yold,   ac,     acold,
      &                        u,      uold,   x,
      &                        shp,    shgl,   shpb,   shglb,
      &                        iBC,    BC,     iper,   ilwork,
      &                        rowp,   colm,   lhsK,   lhsP )
-      
+
       use     stats
 
         include "global.h"
@@ -14776,8 +14787,8 @@ c
         include "common_blocks/timdat.h"
 C
 C     Local variables
-      REAL*8                reg   
-C   
+      REAL*8                reg
+C
       real*8  y(nshg,ndof),             yold(nshg,ndof),
      &        ac(nshg,ndof),            acold(nshg,ndof),
      &        u(nshg,nsd),              uold(nshg,nsd),
@@ -14790,32 +14801,32 @@ C
       integer iBC(nshg),                iper(nshg),
      &        ilwork(nlwork),           rowp(nshg*nnz),
      &        colm(nshg+1)
-      
-      
+
+
       real*8  yAlpha(nshg,ndof),      acAlpha(nshg,ndof),
      &        uAlpha(nshg,nsd),
      &        res(nResDims),          MInv(6),
      &        DInv(3),                B(3),
      &        CInv(6)
-      
+
       real*8 u1, u2, u3, r0, r1, r2, r3, r4, r5, t3, t4, t5
 
       integer i
-      
+
       nTimeStep = nTimeStep + 1
 c
 c.... compute solution at n+alpha
 c
       call itrYAlpha( uold,     yold,     acold,
-     &                u,        y,        ac,  
+     &                u,        y,        ac,
      &                uAlpha,   yAlpha,   acAlpha)
-      
+
 c
 c.... assemble the residual
 c
       if (stsType .eq. 1) then
-         call elmStatsRes( yAlpha,   acAlpha,     x,       shp,   shgl, 
-     &                     shpb,     shglb,       iBC,     BC, 
+         call elmStatsRes( yAlpha,   acAlpha,     x,       shp,   shgl,
+     &                     shpb,     shglb,       iBC,     BC,
      &                     iper,     ilwork,      rowp,    colm,
      &                     lhsK,     lhsP  )
 
@@ -14825,107 +14836,107 @@ c
          do i = 1, nshg
             res   = stsVec(i,:)
             reg   = stsReg(i)
-      
+
             MInv  = stsMInv(i,:)
             DInv  = stsDInv(i,:)
             B     = stsB(i,:)
             CInv  = stsCInv(i,:)
-            
+
             u1    = yAlpha(i,1)
             u2    = yAlpha(i,2)
             u3    = yAlpha(i,3)
-            
-            stsPres(i)    = stsPres(i)    +  y(i,4) 
-            stsPresSqr(i) = stsPresSqr(i) +  y(i,4)*y(i,4)  
 
-            r0            = res(1) + reg * u1 
-            r1            = res(2) + reg * u2 
-            r2            = res(3) + reg * u3 
-         
-            stsVel(i,1)   = stsVel(i,1) 
-     &                    + MInv(1) * r0 + MInv(4) * r1 + MInv(6) * r2 
+            stsPres(i)    = stsPres(i)    +  y(i,4)
+            stsPresSqr(i) = stsPresSqr(i) +  y(i,4)*y(i,4)
+
+            r0            = res(1) + reg * u1
+            r1            = res(2) + reg * u2
+            r2            = res(3) + reg * u3
+
+            stsVel(i,1)   = stsVel(i,1)
+     &                    + MInv(1) * r0 + MInv(4) * r1 + MInv(6) * r2
             stsVel(i,2)   = stsVel(i,2)
-     &                    + MInv(4) * r0 + MInv(2) * r1 + MInv(5) * r2 
+     &                    + MInv(4) * r0 + MInv(2) * r1 + MInv(5) * r2
             stsVel(i,3)   = stsVel(i,3)
-     &                    + MInv(6) * r0 + MInv(5) * r1 + MInv(3) * r2 
-            
-            stsVelReg(i,1) = stsVelReg(i,1) + u1 
-            stsVelReg(i,2) = stsVelReg(i,2) + u2 
-            stsVelReg(i,3) = stsVelReg(i,3) + u3 
-            
-            r0          = res(1) * u1               + reg * u1 * u1 
-            r1          = res(2) * u2               + reg * u2 * u2 
-            r2          = res(3) * u3               + reg * u3 * u3 
-            r3          = res(1) * u2 + res(2) * u1 + reg * u2 * u1 
-            r4          = res(2) * u3 + res(3) * u2 + reg * u3 * u2 
-            r5          = res(3) * u1 + res(1) * u3 + reg * u1 * u3 
-            r0          = DInv(1) * r0 
-            r1          = DInv(2) * r1 
-            r2          = DInv(3) * r2 
-            r3          = r3 - B(1) * (r0 + r1) 
-            r4          = r4 - B(2) * (r1 + r2) 
-            r5          = r5 - B(3) * (r2 + r0) 
-            t3          = CInv(1) * r3 + CInv(4) * r4 + CInv(6) * r5 
-            t4          = CInv(4) * r3 + CInv(2) * r4 + CInv(5) * r5 
-            t5          = CInv(6) * r3 + CInv(5) * r4 + CInv(3) * r5 
-            
-            stsVelSqr(i,1) = stsVelSqr(i,1)  
-     &                  + r0 - DInv(1) * (B(1) * t3 + B(3) * t5) 
-            stsVelSqr(i,2) = stsVelSqr(i,2)  
-     &                  + r1 - DInv(2) * (B(2) * t4 + B(1) * t3) 
-            stsVelSqr(i,3) = stsVelSqr(i,3)  
-     &                  + r2 - DInv(3) * (B(3) * t5 + B(2) * t4) 
+     &                    + MInv(6) * r0 + MInv(5) * r1 + MInv(3) * r2
 
-            stsVelSqr(i,4) = stsVelSqr(i,4) + t3 
-            stsVelSqr(i,5) = stsVelSqr(i,5) + t4 
-            stsVelSqr(i,6) = stsVelSqr(i,6) + t5 
+            stsVelReg(i,1) = stsVelReg(i,1) + u1
+            stsVelReg(i,2) = stsVelReg(i,2) + u2
+            stsVelReg(i,3) = stsVelReg(i,3) + u3
 
-            r0           = res(4) 
-            r1           = res(5) 
-            r2           = res(6) 
-            r3           = res(7) 
-            r4           = res(8) 
-            r5           = res(9) 
-            
-            r0          = DInv(1) * r0 
-            r1          = DInv(2) * r1 
-            r2          = DInv(3) * r2 
+            r0          = res(1) * u1               + reg * u1 * u1
+            r1          = res(2) * u2               + reg * u2 * u2
+            r2          = res(3) * u3               + reg * u3 * u3
+            r3          = res(1) * u2 + res(2) * u1 + reg * u2 * u1
+            r4          = res(2) * u3 + res(3) * u2 + reg * u3 * u2
+            r5          = res(3) * u1 + res(1) * u3 + reg * u1 * u3
+            r0          = DInv(1) * r0
+            r1          = DInv(2) * r1
+            r2          = DInv(3) * r2
+            r3          = r3 - B(1) * (r0 + r1)
+            r4          = r4 - B(2) * (r1 + r2)
+            r5          = r5 - B(3) * (r2 + r0)
+            t3          = CInv(1) * r3 + CInv(4) * r4 + CInv(6) * r5
+            t4          = CInv(4) * r3 + CInv(2) * r4 + CInv(5) * r5
+            t5          = CInv(6) * r3 + CInv(5) * r4 + CInv(3) * r5
 
-            r3          = r3 - B(1) * (r0 + r1) 
-            r4          = r4 - B(2) * (r1 + r2) 
-            r5          = r5 - B(3) * (r2 + r0) 
+            stsVelSqr(i,1) = stsVelSqr(i,1)
+     &                  + r0 - DInv(1) * (B(1) * t3 + B(3) * t5)
+            stsVelSqr(i,2) = stsVelSqr(i,2)
+     &                  + r1 - DInv(2) * (B(2) * t4 + B(1) * t3)
+            stsVelSqr(i,3) = stsVelSqr(i,3)
+     &                  + r2 - DInv(3) * (B(3) * t5 + B(2) * t4)
 
-            t3          = CInv(1) * r3 + CInv(4) * r4 + CInv(6) * r5 
-            t4          = CInv(4) * r3 + CInv(2) * r4 + CInv(5) * r5 
-            t5          = CInv(6) * r3 + CInv(5) * r4 + CInv(3) * r5 
+            stsVelSqr(i,4) = stsVelSqr(i,4) + t3
+            stsVelSqr(i,5) = stsVelSqr(i,5) + t4
+            stsVelSqr(i,6) = stsVelSqr(i,6) + t5
+
+            r0           = res(4)
+            r1           = res(5)
+            r2           = res(6)
+            r3           = res(7)
+            r4           = res(8)
+            r5           = res(9)
+
+            r0          = DInv(1) * r0
+            r1          = DInv(2) * r1
+            r2          = DInv(3) * r2
+
+            r3          = r3 - B(1) * (r0 + r1)
+            r4          = r4 - B(2) * (r1 + r2)
+            r5          = r5 - B(3) * (r2 + r0)
+
+            t3          = CInv(1) * r3 + CInv(4) * r4 + CInv(6) * r5
+            t4          = CInv(4) * r3 + CInv(2) * r4 + CInv(5) * r5
+            t5          = CInv(6) * r3 + CInv(5) * r4 + CInv(3) * r5
 
             stsStress(i,1) = stsStress(i,1)
-     &                  + r0 - DInv(1) * (B(1) * t3 + B(3) * t5) 
+     &                  + r0 - DInv(1) * (B(1) * t3 + B(3) * t5)
             stsStress(i,2) = stsStress(i,2)
-     &                  + r1 - DInv(2) * (B(2) * t4 + B(1) * t3) 
+     &                  + r1 - DInv(2) * (B(2) * t4 + B(1) * t3)
             stsStress(i,3) = stsStress(i,3)
-     &                  + r2 - DInv(3) * (B(3) * t5 + B(2) * t4) 
-            stsStress(i,4) = stsStress(i,4) + t3 
-            stsStress(i,5) = stsStress(i,5) + t4 
-            stsStress(i,6) = stsStress(i,6) + t5 
+     &                  + r2 - DInv(3) * (B(3) * t5 + B(2) * t4)
+            stsStress(i,4) = stsStress(i,4) + t3
+            stsStress(i,5) = stsStress(i,5) + t4
+            stsStress(i,6) = stsStress(i,6) + t5
          enddo
       else if (stsType .eq. 2) then
-         
-         call evalAtInterp( yAlpha,     stsVec,         x, 
+
+         call evalAtInterp( yAlpha,     stsVec,         x,
      &                      nResDims,   nshape)
-         
+
          do i = 1, nshg
-            
+
             u1    = stsVec(i,1)
             u2    = stsVec(i,2)
             u3    = stsVec(i,3)
 
-            stsPres(i)    = stsPres(i)    +  stsVec(i,4) 
-            stsPresSqr(i) = stsPresSqr(i) +  stsVec(i,4)*stsVec(i,4)  
-            
-            stsVel(i,1) = stsVel(i,1) + u1 
-            stsVel(i,2) = stsVel(i,2) + u2 
-            stsVel(i,3) = stsVel(i,3) + u3 
+            stsPres(i)    = stsPres(i)    +  stsVec(i,4)
+            stsPresSqr(i) = stsPresSqr(i) +  stsVec(i,4)*stsVec(i,4)
+
+            stsVel(i,1) = stsVel(i,1) + u1
+            stsVel(i,2) = stsVel(i,2) + u2
+            stsVel(i,3) = stsVel(i,3) + u3
 
             stsVelSqr(i,1) = stsVelSqr(i,1) + u1*u1
             stsVelSqr(i,2) = stsVelSqr(i,2) + u2*u2
@@ -14933,7 +14944,7 @@ c
             stsVelSqr(i,4) = stsVelSqr(i,4) + u1*u2
             stsVelSqr(i,5) = stsVelSqr(i,5) + u2*u3
             stsVelSqr(i,6) = stsVelSqr(i,6) + u3*u1
-            
+
             stsStress(i,1) = stsStress(i,1) + stsVec(i,6)
             stsStress(i,2) = stsStress(i,2) + stsVec(i,7)
             stsStress(i,3) = stsStress(i,3) + stsVec(i,8)
@@ -14943,19 +14954,19 @@ c
 
          enddo
       endif
-      
-      if ( mod(nTimeStep,stsWriteFreq) .eq. 0 .or. 
+
+      if ( mod(nTimeStep,stsWriteFreq) .eq. 0 .or.
      &     nTimeStep .eq. nstep(itseq) ) then
          call stsWriteStats()
       endif
-      
+
       return
       end
-         
-!> Collect the desired statistics 
+
+!> Collect the desired statistics
 
       subroutine stsWriteStats()
-      
+
       use     stats
 
         include "global.h"
@@ -14997,7 +15008,7 @@ c      outvec(:,2:4)   = stsVelReg(:,:)
       outvec(:,7:12)  = stsVelSqr(:,:)
       outvec(:,13)    = zero   ! later wil be tempSqr
       outvec(:,14:19) = stsStress(:,:)
-      
+
       write (iofile) numnp, nshg, nTimeStep
       write (iofile) outvec(1:nshg,:)
       close (iofile)
@@ -15007,7 +15018,7 @@ c      outvec(:,2:4)   = stsVelReg(:,:)
  111  format(1p,3e24.16)
  112  format(1p, e24.16)
  113  format(1p,6e24.16)
-      
+
       return
       end
 
@@ -15026,15 +15037,15 @@ c      outvec(:,2:4)   = stsVelReg(:,:)
 
 c........................Declarations....................................
        INTEGER ienb,materb,iBCB
-       REAL*8 shglb,shpb,x,y,BCB,res,rl,sgn,yl,xlb      
-c................................................................      
- 
+       REAL*8 shglb,shpb,x,y,BCB,res,rl,sgn,yl,xlb
+c................................................................
+
         dimension y(nshg,ndofl),           x(numnp,nsd),
      &            shpb(nshl,*),
-     &            shglb(nsd,nshl,*),         
+     &            shglb(nsd,nshl,*),
      &            ienb(npro,nshl),         materb(npro),
      &            iBCB(npro,ndiBCB),       BCB(npro,nshlb,ndBCB),
-     &            res(nshg)         
+     &            res(nshg)
 c
         dimension yl(npro,nshl,ndofl),     xlb(npro,nenl,nsd),
      &            rl(npro,nshl),     sgn(npro,nshl)
@@ -15061,19 +15072,19 @@ c
 c.... assemble the residual and the modified residual
 c
         call local (res,    rl,     ienb,   1,  'scatter ')
-c     
+c
 c.... end
 c
         return
         end
 
 !> This routine computes and assembles data required for an Augmented
-!! Lagrangian Method. 
+!! Lagrangian Method.
 
       subroutine AsBPNABI ( x,       shpb,
      &                   ienb,  iBCB)
         use pvsQbi
-        use LagrangeMultipliers ! brings in face radius and center 
+        use LagrangeMultipliers ! brings in face radius and center
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/elmpar.h"
@@ -15126,30 +15137,30 @@ c
         call localx(x,      xlb,    ienb,   nsd,    'gather  ')
 c
 c....   calculate quadrature points
-c        
+c
         intpxlb = zero
         intpdistance = zero
         intpprofile = zero
-        if (lcsyst.ne.6) then 
+        if (lcsyst.ne.6) then
            do intp=1, 3 ! use 3 quadrature points
-              do n=1, 3  
+              do n=1, 3
                  intpxlb(:,intp,:) = intpxlb(:,intp,:)
      &              +xlb(:,n,:)*Qptb(1,n,intp)
               enddo
            enddo
         else
            do intp=1, 3 ! use 3 quadrature points
-              do n=1, 2  
+              do n=1, 2
                  intpxlb(:,intp,:) = intpxlb(:,intp,:)
      &              +xlb(:,n,:)*Qptb(1,n,intp)
               enddo
               intpxlb(:,intp,:) = intpxlb(:,intp,:)
-     &           +xlb(:,5,:)*Qptb(1,3,intp)              
+     &           +xlb(:,5,:)*Qptb(1,3,intp)
            enddo
         endif
 c
 c....   calculate profile functions at quadrature points
-c        
+c
         do k=1, numLagrangeSrfs
            do intp = 1, 3
               do iel=1, npro
@@ -15165,7 +15176,7 @@ c
                  endif
               enddo
            enddo
-         enddo  
+         enddo
 
 c
 c.... get the boundary element residuals
@@ -15173,7 +15184,7 @@ c
         rl  = zero
         rl2 = zero
         tmpLagProfileArea = zero
-        tmpProfileDelta = zero     
+        tmpProfileDelta = zero
         tmpLagInplaneVectors = zero
 c
 c.... compute the nodes which lie on the boundary (hierarchic)
@@ -15183,18 +15194,18 @@ c
 c.... loop through the integration points
 c
         ngaussb = nintb(lcsyst)
-c        
+c
         do intp = 1, ngaussb
 c
 c.... get the hierarchic shape functions at this int point
 c
-           shglb=zero  ! protect debugger 
-           call getshpb(shpb,        shglb,        sgn, 
+           shglb=zero  ! protect debugger
+           call getshpb(shpb,        shglb,        sgn,
      &              shpfun,       shdrv)
 
 c
 c.... compute the normal to the boundary. This is achieved by taking
-c     the cross product of two vectors in the plane of the 2-d 
+c     the cross product of two vectors in the plane of the 2-d
 c     boundary face.
 c
            if(lcsyst.ne.6) then
@@ -15205,25 +15216,25 @@ c
            v1 = xlb(:,2,:) - xlb(:,1,:)
            v2 = xlb(:,ipt3,:) - xlb(:,1,:)
 c
-c.....The following are done in order to correct temp1..3  
-c     based on the results from compressible code.  This is done only 
-c     for wedges, depending on the boundary face.(tri or quad)  
-c        
+c.....The following are done in order to correct temp1..3
+c     based on the results from compressible code.  This is done only
+c     for wedges, depending on the boundary face.(tri or quad)
+c
            if (lcsyst .eq. 1) then
               temp1 = v1(:,2) * v2(:,3) - v2(:,2) * v1(:,3)
               temp2 = v2(:,1) * v1(:,3) - v1(:,1) * v2(:,3)
               temp3 = v1(:,1) * v2(:,2) - v2(:,1) * v1(:,2)
-           else 
+           else
               temp1 = - v1(:,2) * v2(:,3) + v2(:,2) * v1(:,3)
               temp2 = - v2(:,1) * v1(:,3) + v1(:,1) * v2(:,3)
               temp3 = - v1(:,1) * v2(:,2) + v2(:,1) * v1(:,2)
            endif
-c     
+c
            temp       = one / sqrt ( temp1**2 + temp2**2 + temp3**2 )
            bnorm(:,1) = temp1 * temp
            bnorm(:,2) = temp2 * temp
            bnorm(:,3) = temp3 * temp
-c 
+c
            if (lcsyst .eq. 3) then
               WdetJb     = (1 - Qwtb(lcsyst,intp)) / (four*temp)
            elseif (lcsyst .eq. 4) then
@@ -15237,19 +15248,19 @@ c
               do k=1, numLagrangeSrfs
                  if (iBCB(iel,2) .eq. nsrflistLagrange(k)) then
                     iface = iBCB(iel,2)
-                    ndsurf(ienb(iel,1:nshlb))=iface   
+                    ndsurf(ienb(iel,1:nshlb))=iface
                     count = count+1
                  endif
               enddo
               if (count .eq. 0) then
                  bnorm(iel,:) = zero  ! we want zeros where we are not integrating
                  WdetJb(iel) = zero  ! we want zeros where we are not integrating
-              endif              
+              endif
            enddo
 c
 c   Calculate two orthonormal in-plane vectors
 c   |bnorm(iel,1)  bnorm(iel,2)  bnorm(iel,3) |
-c   |v1(iel,1)     v1(iel,2)     v1(iel,3)    | 
+c   |v1(iel,1)     v1(iel,2)     v1(iel,3)    |
 c   x1 component: -v1(iel,2)*bnorm(iel,3)+v1(iel,3)*bnorm(iel,2)
 c   x2 component: -v1(iel,3)*bnorm(iel,1)+v1(iel,1)*bnorm(iel,3)
 c   x3 component: -v1(iel,1)*bnorm(iel,2)+v1(iel,2)*bnorm(iel,1)
@@ -15274,18 +15285,18 @@ c
                     exit
                  endif
               enddo
-           enddo              
+           enddo
 c
 c  Now lets calculate Integral N_(a:e)^i n_i ProfileFunction  d Gamma
 c
 c
            do n = 1, nshlb
               nodlcl = lnode(n)
-              rl(:,nodlcl,1) = rl(:,nodlcl,1) + shpfun(:,nodlcl) 
+              rl(:,nodlcl,1) = rl(:,nodlcl,1) + shpfun(:,nodlcl)
      &           * bnorm(:,1)*intpprofile(:,intp)*WdetJb(:)
-              rl(:,nodlcl,2) = rl(:,nodlcl,2) + shpfun(:,nodlcl) 
+              rl(:,nodlcl,2) = rl(:,nodlcl,2) + shpfun(:,nodlcl)
      &           * bnorm(:,2)*intpprofile(:,intp)*WdetJb(:)
-              rl(:,nodlcl,3) = rl(:,nodlcl,3) + shpfun(:,nodlcl) 
+              rl(:,nodlcl,3) = rl(:,nodlcl,3) + shpfun(:,nodlcl)
      &           * bnorm(:,3)*intpprofile(:,intp)*WdetJb(:)
            enddo
 c
@@ -15295,7 +15306,7 @@ c
            do k=1, numLagrangeSrfs
               do n = 1, nshlb
                  nodlcl = lnode(n)
-                 do m=1, nsd                 
+                 do m=1, nsd
                     rl2(:,nodlcl,m,1)=rl2(:,nodlcl,m,1)+
      &                 shpfun(:,nodlcl)*shpfun(:,nodlcl)*WdetJb(:)
      &                 *tmpLagInplaneVectors(m,1,k)
@@ -15311,7 +15322,7 @@ c
                  enddo
               enddo
            enddo
-           
+
            do k=1, numLagrangeSrfs
               do iel=1,npro
                  if (iBCB(iel,2) .eq. nsrflistLagrange(k)) then
@@ -15329,11 +15340,11 @@ c
         call local (PNABI,    rl,     ienb,   3,  'scatter ')
 c
 c.... assemble the NANBIJ vector
-c      
+c
         do i=1, 3
            call local (NANBIJ(:,:,i),rl2(:,:,:,i),ienb,3,'scatter ')
         enddo
-        
+
         do k=1, numLagrangeSrfs
            LagProfileArea(k)=LagProfileArea(k)+tmpLagProfileArea(k)
            ProfileDelta(k)=ProfileDelta(k)+tmpProfileDelta(k)
@@ -15342,16 +15353,16 @@ c
            if (InplaneNorm .eq. zero) then
               LagInplaneVectors(:,:,k)=tmpLagInplaneVectors(:,:,k)
            endif
-        enddo   
-c                 
+        enddo
+c
         return
         end
 
 !> This routine computes and assembles the data corresponding to the
 !! interior elements.
 
-        subroutine AsIGMRSclr(y,       ac,      x,       
-     &                     shp,     shgl,    ien,     
+        subroutine AsIGMRSclr(y,       ac,      x,
+     &                     shp,     shgl,    ien,
      &                     res,     qres,    xSebe, xmudmi )
 
 
@@ -15362,7 +15373,7 @@ c
         include "common_blocks/intpt.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
- 
+
 c......................Declaration.....................................
 C     Argument variables
 C
@@ -15382,20 +15393,20 @@ c......................................................................
 
 c
         real*8    yl(npro,nshl,ndofl),        acl(npro,nshl,ndofl),
-     &            xl(npro,nenl,nsd),         
+     &            xl(npro,nenl,nsd),
      &            rl(npro,nshl),              ql(npro,nshl,nsd),
-     &            dwl(npro,nenl)            
-c        
-        real*8    xSebe(npro,nshl,nshl),      xmudmi(npro,ngauss) 
+     &            dwl(npro,nenl)
+c
+        real*8    xSebe(npro,nshl,nshl),      xmudmi(npro,ngauss)
 c
 c.... gather the variables
 c
-c.... get the matrix of mode signs for the hierarchic basis functions. 
+c.... get the matrix of mode signs for the hierarchic basis functions.
 c
         if (ipord .gt. 1) then
            call getsgn(ien,sgn)
         endif
-        
+
         call localy(y,      yl,     ien,    ndofl,  'gather  ')
         call localy(ac,    acl,     ien,    ndofl,  'gather  ')
         call localx(x,      xl,     ien,    nsd,    'gather  ')
@@ -15405,14 +15416,14 @@ c.... zero the matrices if they are being recalculated
 c
         if (lhs. eq. 1)  then
            xSebe = zero
-        endif   
+        endif
 c
 c.... get the element residuals, LHS matrix, and preconditioner
 c
       rl = zero
       call e3Sclr  (yl,      acl,     shp,
      &              shgl,    xl,      dwl,
-     &              rl,      ql,      xSebe,   
+     &              rl,      ql,      xSebe,
      &              sgn, xmudmi)
 c
 c.... assemble the residual
@@ -15425,15 +15436,15 @@ c
         end
 
       subroutine initSponge( y,x)
-      
+
       use     specialBC
-      
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/matdat.h"
         include "common_blocks/mmatpar.h"
         include "common_blocks/outpar.h"
-        
+
 C     Local variables
 C
       INTEGER             id
@@ -15445,8 +15456,8 @@ C
       REAL*8                zstart,      zval
 C
       real*8   y(nshg,nflow), x(numnp,3)
-      allocate (ytarget(nshg,nflow))  
-      
+      allocate (ytarget(nshg,nflow))
+
       if(matflg(5,1).eq.5) then
          write(*,*) 'calculating IC sponge'
          ytarget = y
@@ -15480,7 +15491,7 @@ c         if((x(id,3).gt. zstart) .or. (radsqr.gt.radsts))  then
             ytarget(id,2) = zero
             ytarget(id,3) = utarget
             ytarget(id,4) = ptarget
-            ytarget(id,5) = Ttarget            
+            ytarget(id,5) = Ttarget
 c         endif
       enddo
       endif
@@ -15816,15 +15827,15 @@ C
       REAL*8      wr
 C
       real*8   BC(nshg,ndofBC), timel,t
-      real*8   x(numnp,nsd),   
+      real*8   x(numnp,nsd),
      &         shp(MAXTOP,maxsh,MAXQPT),
      &         shgl(MAXTOP,nsd,maxsh,MAXQPT),
      &         shpb(MAXTOP,maxsh,MAXQPT),
      &         shglb(MAXTOP,nsd,maxsh,MAXQPT)
 
-      integer  iBC(numnp),nlast,i,j,nper 
+      integer  iBC(numnp),nlast,i,j,nper
 
-      do i =1,itvn ! itvn is the number of varying nodes on this proc 
+      do i =1,itvn ! itvn is the number of varying nodes on this proc
 
          nlast=numBCt(i)     ! number of time series to interpolate from
          nper=timel/BCt(i,nlast,4)! number of periods completed to shift off
@@ -15837,7 +15848,7 @@ C
             if(BCt(i,j,4).gt.t) then  ! this is upper bound, j-1 is lower
 
                wr=(t-BCt(i,j-1,4))/(BCt(i,j,4)-BCt(i,j-1,4))
-               BC(nbct(i),3:5)= BCt(i,j-1,1:3)*(one-wr) 
+               BC(nbct(i),3:5)= BCt(i,j-1,1:3)*(one-wr)
      &                        + BCt(i,j,1:3)*wr
                exit
 
@@ -15848,7 +15859,7 @@ C
       end
 
       function distds(x1,y1,z1,x2,y2,z2)
-      real*8 distds 
+      real*8 distds
       real*8 x1,y1,z1,x2,y2,z2,x,y,z
       x=x1-x2
       y=y1-y2
@@ -15862,7 +15873,7 @@ C
 !! interpolate the data to match the process time step in Impint
 
       subroutine initImpt()
-      
+
       use convolImpFlow
       include "global.h"
       include "common_blocks/nomodule.h"
@@ -15870,10 +15881,10 @@ C
 C     Local variables
 C
       INTEGER             j,           k,           n
-      
+
       open(unit=817, file='impt.dat',status='old')
          read (817,*) nptsImpmax
-         allocate (numImpt(numImpSrfs))  
+         allocate (numImpt(numImpSrfs))
          allocate (ValueImpt(nptsImpmax,2,numImpSrfs))
          ValueImpt=0
          do k=1,numImpSrfs
@@ -15884,17 +15895,17 @@ C
             enddo
          enddo
       close(817)
-      
+
       allocate (ValueListImp(ntimeptpT+1,numImpSrfs))
       ValueListImp(ntimeptpT+1,:) = ValueImpt(1,2,:) !Z(time=0), last entry
       ValueListImp(1,:) = ValueImpt(1,2,:) !Z(time=0)=Z(time=T)
       return
       end
-      
-      
-      
+
+
+
       subroutine Impint(ctime,jstep)
-      
+
       use convolImpFlow
 
         include "global.h"
@@ -15906,19 +15917,19 @@ C
 C
       real*8 ctime, ptime
       integer nlast, nper, k, j , jstep
-      
-         
+
+
       do k =1,numImpSrfs
          nlast=numImpt(k)     ! number of time series to interpolate from
          nper=ctime/ValueImpt(nlast,1,k)!number of periods completed to shift off
          ptime = ctime-nper*ValueImpt(nlast,1,k)  ! now time in periodic domain
-            
+
          do j=2,nlast   !loop to find the interval that we are in
 
             if(ValueImpt(j,1,k).gt.ptime) then  ! this is upper bound, j-1 is lower
                wr=(ptime-ValueImpt(j-1,1,k))
      &             / ( ValueImpt(j,1,k)-ValueImpt(j-1,1,k) )
-               ValueListImp(jstep,k)= ValueImpt(j-1,2,k)*(one-wr) 
+               ValueListImp(jstep,k)= ValueImpt(j-1,2,k)*(one-wr)
      &                        + ValueImpt(j,2,k)*wr
                exit
             endif
@@ -15934,7 +15945,7 @@ C
 !! interpolate the data to match the process time step in RCRint
 
       subroutine initRCRt()
-      
+
       use convolRCRFlow
 
       include "global.h"
@@ -15951,8 +15962,8 @@ C
 C
       open(unit=818, file='rcrt.dat',status='old')
          read (818,*) nptsRCRmax
-         allocate (numRCRt(numRCRSrfs))  
-         allocate (RCRArea(numRCRSrfs))  
+         allocate (numRCRt(numRCRSrfs))
+         allocate (RCRArea(numRCRSrfs))
          allocate (ValuePdist(nptsRCRmax,2,numRCRSrfs))
          allocate (ValueListRCR(3,numRCRSrfs))
          RCRArea = zero
@@ -15978,8 +15989,8 @@ C
          allocate (RCRConvCoef(nstep(1)+2,numRCRSrfs)) !for convolution coeff
          QHistRCR = zero
          PHistRCR = zero
-      elseif (lstep .gt. 0) then   
-         nptsRCR = lstep            
+      elseif (lstep .gt. 0) then
+         nptsRCR = lstep
          allocate (QHistRCR(lstep+nstep(1)+1,numRCRSrfs))
          allocate (RCRConvCoef(lstep+nstep(1)+2,numRCRSrfs)) !for convolution coeff
          allocate (PHistRCR(lstep+nstep(1)+1,numRCRSrfs))
@@ -16006,13 +16017,13 @@ c     read the results in legacy format *HistRCR.dat
      &         "PHistRCR.dat",871)
          endif
       endif
-      
+
       return
       end
-           
-      
+
+
       subroutine RCRint(ctime,Pdist)
-      
+
       use convolRCRFlow ! brings numRCRSrfs, ValuePdist
 
       include "global.h"
@@ -16024,19 +16035,19 @@ C
 C
       real*8  ctime, ptime
       integer nlast, nper, k, j
-      real*8  Pdist(0:MAXSURF)      
-         
+      real*8  Pdist(0:MAXSURF)
+
       do k =1,numRCRSrfs
          nlast=numRCRt(k)     ! number of time series to interpolate from
          nper=ctime/ValuePdist(nlast,1,k)!number of periods completed to shift off
          ptime = ctime-nper*ValuePdist(nlast,1,k)  ! now time in periodic domain
-            
+
          do j=2,nlast   !loop to find the interval that we are in
 
             if(ValuePdist(j,1,k).gt.ptime) then  ! this is upper bound, j-1 is lower
                wr=(ptime-ValuePdist(j-1,1,k))
      &             / ( ValuePdist(j,1,k)-ValuePdist(j-1,1,k) )
-               Pdist(k)= ValuePdist(j-1,2,k)*(one-wr) 
+               Pdist(k)= ValuePdist(j-1,2,k)*(one-wr)
      &                        + ValuePdist(j,2,k)*wr
                exit
             endif
@@ -16045,13 +16056,13 @@ C
       enddo
       return
       end
-      
+
 !> Read data for Lagrange multipliers: read input data in initLagrange
 !! This data is required to generate profile functions
 
       subroutine initLagrange()
-      
-      use LagrangeMultipliers 
+
+      use LagrangeMultipliers
 
       include "global.h"
       include "common_blocks/nomodule.h"
@@ -16065,7 +16076,7 @@ C
       LOGICAL ierr
 C
       integer NumOfData
-      
+
       allocate(LagCenter(3,numLagrangeSrfs))
       allocate(LagInplaneVectors(3,3,numLagrangeSrfs))
       allocate(LagRadius(numLagrangeSrfs))
@@ -16113,7 +16124,7 @@ C
          read(800,*)
          read(800,*) LagMeanFlow(k)      !Mean flow
          read(800,*)
-         read(800,*) (Lagold(k,n), n=1,3) !Initial Lagrange Multipliers 
+         read(800,*) (Lagold(k,n), n=1,3) !Initial Lagrange Multipliers
          read(800,*)
          read(800,*) (PenaltyCoeff(k,n), n=1,3) !Penalty numbers
          read(800,*)
@@ -16129,9 +16140,9 @@ c     CHECK IF THE LAGRANGE MULTIPLIER FILE EXISTS - DES
          call ReadDataFile(LagErrorHist(1:lstep+1,:),lstep+1,NumOfData,
      &      'LagrangeErrors.dat',802)
       endif
-      
+
       return
-      end         
+      end
 
 !> Returns in pold the history dependent part of the pressure in the
 !! impedance/flow rate convolution for the impedance, RCR, COR
@@ -16169,22 +16180,22 @@ C
       character(len=*) Filename
       real*8    DataFile(nrows,ncolms)
       integer   nrows, ncolms, UnitNumber
-      
+
       open(unit=UnitNumber, file=Filename, status='old')
-         read(UnitNumber,*) 
+         read(UnitNumber,*)
          do i=1, nrows
             read(UnitNumber,*) (DataFile(i,j), j=1, ncolms)
          enddo
       close(UnitNumber)
-   
+
       return
       end
 
-!> This routine computes the LHS mass matrix, the RHS residual 
+!> This routine computes the LHS mass matrix, the RHS residual
 !! vector, and the preconditioning matrix, for use with the GMRES
 !! solver.
 
-      subroutine ElmGMRSclr (y,         ac,        x,     
+      subroutine ElmGMRSclr (y,         ac,        x,
      &                       shp,       shgl,      iBC,
      &                       BC,        shpb,      shglb,
      &                       res,       iper,      ilwork,
@@ -16225,14 +16236,14 @@ C
       REAL*8                spmass
 C
         dimension y(nshg,ndof),         ac(nshg,ndof),
-     &            x(numnp,nsd),         iBC(nshg),           
+     &            x(numnp,nsd),         iBC(nshg),
      &            BC(nshg,ndofBC),      res(nshg),
      &            iper(nshg)
 c
-        dimension shp(MAXTOP,maxsh,MAXQPT),  
-     &            shgl(MAXTOP,nsd,maxsh,MAXQPT), 
+        dimension shp(MAXTOP,maxsh,MAXQPT),
+     &            shgl(MAXTOP,nsd,maxsh,MAXQPT),
      &            shpb(MAXTOP,maxsh,MAXQPT),
-     &            shglb(MAXTOP,nsd,maxsh,MAXQPT) 
+     &            shglb(MAXTOP,nsd,maxsh,MAXQPT)
 c
         dimension qres(nshg,nsd),     rmass(nshg)
 c
@@ -16258,7 +16269,7 @@ c of the diffusive flux vector, q, and lumped mass matrix, rmass
 c
            qres = zero
            rmass = zero
-        
+
            do iblk = 1, nelblk
               iel    = lcblk(1,iblk)
               lcsyst = lcblk(3,iblk)
@@ -16266,27 +16277,27 @@ c
               nshl   = lcblk(10,iblk)
               mattyp = lcblk(7,iblk)
               ndofl  = lcblk(8,iblk)
-              npro   = lcblk(1,iblk+1) - iel 
-              
+              npro   = lcblk(1,iblk+1) - iel
+
               ngauss = nint(lcsyst)
-c     
+c
 c.... compute and assemble diffusive flux vector residual, qres,
 c     and lumped mass matrix, rmass
 
-              call AsIqSclr (y,                   x,                       
-     &                       shp(lcsyst,1:nshl,:), 
+              call AsIqSclr (y,                   x,
+     &                       shp(lcsyst,1:nshl,:),
      &                       shgl(lcsyst,:,1:nshl,:),
-     &                       mien(iblk)%p,     qres,                   
+     &                       mien(iblk)%p,     qres,
      &                       rmass )
-       
+
            enddo
-       
+
 c
 c.... form the diffusive flux approximation
 c
-           call qpbcSclr ( rmass, qres, iBC, iper, ilwork )       
+           call qpbcSclr ( rmass, qres, iBC, iper, ilwork )
 c
-        endif 
+        endif
 c
 c.... -------------------->   interior elements   <--------------------
 c
@@ -16322,15 +16333,15 @@ c.... compute and assemble the residual and tangent matrix
 c
           call AsIGMRSclr(y,                   ac,
      &                 x,
-     &                 shp(lcsyst,1:nshl,:), 
+     &                 shp(lcsyst,1:nshl,:),
      &                 shgl(lcsyst,:,1:nshl,:),
      &                 mien(iblk)%p,        res,
      &                 qres,                xSebe, mxmudmi(iblk)%p )
 c
 c.... satisfy the BC's on the implicit LHS
-c     
+c
           if (impl(1) .ne. 9 .and. lhs .eq. 1) then
-             call fillsparseSclr (mien(iblk)%p, 
+             call fillsparseSclr (mien(iblk)%p,
      &                 xSebe,             lhsS,
      &                 rowp,              colm)
           endif
@@ -16391,7 +16402,7 @@ c
      &              miBCB(iblk)%p,  mBCB(iblk)%p)
 
 c
-c.... compute and assemble the residuals corresponding to the 
+c.... compute and assemble the residuals corresponding to the
 c     boundary integral
 c
           call AsBSclr (y,                       x,
@@ -16426,12 +16437,12 @@ CAD      call timer ('Back    ')
       return
       end
 
-        
+
 c
 c....routine to compute and return the flow rates for coupled surfaces of a given type
-c        
+c
       subroutine GetFlowQ (qsurf,y,srfIdList,numSrfs)
-        
+
       use pvsQbi  ! brings in NABI
 c
       include "global.h"
@@ -16456,13 +16467,13 @@ c note we only need the first three entries (u) from y
       do i = 1,nshg
          do k = 1,numSrfs
             if (srfIdList(k).eq.ndsurf(i)) then
-               do j = 1,3              
+               do j = 1,3
                   qsurfProc(k) = qsurfProc(k) + NABI(i,j)*y(i,j)
                enddo
-            endif      
-         enddo       
+            endif
+         enddo
       enddo
-c      
+c
 c     at this point, each qsurf has its "nodes" contributions to Q
 c     accumulated into qsurf. Note, because NABI is on processor this
 c     will NOT be Q for the surface yet
@@ -16471,18 +16482,18 @@ c.... reduce integrated Q for each surface, push on qsurf
 c
        npars=MAXSURF+1
        call MPI_ALLREDUCE (qsurfProc, qsurf, npars,
-     &        MPI_DOUBLE_PRECISION,MPI_SUM, MPI_COMM_WORLD,ierr) 
+     &        MPI_DOUBLE_PRECISION,MPI_SUM, MPI_COMM_WORLD,ierr)
 c
 c.... return
 c
       return
-      end 
+      end
 c
 c.... routine to compute and return the flow rates multiplied by a profile function
 c.... for constrained surfaces
-c        
+c
       subroutine GetProfileFlowQ (qsurf, y, srfIdList, numSrfs)
-        
+
       use pvsQbi  ! brings in PNABI, ndsurf
 c
       include "global.h"
@@ -16500,24 +16511,24 @@ C
       integer numSrfs, irankCoupled, srfIdList(0:MAXSURF)
       integer i, j, k
 c
-c.... clear the vectors 
+c.... clear the vectors
 c
       qsurfProc = zero
-      do i = 1,nshg      
+      do i = 1,nshg
          if(numSrfs .gt. zero) then
             do k = 1, numSrfs
                irankCoupled = 0
                if (srfIdList(k) .eq. ndsurf(i)) then
                   irankCoupled=k
-                  do j = 1, 3   
+                  do j = 1, 3
                      qsurfProc(irankCoupled) = qsurfProc(irankCoupled)
      &                  +PNABI(i,j)*y(i,j)
                   enddo
-               endif      
-            enddo       
-         endif      
+               endif
+            enddo
+         endif
       enddo
-c      
+c
 c     at this point, each qsurf has its "nodes" contributions to Q
 c     accumulated into qsurf. Note, because PNABI is on processor this
 c     will NOT be Q for the surface yet
@@ -16527,7 +16538,7 @@ c
       npars=MAXSURF+1
       call MPI_ALLREDUCE (qsurfProc, qsurf, npars,
      &        MPI_DOUBLE_PRECISION,MPI_SUM, MPI_COMM_WORLD,ierr)
-  
+
 c
 c.... return
 c
@@ -16541,8 +16552,8 @@ c
 c
 
       use LagrangeMultipliers
-      use pvsQbi 
- 
+      use pvsQbi
+
       include "global.h"
       include "common_blocks/conpar.h"
       include "common_blocks/nomodule.h"
@@ -16555,7 +16566,7 @@ c
 c
 c.... clear the vector
 c
-      if (LagSwitch .gt. 0) then 
+      if (LagSwitch .gt. 0) then
          NANBLagrange(4:6,:,:) = zero
       else
          NANBLagrange = zero
@@ -16569,7 +16580,7 @@ c
                tmp1 = 0
                tmp2 = 0
                tmp3 = 0
-               if (nsrflistLagrange(p).eq.ndsurf(i)) then 
+               if (nsrflistLagrange(p).eq.ndsurf(i)) then
                   do k = col(i), col(i+1)-1
                      j = row(k)
 c
@@ -16587,7 +16598,7 @@ c
      3                  +lhsLagL(9,k,n)*y(j,3)
 c
                   enddo
-                  if (LagSwitch .gt. 0) then 
+                  if (LagSwitch .gt. 0) then
                      m = n+3
                      NANBLagrange(m,i,1)=NANBLagrange(m,i,1)+tmp1
                      NANBLagrange(m,i,2)=NANBLagrange(m,i,2)+tmp2
@@ -16603,14 +16614,14 @@ c
          enddo
       enddo
 c
-      return 
+      return
       end
-                        
+
 !> Routine to compute inner products for constrained surfaces.
 !! CalcNANBLagrange should be called first
-        
+
       subroutine GetInnerProduct (qsurf, y, srfIdList, numSrfs)
-c        
+c
       use LagrangeMultipliers ! brings in NANBLagrange
       use pvsQbi  ! brings in ndsurf
 c
@@ -16627,24 +16638,24 @@ C
       integer numSrfs, irankCoupled, srfIdList(0:MAXSURF)
       integer i, j, k, n
 c
-c.... clear the vector 
+c.... clear the vector
 c
       qsurfProc = zero
       if(numSrfs.gt.zero) then
          do i = 1, nshg
             do n=1, 3
-               do k = 1, numSrfs      
+               do k = 1, numSrfs
                   if (srfIdList(k) .eq. ndsurf(i)) then
                      do j=1, 3
                         qsurfProc(k,n)=qsurfProc(k,n)
      &                     +NANBLagrange(n,i,j)*y(i,j)
                      enddo
                   endif
-               enddo      
-            enddo       
-         enddo      
+               enddo
+            enddo
+         enddo
       endif
-c      
+c
 c     at this point, each qsurf has its "nodes" contributions to Q
 c     accumulated into qsurf. Note, because NABI is on processor this
 c     will NOT be Q for the surface yet
@@ -16655,16 +16666,16 @@ c
          npars=MAXSURF+1
          call MPI_ALLREDUCE (qsurfProc(:,n), qsurf(:,n), npars,
      &        MPI_DOUBLE_PRECISION,MPI_SUM, MPI_COMM_WORLD,ierr)
-      enddo  
+      enddo
 c
 c.... return
 c
       return
-      end      
+      end
 
 !> Routine to multiply 1/mu * L transpose matrix for Lagrange Multipliers
 
-      subroutine LagMultiplyMatrixTranspose(srfIDList, numSrfs)     
+      subroutine LagMultiplyMatrixTranspose(srfIDList, numSrfs)
 
       use pvsQbi  ! brings in NABI
       use LagrangeMultipliers !brings in the current part of coef for Lagrange Multipliers
@@ -16681,8 +16692,8 @@ C
 
 C
       real*8  DiagonalDelta,          DiagonalDeltaSurf
-      integer  srfIDList(0:MAXSURF),  numSrfs 
-     
+      integer  srfIDList(0:MAXSURF),  numSrfs
+
       DiagonalDelta = -two*alfi*gami*Delt(1)
       LagAPproduct = zero
 
@@ -16690,7 +16701,7 @@ C
          do k = 1, numSrfs
             DiagonalDeltaSurf = zero
             DiagonalDeltaSurf = DiagonalDelta*LagMeanFlow(k)
-            if (srfIDList(k).eq.ndsurf(i)) then 
+            if (srfIDList(k).eq.ndsurf(i)) then
                LagAPproduct(i,1:3)=LagAPproduct(i,1:3)+DiagonalDeltaSurf
      &            *((NANBLagrange(1,i,1:3)-PQLagrange(k,1)*NABI(i,1:3)
      &            -QLagrange(k,1)*PNABI(i,1:3)/LagProfileArea(k)
@@ -16699,14 +16710,14 @@ C
      &            +NANBLagrange(3,i,1:3)*AddLag(k,3) )
             endif
          enddo
-      enddo  
-     
+      enddo
+
       return
       end
 
 !> Routine to multiply L matrix for Lagrange Multipliers
 
-      subroutine LagMultiplyMatrix (Dy, CaseNumber, srfIDList, numSrfs) 
+      subroutine LagMultiplyMatrix (Dy, CaseNumber, srfIDList, numSrfs)
 
       use pvsQbi  ! brings in NABI
       use LagrangeMultipliers !brings in the current part of coef for Lagrange Multipliers
@@ -16724,23 +16735,23 @@ C
 C
       real*8  Dy(nshg,3),    DiagonalDeltaSurf
       real*8  DiagonalDelta, ProcAddLag(0:MAXSURF,3)
-      integer CaseNumber, srfIDList(0:MAXSURF), numSrfs 
+      integer CaseNumber, srfIDList(0:MAXSURF), numSrfs
 
       DiagonalDelta = -two*alfi*gami*Delt(1)
       ProcAddLag = zero
       if (CaseNumber .eq. zero) then
-         call GetFlowQ(ProcAddLag(:,1), Dy(:,1:3), srfIDList, numSrfs)  
+         call GetFlowQ(ProcAddLag(:,1), Dy(:,1:3), srfIDList, numSrfs)
          QLagrange(1:numSrfs,2)=ProcAddLag(1:numSrfs,1)
          ProcAddLag = zero
          call GetProfileFlowQ(ProcAddLag(:,1), Dy(:,1:3), srfIDList,
-     &      numSrfs)    
+     &      numSrfs)
          PQLagrange(1:numSrfs,2)=ProcAddLag(1:numSrfs,1)
-     &      /LagProfileArea(1:numSrfs) 
+     &      /LagProfileArea(1:numSrfs)
          ProcAddLag = zero
          call GetInnerProduct(ProcAddLag, Dy(:,1:3), srfIDList, numSrfs)
-         IPLagrange(1:numSrfs,4:6)=ProcAddLag(1:numSrfs,1:3)  
+         IPLagrange(1:numSrfs,4:6)=ProcAddLag(1:numSrfs,1:3)
       endif
-            
+
       do k = 1, numSrfs
          DiagonalDeltaSurf = zero
          DiagonalDeltaSurf = DiagonalDelta * LagMeanFlow(k)
@@ -16750,8 +16761,8 @@ C
      &      +QLagrange(k,1)*QLagrange(k,2)*ProfileDelta(k))
          AddLag(k,2)=DiagonalDeltaSurf*IPLagrange(k,5)
          AddLag(k,3)=DiagonalDeltaSurf*IPLagrange(k,6)
-      enddo  
-  
+      enddo
+
       return
       end
 
@@ -16761,15 +16772,15 @@ c
       subroutine CalcImpConvCoef (numISrfs, numTpoints)
 
       use convolImpFlow !uses flow history and impedance for convolution
-      
-      include "global.h" 
+
+      include "global.h"
       include "common_blocks/timdat.h" !for alfi
 C
 C     Local variables
 C
       INTEGER              j
-C      
-      integer numISrfs, numTpoints      
+C
+      integer numISrfs, numTpoints
 
       allocate (ConvCoef(numTpoints+2,3)) !same time discret. for all imp. BC
       do j=1,numTpoints+2
@@ -16783,10 +16794,10 @@ C
       ConvCoef(2,3)=zero
       ConvCoef(numTpoints+1,1)=zero
       ConvCoef(numTpoints+2,2)=zero
-      ConvCoef(numTpoints+2,1)=zero  
+      ConvCoef(numTpoints+2,1)=zero
 c
 c...calculate the coefficients for the impedance convolution
-c 
+c
       allocate (ImpConvCoef(numTpoints+2,numISrfs))
 
 c..try easiest convolution Q and Z constant per time step
@@ -16795,12 +16806,12 @@ c..try easiest convolution Q and Z constant per time step
       enddo
       ImpConvCoef(1,:) =zero
       ImpConvCoef(2,:) =zero
-      ImpConvCoef(numTpoints+2,:) = 
+      ImpConvCoef(numTpoints+2,:) =
      &           ValueListImp(numTpoints+1,:)/numTpoints
 c compensate for yalpha passed not y in Elmgmr()
       ImpConvCoef(numTpoints+1,:)= ImpConvCoef(numTpoints+1,:)
-     &                  - ImpConvCoef(numTpoints+2,:)*(1.0-alfi)/alfi 
-      ImpConvCoef(numTpoints+2,:)= ImpConvCoef(numTpoints+2,:)/alfi 
+     &                  - ImpConvCoef(numTpoints+2,:)*(1.0-alfi)/alfi
+      ImpConvCoef(numTpoints+2,:)= ImpConvCoef(numTpoints+2,:)/alfi
       return
       end
 
@@ -16810,32 +16821,32 @@ c
       subroutine CalcRCRConvCoef (stepn, numSrfs)
 
       use convolRCRFlow !brings in ValueListRCR, dtRCR
-      
-      include "global.h" 
+
+      include "global.h"
       include "common_blocks/timdat.h" !brings alfi
 C
 C     Local variables
 C
       INTEGER             j
-C      
-      integer numSrfs, stepn    
+C
+      integer numSrfs, stepn
 
       RCRConvCoef = zero
       if (stepn .eq. 0) then
         RCRConvCoef(1,:) = ValueListRCR(1,:)*(1.0-alfi) +
-     &   ValueListRCR(3,:)*(-alfi + 1.0 + 1/dtRCR(:) 
+     &   ValueListRCR(3,:)*(-alfi + 1.0 + 1/dtRCR(:)
      &     - exp(-alfi*dtRCR(:))*(1 + 1/dtRCR(:)))
-        RCRConvCoef(2,:) = ValueListRCR(1,:)*alfi 
+        RCRConvCoef(2,:) = ValueListRCR(1,:)*alfi
      &     + ValueListRCR(3,:)
      &     *(alfi - 1/dtRCR(:) + exp(-alfi*dtRCR(:))/dtRCR(:))
       endif
       if (stepn .ge. 1) then
         RCRConvCoef(1,:) =-ValueListRCR(3,:)*exp(-dtRCR(:)*(stepn+alfi))
      &        *(1 + (1 - exp(dtRCR(:)))/dtRCR(:))
-        RCRConvCoef(stepn+1,:) = ValueListRCR(1,:)*(1-alfi) 
-     &     - ValueListRCR(3,:)*(alfi - 1 - 1/dtRCR(:) 
+        RCRConvCoef(stepn+1,:) = ValueListRCR(1,:)*(1-alfi)
+     &     - ValueListRCR(3,:)*(alfi - 1 - 1/dtRCR(:)
      &     + exp(-alfi*dtRCR(:))/dtRCR(:)*(2 - exp(-dtRCR(:))))
-        RCRConvCoef(stepn+2,:) = ValueListRCR(1,:)*alfi 
+        RCRConvCoef(stepn+2,:) = ValueListRCR(1,:)*alfi
      &     + ValueListRCR(3,:)
      &     *(alfi - 1/dtRCR(:) + exp(-alfi*dtRCR(:))/dtRCR(:))
       endif
@@ -16849,8 +16860,8 @@ C
 
 c compensate for yalpha passed not y in Elmgmr()
       RCRConvCoef(stepn+1,:)= RCRConvCoef(stepn+1,:)
-     &                  - RCRConvCoef(stepn+2,:)*(1.0-alfi)/alfi 
-      RCRConvCoef(stepn+2,:)= RCRConvCoef(stepn+2,:)/alfi 
+     &                  - RCRConvCoef(stepn+2,:)*(1.0-alfi)/alfi
+      RCRConvCoef(stepn+2,:)= RCRConvCoef(stepn+2,:)/alfi
 
       return
       end
@@ -16866,12 +16877,12 @@ c
       include "mpif.h"  !needed?
       include "common_blocks/timdat.h"
 C
-      integer numSrfs, stepn      
+      integer numSrfs, stepn
       real*8  PdistCur(0:MAXSURF), timestepRCR
-      
+
       HopRCR=zero
       call RCRint(timestepRCR*(stepn + alfi),PdistCur)
-      HopRCR(1:numSrfs) = RCRic(1:numSrfs) 
+      HopRCR(1:numSrfs) = RCRic(1:numSrfs)
      &     *exp(-dtRCR(1:numSrfs)*(stepn + alfi)) + PdistCur(1:numSrfs)
       return
       end
@@ -16881,18 +16892,18 @@ c.... This subroutine writes FlowHist.dat and PressHist.dat files
 c
       subroutine UpdRCR(y, srfIDList, numSrfs)
 
-      use convolRCRFlow 
+      use convolRCRFlow
 
         include "global.h"
         include "common_blocks/outpar.h"
         include "common_blocks/workfc.h"
         include "common_blocks/conpar.h"
         include "common_blocks/timdat.h"
-C     
+C
       real*8   y(nshg, ndof), NewP(0:MAXSURF)
       integer  srfIDList(0:MAXSURF),  numSrfs
       character*50 fname
-      
+
       call integrScalar(NewP,y(:,4),srfIdList,numSrfs)
          PHistRCR(lstep+1,1:numSrfs)=NewP(1:numSrfs)/RCRArea(1:numSrfs)
       if ((mod(lstep, ntout) .eq. 0).and.
@@ -16906,23 +16917,23 @@ c     output the results in format *HistRCR.dat.step#
          fname = trim(fname)
          call OutputDataFile(PHistRCR(1:lstep+1,:),lstep+1,numSrfs,
      &      fname,871)
-      endif 
+      endif
 
       return
       end
 
 
-c 
+c
 c ... calculate initial conditions for the CalcSurfaces
-c      
+c
       subroutine calcCalcic(y,srfIdList,numSrfs)
-      
+
       use calcFlowPressure
 c
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/timdat.h"
-C      
+C
       integer   srfIdList(0:MAXSURF), numSrfs, irankCoupled
       real*8    y(nshg,4)   !need velocity and pressure
       real*8    Qini(0:MAXSURF) !initial flow rate
@@ -16940,14 +16951,14 @@ c
       call integrScalar(Pini,POnly,srfIdList,numSrfs) !get initial pressure integral
       Pini(1:numSrfs) = Pini(1:numSrfs)/CalcArea(1:numSrfs)
       PressHist(lstep+1,1:numSrfs)=Pini(1:numSrfs)
-     
+
       return
       end
-c 
+c
 c ... initialize the influence of the initial conditions for the RCR BC
-c    
+c
       subroutine calcRCRic(y,srfIdList,numSrfs)
-      
+
       use convolRCRFlow    !brings RCRic, ValueListRCR, ValuePdist
 
         include "global.h"
@@ -16963,8 +16974,8 @@ C
       real*8    VelOnly(nshg,3), POnly(nshg)
 
       allocate (RCRic(0:MAXSURF))
-c      call RCRint(lstep,PdistIni) !get initial distal P 
-      call RCRint(time,PdistIni) !get initial distal P 
+c      call RCRint(lstep,PdistIni) !get initial distal P
+      call RCRint(time,PdistIni) !get initial distal P
       POnly(:)= one ! one to get area
       call integrScalar(CoupleArea,POnly,srfIdList,numSrfs) !get surf area
       RCRArea(1:numSrfs) = CoupleArea(1:numSrfs)
@@ -16976,14 +16987,14 @@ c      call RCRint(lstep,PdistIni) !get initial distal P
          call integrScalar(Pini,POnly,srfIdList,numSrfs) !get initial pressure integral
          Pini(1:numSrfs) = Pini(1:numSrfs)/RCRArea(1:numSrfs)
          PHistRCR(1,1:numSrfs)=Pini(1:numSrfs)
-         RCRic(1:numSrfs) = Pini(1:numSrfs) 
+         RCRic(1:numSrfs) = Pini(1:numSrfs)
      &          - ValueListRCR(1,:)*Qini(1:numSrfs)-PdistIni(1:numSrfs)
       elseif (lstep .gt. zero) then
-          RCRic(1:numSrfs) = PHistRCR(1,1:numSrfs) 
+          RCRic(1:numSrfs) = PHistRCR(1,1:numSrfs)
      &     -ValueListRCR(1,1:numSrfs)*QHistRCR(1,1:numSrfs)
      &     -PdistIni(1:numSrfs)
       endif
-      
+
       return
       end
 
@@ -17010,21 +17021,21 @@ C
       PressHist(lstep+1,1:numSrfs) = NewP(1:numSrfs)/CalcArea(1:numSrfs)
       if ((mod(lstep, ntout) .eq. 0).and.
      &   (myrank .eq. zero)) then
-c            CALL AppendDataFile(NewQ(1:numSrfs), srfIDList(1:numSrfs), 
+c            CALL AppendDataFile(NewQ(1:numSrfs), srfIDList(1:numSrfs),
 c     2         numSrfs, 'FlowHist.dat', 1004)
-c            CALL AppendDataFile(NewP(1:numSrfs), srfIDList(1:numSrfs), 
+c            CALL AppendDataFile(NewP(1:numSrfs), srfIDList(1:numSrfs),
 c     2         numSrfs, 'PressHist.dat', 1005)
          call OutputDataFile(FlowHist(1:lstep+1,:),lstep+1,numSrfs,
      &      'FlowHist.dat',1004)
          call OutputDataFile(PressHist(1:lstep+1,:),lstep+1,numSrfs,
      &      'PressHist.dat',1005)
-      endif 
+      endif
 
       return
       end
 
 c
-c.... This subroutine writes Lagrange Multipliers and errors in 
+c.... This subroutine writes Lagrange Multipliers and errors in
 c.... LagrangeMultipliers.dat and LagrangeErrors.dat
 c
       subroutine UpdateLagrangeCoef(y, col, row, srfIDList, numSrfs)
@@ -17041,22 +17052,22 @@ C
 C     Local variables
 C
       INTEGER            k
-C      
+C
       real*8   y(nshg, ndof)
       integer  col(nshg+1),           row(nnz_tot)
       integer  srfIDList(0:MAXSURF),  numSrfs, NumOfData
       real*8   Integral(0:MAXSURF),   InnerProduct(0:MAXSURF,3)
- 
-      Integral = zero     
-      InnerProduct = zero   
-      call GetFlowQ(Integral, y(:,1:3), srfIDList, numSrfs)  
+
+      Integral = zero
+      InnerProduct = zero
+      call GetFlowQ(Integral, y(:,1:3), srfIDList, numSrfs)
       QLagrange(1:numSrfs,1)=Integral(1:numSrfs)
       Integral = zero
-      call GetProfileFlowQ(Integral, y(:,1:3), srfIDList, numSrfs) 
+      call GetProfileFlowQ(Integral, y(:,1:3), srfIDList, numSrfs)
       PQLagrange(1:numSrfs,1)=Integral(1:numSrfs)
-     &   /LagProfileArea(1:numSrfs) 
+     &   /LagProfileArea(1:numSrfs)
       Integral = zero
-      LagSwitch = 0 
+      LagSwitch = 0
       call CalcNANBLagrange(col, row, y(:,1:3))
       call GetInnerProduct(InnerProduct, y(:,1:3), srfIDList, numSrfs)
       IPLagrange(1:numSrfs,1:3)=InnerProduct(1:numSrfs,1:3)
@@ -17071,7 +17082,7 @@ C
      &      LagErrorHist(lstep+1,NumOfData:NumOfData+2)
      &      *LagMeanFlow(k)
          LagHist(lstep+1,NumOfData:NumOfData+2)=Lag(k,1:3)
-      enddo    
+      enddo
 
       if ((mod(lstep, ntout) .eq. 0).and.
      &      (myrank .eq. zero)) then
@@ -17083,15 +17094,15 @@ C
       endif
 c
       return
-      end  
+      end
 c
 c.... this function calculates an initial condition of a constrained surface
 c
       subroutine calcLagrangeic(srfIDList, numSrfs)
-c      
+c
       use LagrangeMultipliers
-      
-      include "global.h" 
+
+      include "global.h"
       include "common_blocks/timdat.h"
       include "common_blocks/conpar.h"
 C
@@ -17099,14 +17110,14 @@ C     Local variables
 C
       INTEGER             k
 C
-      integer  srfIDList(0:MAXSURF),  numSrfs,   NumOfData 
-      
-      LagSwitch = 0 
+      integer  srfIDList(0:MAXSURF),  numSrfs,   NumOfData
+
+      LagSwitch = 0
       allocate(lhsLagL(9,nnz_tot,3))
       allocate(resL(numSrfs,3))
       allocate(LagAPproduct(nshg,3))
       lhsLagL = zero
-      resL = zero   
+      resL = zero
       LagAPproduct = zero
       call MergeLagrangeParameters(srfIDList, numSrfs)
       ProfileDelta(1:numSrfs)=ProfileDelta(1:numSrfs)
@@ -17121,16 +17132,16 @@ C
          endif
       enddo
 
-      return 
+      return
       end
 
 c
 c.... this function calculates an initial condition of a constrained surface
 c
       subroutine calcLagrangeErroric(y,  col,  row,  srfIDList, numSrfs)
-c      
+c
       use LagrangeMultipliers
-      
+
         include "global.h"
         include "common_blocks/conpar.h"
         include "common_blocks/timdat.h"
@@ -17140,18 +17151,18 @@ C
       INTEGER             k
 C
       real*8   y(nshg, ndof)
-      integer  srfIDList(0:MAXSURF),  numSrfs,   NumOfData 
+      integer  srfIDList(0:MAXSURF),  numSrfs,   NumOfData
       integer  col(nshg+1),           row(nnz_tot)
       real*8   Integral(0:MAXSURF),   InnerProduct(0:MAXSURF,3)
-      
-      Integral = zero     
-      InnerProduct = zero   
-      call GetFlowQ(Integral, y(:,1:3), srfIDList, numSrfs)  
+
+      Integral = zero
+      InnerProduct = zero
+      call GetFlowQ(Integral, y(:,1:3), srfIDList, numSrfs)
       QLagrange(1:numSrfs,1)=Integral(1:numSrfs)
       Integral = zero
-      call GetProfileFlowQ(Integral, y(:,1:3), srfIDList, numSrfs) 
+      call GetProfileFlowQ(Integral, y(:,1:3), srfIDList, numSrfs)
       PQLagrange(1:numSrfs,1)=Integral(1:numSrfs)
-     &   /LagProfileArea(1:numSrfs) 
+     &   /LagProfileArea(1:numSrfs)
       Integral = zero
       call CalcNANBLagrange(col, row, y(:,1:3))
       call GetInnerProduct(InnerProduct, y(:,1:3), srfIDList, numSrfs)
@@ -17168,45 +17179,45 @@ C
      &      *LagMeanFlow(k)
       enddo
 
-      return 
+      return
       end
 
 c
 c.... this function calculates an area and plane vectors of a constrained surface
 c
       subroutine MergeLagrangeParameters(srfIDList, numSrfs)
-c      
+c
       use LagrangeMultipliers
-c      
+c
       include "global.h"
       include "mpif.h"
 C
 C     Local variables
 C
       INTEGER             i,           ierr,        j,           k
-C           
-      integer  srfIDList(0:MAXSURF),  numSrfs 
+C
+      integer  srfIDList(0:MAXSURF),  numSrfs
       real*8   VectMag(3), Inplane1, Inplane2, Inplane3, InplaneNorm
       real*8, allocatable, dimension (:) :: TotalArea
       real*8, allocatable, dimension (:,:,:) :: InplaneVectors
-c      
+c
       allocate(TotalArea(numSrfs))
       allocate(InplaneVectors(3,3,numSrfs))
       TotalArea = zero
       InplaneVectors = zero
       call MPI_ALLREDUCE (LagProfileArea, TotalArea, numSrfs,
-     &        MPI_DOUBLE_PRECISION,MPI_SUM, MPI_COMM_WORLD,ierr)  
+     &        MPI_DOUBLE_PRECISION,MPI_SUM, MPI_COMM_WORLD,ierr)
       LagProfileArea(1:numSrfs)=TotalArea(1:numSrfs)
       TotalArea = zero
       call MPI_ALLREDUCE (ProfileDelta, TotalArea, numSrfs,
-     &        MPI_DOUBLE_PRECISION,MPI_SUM, MPI_COMM_WORLD,ierr)  
+     &        MPI_DOUBLE_PRECISION,MPI_SUM, MPI_COMM_WORLD,ierr)
       ProfileDelta(1:numSrfs)=TotalArea(1:numSrfs)
       InplaneVectors = zero
-      
+
       do i=1,3
          do j=1,3
             call MPI_ALLREDUCE(LagInplaneVectors(i,j,:),
-     &         InplaneVectors(i,j,:), numSrfs,  
+     &         InplaneVectors(i,j,:), numSrfs,
      &         MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD,ierr)
          enddo
       enddo
@@ -17233,10 +17244,10 @@ c
             LagInplaneVectors(3,3,k)=Inplane3*InplaneNorm
          endif
       enddo
-c            
-      return 
-      end      
-c  
+c
+      return
+      end
+c
 c.........function that integrates a scalar over a boundary
 c
       subroutine integrScalar(scalInt,scal,srfIdList,numSrfs)
@@ -17251,7 +17262,7 @@ C     Local variables
 C
       INTEGER             ierr
       INTEGER             npars
-C 
+C
       integer   srfIdList(0:MAXSURF), numSrfs, i, k
       real*8    scal(nshg), scalInt(0:MAXSURF), scalIntProc(0:MAXSURF)
 
@@ -17265,7 +17276,7 @@ C
             endif
          enddo
       enddo
-c      
+c
 c     at this point, each scalint has its "nodes" contributions to the scalar
 c     accumulated into scalIntProc. Note, because NASC is on processor this
 c     will NOT be the scalar for the surface yet
@@ -17274,8 +17285,8 @@ c.... reduce integrated scalar for each surface, push on scalInt
 c
         npars=MAXSURF+1
        call MPI_ALLREDUCE (scalIntProc, scalInt, npars,
-     &        MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD,ierr)  
-   
+     &        MPI_DOUBLE_PRECISION, MPI_SUM, MPI_COMM_WORLD,ierr)
+
       return
       end
 
@@ -17289,12 +17300,12 @@ C
 C     Local variables
 C
       INTEGER             i,           n
-C      
+C
       character(len=*) Filename
       real*8    DataFile(nrows,ncolms)
       integer   nrows, ncolms, UnitNumber
       integer ioerr
-      
+
       open(unit=UnitNumber, file=Filename,status='replace',iostat=ioerr)
 
       if (ioerr.eq.0) then
@@ -17307,6 +17318,6 @@ C
       endif
 
       close(UnitNumber)
-   
+
       return
       end

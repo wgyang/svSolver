@@ -4,33 +4,33 @@ c
 c Portions of the code Copyright (c) 2009-2011 Open Source Medical
 c Software Corporation, University of California, San Diego.
 c
-c Portions of the code Copyright (c) 2000-2007, Stanford University, 
-c     Rensselaer Polytechnic Institute, Kenneth E. Jansen, 
+c Portions of the code Copyright (c) 2000-2007, Stanford University,
+c     Rensselaer Polytechnic Institute, Kenneth E. Jansen,
 c     Charles A. Taylor.
-c  
-c  See SimVascular Acknowledgements file for additional 
+c
+c  See SimVascular Acknowledgements file for additional
 c  contributors to the source code.
 c
-c  Redistribution and use in source and binary forms, with or without 
-c  modification, are permitted provided that the following conditions 
+c  Redistribution and use in source and binary forms, with or without
+c  modification, are permitted provided that the following conditions
 c  are met:
 c
 c  Redistributions of source code must retain the above copyright notice,
-c  this list of conditions and the following disclaimer. 
-c  Redistributions in binary form must reproduce the above copyright 
-c  notice, this list of conditions and the following disclaimer in the 
-c  documentation and/or other materials provided with the distribution. 
+c  this list of conditions and the following disclaimer.
+c  Redistributions in binary form must reproduce the above copyright
+c  notice, this list of conditions and the following disclaimer in the
+c  documentation and/or other materials provided with the distribution.
 c  Neither the name of the Stanford University or Rensselaer Polytechnic
 c  Institute nor the names of its contributors may be used to endorse or
-c  promote products derived from this software without specific prior 
+c  promote products derived from this software without specific prior
 c  written permission.
 c
 c  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 c  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-c  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-c  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-c  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-c  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+c  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+c  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+c  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+c  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 c  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 c  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
 c  AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -85,8 +85,9 @@ C
 #if(VER_VARWALL == 1)
       character*255 fname0
       integer nwallprop
-
 #endif
+
+
       character*255 warning
 c     CAREFUL IGEOM,IBNDC,IRSTIN REDECLARED IN VARWALL
       integer irstin0, ierr
@@ -149,12 +150,12 @@ c
       call readheader(igeom,fname1,ntopsh,ione,'integer'//CHAR(0), iotype)
 c
 c.... calculate the maximum number of boundary element nodes
-c     
+c
       nenb = 0
       do i = 1, melCat
          if (nen .eq. nenCat(i,nsd)) nenb = max(nenCat(i,nsd-1), nenb)
       enddo
-c     
+c
       if (myrank == master) then
          if (nenb .eq. 0) call error ('input   ','nen     ',nen)
       endif
@@ -163,20 +164,20 @@ c.... setup some useful constants
 c
       I3nsd  = nsd / 3          ! nsd=3 integer flag
       E3nsd  = float(I3nsd)     ! nsd=3 real    flag
-c    
+c
       if(matflg(1,1).lt.0) then
          nflow = nsd + 1
       else
          nflow = nsd + 2
-      endif 
+      endif
       ndof   = nsd + 2
       nsclr=impl(1)/100
       ndof=ndof+nsclr           ! number of sclr transport equations to solve
-      
+
       ndofBC = ndof + I3nsd     ! dimension of BC array
       ndiBCB = 2                ! dimension of iBCB array
       ndBCB  = ndof + 1         ! dimension of BCB array
-c     
+c
       nsymdf = (ndof*(ndof + 1)) / 2 ! symm. d.o.f.'s
 c
 c.... ----------------------> Communication tasks <--------------------
@@ -200,7 +201,7 @@ c
            nlwork=1
            allocate( point2ilwork(1))
       endif
-c     
+c
 c.... read the node coordinates
 c
       itwo=2
@@ -313,11 +314,10 @@ c
       if ((ideformwall.eq.1) .and. (ivarwallprop.eq.1)) then
 
           use_restart=1
-
           itwo=2
           fname1='varwallprop?'
           intfromfile = 0
-          call readheader(igeom,fname1,intfromfile,itwo, 'double'//CHAR(0), iotype)     
+          call readheader(igeom,fname1,intfromfile,itwo, 'integer'//CHAR(0), iotype)
 
           if (intfromfile(1).gt.0) then
               use_restart=0
@@ -330,7 +330,7 @@ c.... Check that either 2 or 5 nwallprop exist: (thicknessvw, evw) with/without 
                   stop
               endif
 
-              if (itissuesuppt .eq. 1) then 
+              if (itissuesuppt .eq. 1) then
                   if (nwallprop .ne. 5) then
                       warning = 'WARNING: number of properties not equal 5'
                       write(*,*) warning
@@ -340,18 +340,54 @@ c.... Check that either 2 or 5 nwallprop exist: (thicknessvw, evw) with/without 
                       warning = 'WARNING: number of properties not equal 2'
                       write(*,*) warning
                   endif
-              endif 
-              
+              endif
+
 
               allocate( wallpropg(numnp, nwallprop) )
-              
+
               ixsiz=numnp*nwallprop
-              wallpropg = 0.0D0          
+              wallpropg = 0.0D0
 
               call readdatablock(igeom,fname1,wallpropg,ixsiz, 'double'//CHAR(0),iotype)
           endif
       endif
+
+
 #endif
+
+c.... read the values of permeability property variables from geombc into permpropg
+c
+      if (iporouspen .eq. 1) then
+
+       use_restart=1
+       itwo=2
+       fname1='permprop?'
+       intfromfile = 0
+       call readheader(igeom,fname1,intfromfile,itwo, 'integer'//CHAR(0)
+     & , iotype)
+
+       if (intfromfile(1).gt.0) then
+         use_restart=0
+         numnp=intfromfile(1)
+         npermprop=intfromfile(2)
+
+         if (npermprop .ne. 1) then
+          warning = 'WARNING: number of perm. prop not equal 1'
+          write(*,*) warning
+         endif
+
+         allocate( permpropg(numnp, npermprop) )
+
+         ixsiz=numnp*npermprop
+         permpropg = 0.0D0
+         call readdatablock(igeom,fname1,permpropg,ixsiz,
+     &    'double'//CHAR(0),iotype)
+       endif
+      endif
+c................
+
+
+
 c
 c.... Read restart files
 c
@@ -371,7 +407,7 @@ c      call creadlist(irstin,ithree,nshg2,ndof2,lstep)
         write(*,*) warning , ndof
       endif
 c
-      if (nshg2 .ne. nshg) 
+      if (nshg2 .ne. nshg)
      &     call error ('restar  ', 'nshg   ', nshg)
 c
 c.... read the values of primitive variables into q
@@ -383,20 +419,20 @@ c
       call readdatablock(irstin,fname1,qread,iqsiz,
      &                      'double'//CHAR(0),iotype)
       qold(:,1:ndof)=qread(:,1:ndof)
-c 
+c
       fname1='time derivative of solution?'
       intfromfile=0
       call readheader(irstin,fname1,intfromfile,
      &     ithree,'integer'//CHAR(0), iotype)
       allocate( acold(nshg,ndof) )
-      if(intfromfile(1).ne.0) then 
+      if(intfromfile(1).ne.0) then
          nshg2=intfromfile(1)
          ndof2=intfromfile(2)
          lstep=intfromfile(3)
-         
-         if (nshg2 .ne. nshg) 
+
+         if (nshg2 .ne. nshg)
      &        call error ('restar  ', 'nshg   ', nshg)
-c     
+c
          allocate( acread(nshg,ndof2) )
          acread=zero
 
@@ -428,14 +464,14 @@ c      call creadlist(irstin,ithree,nshg2,ndisp,lstep)
             write(*,*) warning , ndisp
          endif
 c
-         if (nshg2 .ne. nshg) 
+         if (nshg2 .ne. nshg)
      &        call error ('restar  ', 'nshg   ', nshg)
 c
 c.... read the values of primitive variables into uold
 c
          allocate( uold(nshg,nsd) )
          allocate( uread(nshg,nsd) )
-         
+
          iusiz=nshg*nsd
          call readdatablock(irstin,fname1,uread,iusiz,
      &        'double'//CHAR(0),iotype)
@@ -471,7 +507,7 @@ c
            nwallprop = intfromfile(2)
 
 c          lstep=intfromfile(3) is not necessary since this is step 0
-c          not real 
+c          not real
 
 
 c.... Check that 5 nwallprop exist: thicknessvw, evw, ksvw, csvw, p0vw
@@ -497,7 +533,54 @@ c.... Check that 5 nwallprop exist: thicknessvw, evw, ksvw, csvw, p0vw
          endif
          call closefile( irstin0, "read" )
        endif
+
 #endif
+
+
+c
+c.... read the values of permeability property variables from restart into permpropg
+c
+       if (iporouspen .eq. 1) then
+
+         fname0='restart.0'
+         fname0 = trim(fname0) // cname(myrank+1)
+c
+c.... open input files at t=0 to get varwallprop
+c.... varwallprop is stored in restart.0.proc only
+c
+         call openfile( fname0,'read?'//CHAR(0), irstin0 );
+         fname1='permprop?'
+
+         intfromfile = 0
+         call readheader(irstin0,fname1,intfromfile,
+     &        ithree,'integer'//CHAR(0), iotype)
+
+        if (intfromfile(1).gt.0) then
+           nshg2 = intfromfile(1)
+           nwallprop = intfromfile(2)
+
+c          lstep=intfromfile(3) is not necessary since this is step 0
+c          not real
+
+           if(nwallprop.ne.1) then
+             warning ='WARNING: number of properties not equal 1'
+             write(*,*) warning
+           endif
+
+           if (nshg2 .ne. nshg)
+     &        call error ('restar permprop ', 'nshg   ', nshg)
+
+           allocate( permpropg(nshg,nwallprop) )
+           iusiz=nshg*nwallprop
+           permpropg = 0.0D0
+           call readdatablock(irstin0,fname1,uread(:,1:npermprop),iusiz,
+     &        'double'//CHAR(0),iotype)
+           permpropg=uread(:,1:npermprop)
+
+         endif
+         call closefile( irstin0, "read" )
+       endif
+
 
 c
 c.... close c-binary files

@@ -294,7 +294,7 @@ extern "C" {
     int BCTFileNumber;
     int tractionMethod;
     int solverTask;
-    double restol;  /* residual tolerance */ 
+    double restol;  /* residual tolerance */
   } inpdat ;
 
   extern struct {
@@ -536,6 +536,9 @@ extern "C" {
     int iwallmassfactor;
     int iwallstiffactor;
     int nProps;
+    // porous media penalty method
+    int iporouspen;
+    int npermprop;
  } nomodule;
 
   extern struct {

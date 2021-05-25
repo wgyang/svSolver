@@ -158,6 +158,8 @@ extern double  Displacement_thickness_;
 extern double  Displacement_kcons_;
 extern double  Displacement_pressure_;
 
+extern double*  Permeability_K_;
+
 int writeGEOMBCDAT(char* filename);
 int writeRESTARTDAT(char* filename);
 int readRESTARTDAT(char* infile,int readSoln, int readDisp, int readAcc);
@@ -1344,7 +1346,7 @@ int append_varwallprop_to_file(char *filename) {
     } else {
         nsd = 2;
     }
-                   
+
     nshg = numNodes_;
     size = nsd*nshg;
 
@@ -1632,7 +1634,7 @@ int cmd_varwallprop_write_vtk(char *cmd) {
             }
         }
     }
-    
+
     fclose(fp);
 
     // cleanup
@@ -2869,4 +2871,140 @@ int cmd_bct_write_dat(char *cmd) {
 
     debugprint(stddbg,"Exiting cmd_bct_write_dat.\n");
     return CV_OK;
+}
+
+int cmd_set_append_output_permeability(char *cmd){
+
+    debugprint(stddbg,"Entering cmd_set_permeability.\n");
+    if (parseFile(cmd) == CV_ERROR) {
+        return CV_ERROR;
+    }
+
+    Permeability_K_ = new double [numNodes_];
+    double tmp_K;
+
+    // NOTE: currently node id is ignored,
+    // nodes must be in sequential order!
+    int nodeId;
+
+    int eof = 0;
+
+    for (int i = 0; i < numNodes_ ; i++) {
+        if (NWgetNextNonBlankLine(&eof) == CV_ERROR) {
+            delete [] Permeability_K_;
+            Permeability_K_ = NULL;
+            return CV_ERROR;
+        }
+        if (sscanf(buffer_,"%i %lf ",&nodeId,&tmp_K) != 2) {
+            fprintf(stderr,"WARNING:  line not of correct format (%s)\n",buffer_);
+            delete [] Permeability_K_;
+            Permeability_K_ = NULL;
+            return CV_ERROR;
+        }
+        Permeability_K_[nodeId-1] = tmp_K;
+    }
+    NWcloseFile();
+
+
+    int filenum = -1;
+    char filename[MAXPATHLEN];
+    parseCmdStr(cmd,filename);
+    openfile_("geombc.dat.1", "append", &filenum);
+
+   if (filenum < 0) {
+        fprintf(stderr,"ERROR:  could not open file (%s)\n",filename);
+        return CV_ERROR;
+    }
+
+
+    int lstep = 0;
+
+
+    // fprintf(stdout,"check nsd nshg numNodes %i %i %i \n",nsd,nshg,numNodes_ );
+    // append to file
+    int nitems = 3;
+
+    int numpermprop = 1;
+    int iarray[3];
+    iarray[ 0 ] = numNodes_;
+    iarray[ 1 ] = numpermprop;
+    iarray[ 2 ] = lstep;
+    int size = numNodes_*numpermprop;
+    writeheader_( &filenum, "permprop ",
+                  ( void* )iarray, &nitems, &size,"integer", oformat );
+
+    writedatablock_( &filenum, "permprop ",
+                     ( void* )(Permeability_K_), &size, "double", oformat );
+
+    closefile_( &filenum,"append");
+
+
+    //output permeability vtk results
+
+     double scalarval;
+
+    FILE *fp = NULL;
+    if(outfile[0]=='\0'){
+        fp = fopen("permprop.vtk","w");
+    }else{
+        fp = fopen(outfile,"w");
+    }
+
+    if (fp == NULL) {
+        fprintf(stderr,"ERROR: could not open file (%s)\n",outfile);
+        return CV_ERROR;
+    }
+
+   if (Permeability_K_== NULL) {
+        fprintf(stderr,"ERROR: Permeability_K_ is not computed  (%s)\n",outfile);
+        return CV_ERROR;
+    }
+
+    fprintf(fp,"# vtk DataFile Version 3.0\n");
+    fprintf(fp,"vtk output\n");
+    fprintf(fp,"ASCII\n");
+    fprintf(fp,"DATASET UNSTRUCTURED_GRID\n");
+    fprintf(fp,"POINTS %i float\n",numNodes_);
+    for (i = 0; i < numNodes_; i++) {
+        double x = nodes_[0*numNodes_+i];
+        double y = nodes_[1*numNodes_+i];
+        double z = nodes_[2*numNodes_+i];
+        fprintf(fp,"%lf %lf %lf\n",x,y,z);
+    }
+    fprintf(fp,"CELLS %i %i\n",numElements_,5*numElements_);
+    for (i = 0; i < numElements_; i++) {
+    //global id -1 to get correct index
+    fprintf(fp,"4 %i %i %i %i\n",elements_[numElements_*0+i]-1,elements_[numElements_*1+i]-1,
+            elements_[numElements_*2+i]-1,elements_[numElements_*3+i]-1);
+
+    }
+
+    fprintf(fp,"CELL_TYPES %i \n",numElements_);
+    for (i = 0; i < numElements_; i++) {
+    fprintf(fp,"%i \n",10);
+    }
+    fprintf(fp,"POINT_DATA %i\n",numNodes_);
+
+
+    if (Permeability_K_ != NULL) {
+     fprintf(fp,"SCALARS Permeability double\n");
+     fprintf(fp,"LOOKUP_TABLE default\n");
+    for (i = 0; i < numNodes_; i++) {
+       scalarval=Permeability_K_[i];
+      // printf("%lf\n",scalarval);
+        fprintf(fp,"%lf\n",scalarval);
+    }
+
+    }
+
+    fclose(fp);
+
+
+    delete [] Permeability_K_;
+
+    // cleanup
+    debugprint(stddbg,"Exiting cmd_set_append_output_permeability.\n");
+    return CV_OK;
+
+
 }

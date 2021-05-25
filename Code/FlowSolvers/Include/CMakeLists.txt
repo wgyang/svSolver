@@ -16,6 +16,13 @@ if(SV_USE_VARWALL)
 else()
   set(VER_VARWALL 0)
 endif()
+# Set Porous Media Flag
+if(SV_USE_POROUS_PEN)
+  set(VER_POROUS_PEN 1)
+else()
+  set(VER_POROUS_PEN 0)
+endif()
+
 # Set Use VTK Flag
 if(SV_USE_VTK)
   set(VER_USE_VTK 1)

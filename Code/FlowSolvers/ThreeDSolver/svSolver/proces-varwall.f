@@ -53,6 +53,10 @@ c
         USE pointer_data
 #endif
 
+
+c        USE pointer_data
+
+
         include "global.h"
         include "mpif.h"
         include "common_blocks/conpar.h"
@@ -93,7 +97,12 @@ c      temporary local boundary element nodal coordinates and wall properties
        real*8, allocatable, dimension(:,:,:) :: wallpropl
        integer iblk,iel
        integer nwallprop
+c      temporary local permeability properties
+       real*8, allocatable, dimension(:,:,:) :: permpropl
 #endif
+
+
+
 c
 c.... shape function declarations
 c
@@ -114,6 +123,12 @@ c
         REAL*8, DIMENSION(:, :, :) :: rlocal
         REAL*8, DIMENSION(:, :) :: elem_prop
         END SUBROUTINE local_elemwallprop
+
+        SUBROUTINE local_elempermprop(rlocal, elem_prop)
+        REAL*8, DIMENSION(:, :, :) :: rlocal
+        REAL*8, DIMENSION(:, :) :: elem_prop
+        END SUBROUTINE local_elempermprop
+
       END INTERFACE
 
 c
@@ -158,7 +173,7 @@ c
               write(*,*) ""
             endif
 
-c.... ------------> External Tissue Support - ISL July 2019 <-----------         
+c.... ------------> External Tissue Support - ISL July 2019 <-----------
             if (itissuesuppt.eq.1) then
               write(*,*) "External Tissue Support: ON"
               write(*,*) ""
@@ -167,10 +182,12 @@ c.... ------------> External Tissue Support - ISL July 2019 <-----------
               write(*,*) ""
             endif
 c.... ------------------------------------------------------------------
-
           else
             write(*,*) ""
             write(*,*) "Simulation Type: RIGID WALL"
+            if (iporouspen.eq.1) then
+              write(*,*) "USE PENALTY METHOD FOR POROUS MEDIA"
+            endif
             write(*,*) ""
           endif
         endif
@@ -178,12 +195,12 @@ c.... ------------------------------------------------------------------
 #if(VER_VARWALL == 1)
 
 c....   variable thicknessvw, evw, ksvw, csvw, p0vw
-        if (itissuesuppt.eq.1) then    
+        if (itissuesuppt.eq.1) then
           nwallprop = 5
         else
           nwallprop = 2
         endif
-        
+
 
         if((ideformwall.eq.1) .and. (ivarwallprop.eq.1)) then
 
@@ -197,13 +214,13 @@ c
 
 c           allocate ( xlb(npro,nenl,nsd) )
             allocate ( wallpropl(npro,nshl,nwallprop) )
-            
+
 c           get wall properties for each wall node for block iblk
             call localx(wallpropg,wallpropl,  mienb(iblk)%p, nwallprop, 'gather  ')
 
 c           get coordinates for wall nodes in block iblk
 c           call localx(point2x,  xlb,  mienb(iblk)%p,  nsd,  'gather  ')
-          
+
             call local_elemwallprop(wallpropl,wallpropelem(iblk)%p)
 
 c            deallocate(xlb)
@@ -214,6 +231,39 @@ c            deallocate(xlb)
         end if
 
 #endif
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        if (iporouspen .eq. 1) then
+           do iblk = 1, nelblk
+c
+c....set up the parameters
+c
+            iel    = lcblk(1,iblk)
+
+            npro   = lcblk(1,iblk+1) - iel
+
+c           allocate ( xlb(npro,nenl,nsd) )
+            allocate ( permpropl(npro,nshl,npermprop) )
+
+c           get wall properties for each wall node for block iblk
+            call localx(permpropg,permpropl,  mien(iblk)%p, npermprop, 'gather  ')
+
+c           get coordinates for nodes in block iblk
+c           call localx(point2x,  xlb,  mienb(iblk)%p,  nsd,  'gather  ')
+
+            call local_elempermprop(permpropl,permpropelem(iblk)%p)
+
+c            deallocate(xlb)
+            deallocate(permpropl)
+          enddo
+
+          deallocate(permpropg)
+
+        end if
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+
+
+
 
 c.... close echo file
 

@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
- * 
+ * contributors to the source code.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -77,7 +77,7 @@ typedef struct{
     vtkDoubleArray** mapped_data;
 } BCTData;
 
-extern int cmd_input; 
+extern int cmd_input;
 extern FILE *fp_input;
 extern "C" FILE *stddbg;
 extern int verbose_;
@@ -198,7 +198,8 @@ int CALLTYPE cmd_write_restartdat(char*);
 int CALLTYPE cmd_write_geombcdat(char*);
 int CALLTYPE cmd_write_numstartdat(char*);
 int CALLTYPE cmd_append_displacements(char*);
-
+//wgyang 2021/5
+int CALLTYPE cmd_set_append_otuput_permeability(char*);
 #if(VER_VARWALL == 1)
 int CALLTYPE cmd_Laplace_Thickness(char*);
 int CALLTYPE cmd_Laplace_Evw(char*);

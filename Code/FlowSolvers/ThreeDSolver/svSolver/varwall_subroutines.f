@@ -474,7 +474,7 @@ c.... assemble the contributions
 c
 c.... THIS IS DONE FOR ADDING STABILITY IN THE CASE OF BACK FLOW
 c
-        
+
         rou      = backFlowStabCoef*5D-1*rho*WdetJb*(ABS(unm) - unm)
         rNa(:,1) = rNa(:,1) + rou*u1
         rNa(:,2) = rNa(:,2) + rou*u2
@@ -682,7 +682,7 @@ C
       REAL*8                v3,          x1rot,       x2rot,      x3rot
       REAL*8                elem_prop
 
-c     - ISL July 2019 - 
+c     - ISL July 2019 -
       REAL*8                disp,        f_suppt_LHS
 
 c
@@ -738,7 +738,7 @@ c
 c
       dimension   rKwall_glob(npro,9,nshl,nshl),
      &            xKebe(npro,9,nshl,nshl),
-     &            f_suppt_LHS(npro)                     ! ISL July 2019 
+     &            f_suppt_LHS(npro)                     ! ISL July 2019
 c
       real*8      lhmFctvw, tsFctvw(npro)
 
@@ -750,7 +750,7 @@ c
       integer   e, i, j
 c
       integer   aa, b
-      
+
 c
 c.... ------------------->  integration variables  <--------------------
 c
@@ -1299,13 +1299,13 @@ c        The time term: tmp1=alpha_m*(1-lmp)*WdetJ*N^aN^b*rho*thickness
             xKebe(:,9,aa,b) = xKebe(:,9,aa,b) + tmp1
 
 c...     ----------> External tissue support (ISL July 2019) <----------
-c...     elem_prop(elem, :) - var thicknessvw, evw, ksvw, csvw, p0vw 
+c...     elem_prop(elem, :) - var thicknessvw, evw, ksvw, csvw, p0vw
 
             if (itissuesuppt .eq. 1) then
 
-               f_suppt_LHS = WdetJb * 
-     &                       (alfi * gami * Delt(itseq) * 
-     &                       elem_prop(:, 4) * shpb(:, aa) * shpb(:, b) 
+               f_suppt_LHS = WdetJb *
+     &                       (alfi * gami * Delt(itseq) *
+     &                       elem_prop(:, 4) * shpb(:, aa) * shpb(:, b)
      &                       + alfi * betai * Delt(itseq) * Delt(itseq)
      &                       * elem_prop(:, 3)
      &                       * shpb(:, aa) * shpb(:, b))
@@ -1425,23 +1425,23 @@ c.... This is ugly, but I will fix it later...
       endif
 
 c.... ----------> External tissue support (ISL July 2019) <-------------
-c...     elem_prop(elem, :) - var thicknessvw, evw, ksvw, csvw, p0vw 
-      
+c...     elem_prop(elem, :) - var thicknessvw, evw, ksvw, csvw, p0vw
+
       if (itissuesuppt .eq. 1) then
 
-         f_suppt(:, 1) = -elem_prop(:, 3) * disp(:, 1) - 
-     &                    elem_prop(:, 4) * u1 - 
+         f_suppt(:, 1) = -elem_prop(:, 3) * disp(:, 1) -
+     &                    elem_prop(:, 4) * u1 -
      &                    elem_prop(:, 5) * bnorm(:, 1)
 
-         f_suppt(:, 2) = -elem_prop(:, 3) * disp(:, 2) - 
-     &                    elem_prop(:, 4) * u2 - 
+         f_suppt(:, 2) = -elem_prop(:, 3) * disp(:, 2) -
+     &                    elem_prop(:, 4) * u2 -
      &                    elem_prop(:, 5) * bnorm(:, 2)
 
-         f_suppt(:, 3) = -elem_prop(:, 3) * disp(:, 3) - 
-     &                    elem_prop(:, 4) * u3 - 
-     &                    elem_prop(:, 5) * bnorm(:, 3)  
+         f_suppt(:, 3) = -elem_prop(:, 3) * disp(:, 3) -
+     &                    elem_prop(:, 4) * u3 -
+     &                    elem_prop(:, 5) * bnorm(:, 3)
 
-      endif    
+      endif
 
 
       endif                         ! end of deformable wall conditional
@@ -1493,3 +1493,548 @@ c....     Take the average of nodal wall properties
       END
 
 #endif
+
+c      element permeability data for modeling porous media using penalty method wgyang 2021/5
+      SUBROUTINE local_elempermprop(rlocal,elem_prop)
+      INCLUDE "global.h"
+      INCLUDE "common_blocks/propar.h"
+      INCLUDE "common_blocks/shpdat.h"
+      INCLUDE "common_blocks/nomodule.h"
+
+      INTEGER i,k,j
+
+c      rlocal & elem_prop are already allocated prior to this func call
+      REAL*8, DIMENSION(:, :, :) :: rlocal
+      REAL*8, DIMENSION(:, :) :: elem_prop
+
+c.... npermprop = # columns in elem_prop (1 column)
+      REAL*8, DIMENSION(4, SIZE(elem_prop, 2)) :: f
+
+      DO i = 1, npro
+        k = 1
+        DO j = 1, nshl
+            k = k + 1
+            f(k, :) = rlocal(i, j, :)
+        END DO
+
+        IF (k == 4) THEN
+c....     Take the average of nodal wall properties
+          elem_prop(i, :) = (f(1,:) + f(2,:) + f(3,:) + f(4,:)) / 4D0
+        ELSE
+          elem_prop(i, :) =  (/1D16/)
+
+        END IF
+      END DO
+      END
+
+
+
+c      modified from e3 with additional input to pass permeability data for modeling porous media using penalty method wgyang 2021/5
+        subroutine e3k (yl,      acl,     dwl,     shp,
+     &                 shgl,    xl,      rl,      ql,
+     &                 xKebe,   xGoC,    xmudmi,  sgn,
+     &                 rerrl, rlsl,elem_prop_K)
+
+        include "global.h"
+        include "common_blocks/conpar.h"
+        include "common_blocks/elmpar.h"
+        include "common_blocks/genpar.h"
+        include "common_blocks/intpt.h"
+        include "common_blocks/propar.h"
+        include "common_blocks/shpdat.h"
+        include "common_blocks/nomodule.h"
+C     Argument variables
+C
+      REAL*8                acl,         dwl,         ql,          rl
+      REAL*8                rlsl,        sgn,         shgl,        shp
+      REAL*8                xgoc,        xkebe,       xl,      xmudmi
+      REAL*8                yl, elem_prop_K
+C
+C     Local variables
+C
+      INTEGER             iaa,         ib
+C
+      REAL*8                aci,         dxidx,       g1yi,        g2yi
+      REAL*8                g3yi,        pres,        rho,         rlsli
+      REAL*8                rlui,        rmu,         shdrv,       shg
+      REAL*8                shpfun,      src,         taubar,      tauc
+      REAL*8                taum,        u1,          u2,          u3
+      REAL*8                ubar,        wdetj
+C
+c
+        dimension yl(npro,nshl,ndof),
+     &            acl(npro,nshl,ndof),
+     &            shp(nshl,ngauss),       shgl(nsd,nshl,ngauss),
+     &            xl(npro,nenl,nsd),      dwl(npro,nenl),
+     &            rl(npro,nshl,nflow),     ql(npro,nshl,idflx),
+     &            elem_prop_K(npro,npermprop)
+c
+
+        dimension xKebe(npro,9,nshl,nshl), xGoC(npro,4,nshl,nshl)
+c
+c.... local declarations
+c
+        dimension g1yi(npro,ndof),        g2yi(npro,ndof),
+     &            g3yi(npro,ndof),        shg(npro,nshl,nsd),
+     &            aci(npro,3),            dxidx(npro,nsd,nsd),
+     &            WdetJ(npro),            rho(npro),
+     &            pres(npro),             u1(npro),
+     &            u2(npro),               u3(npro),
+     &            rLui(npro,nsd),         uBar(npro,nsd),
+     &            xmudmi(npro,ngauss),     sgn(npro,nshl),
+     &            shpfun(npro,nshl),      shdrv(npro,nsd,nshl),
+     &            rmu(npro),              tauC(npro),
+     &            tauM(npro),             tauBar(npro),
+     &            src(npro,3)
+
+        dimension rlsl(npro,nshl,6),      rlsli(npro,6)
+
+        real*8    rerrl(npro,nshl,6)
+        integer   aa
+
+c
+c     DES - TO REMOVE !!!
+c.... local reconstruction of diffusive flux vector for quadratics
+c     or greater but NOT for bflux since local mass was not mapped
+c
+c        if ( idiff==2 .and. ires .eq. 1 ) then
+c           call e3ql (yl,        dwl,       shp,       shgl,
+c     &                xl,        ql,        xmudmi,
+c     &                sgn)
+c        endif
+c
+c.... loop through the integration points
+c
+        do intp = 1, ngauss
+
+        if (Qwt(lcsyst,intp) .eq. zero) cycle          ! precaution
+c
+c.... get the hierarchic shape functions at this int point
+c
+        call getshp(shp,          shgl,      sgn,
+     &              shpfun,       shdrv)
+c
+c.... get necessary fluid properties (including eddy viscosity)
+c
+        call getdiff(dwl,  yl,     shpfun,     xmudmi, xl,   rmu, rho)
+c
+c.... calculate the integration variables
+c
+        call e3ivar2 (yl,          acl,       shpfun,
+     &               shdrv,       xl,
+     &               aci,         g1yi,      g2yi,
+     &               g3yi,        shg,       dxidx,
+     &               WdetJ,       rmu,       rho,       pres,
+     &               u1,          u2,        u3,
+     &               ql,          rLui,      src,
+     &               rerrl,       rlsl,      rlsli,
+     &               dwl, elem_prop_K)
+c
+c.... compute the stabilization terms
+c
+        call e3stab (rho,          u1,       u2,
+     &               u3,           dxidx,    rLui,
+     &               rmu,          tauC,     tauM,
+     &               tauBar,       uBar )
+c
+c.... compute the residual contribution at this integration point
+c
+        call e3Res ( u1,        u2,         u3,
+     &               uBar,      aci,        WdetJ,
+     &               g1yi,      g2yi,       g3yi,
+     &               rLui,      rmu,        rho,
+     &               tauC,      tauM,       tauBar,
+     &               shpfun,    shg,        src,
+     &               rl,        pres,       acl,
+     &               rlsli)
+c
+c.... compute the tangent matrix contribution
+c
+        if (lhs .eq. 1) then
+           call e3LHS ( u1,        u2,         u3,
+     &                  uBar,      WdetJ,      rho,
+     &                  rLui,      rmu,
+     &                  tauC,      tauM,       tauBar,
+     &                  shpfun,    shg,        xKebe,
+     &                  xGoC )
+        endif
+
+c
+c.... end of integration loop
+c
+      enddo
+
+c
+c.... symmetrize C
+c
+      if (lhs .eq. 1) then
+         do ib = 1, nshl
+            do iaa = 1, ib-1
+               xGoC(:,4,iaa,ib) = xGoC(:,4,ib,iaa)
+            enddo
+         enddo
+      endif
+c
+c.... return
+c
+      return
+      end
+
+c..... modified from e3ivar with additional inputs for modeling porous media using a penalty method wgyang 2021/5
+      subroutine e3ivar2 (yl,          acl,       shpfun,
+     &                   shgl,        xl,
+     &                   aci,         g1yi,      g2yi,
+     &                   g3yi,        shg,       dxidx,
+     &                   WdetJ,       rmu, rho,       pres,
+     &                   u1,          u2,        u3,
+     &                   ql,          rLui,      src,
+     &                   rerrl,       rlsl,      rlsli,
+     &                   dwl, elem_prop_K)
+
+        include "global.h"
+        include "common_blocks/conpar.h"
+        include "common_blocks/elmpar.h"
+        include "common_blocks/genpar.h"
+        include "common_blocks/matdat.h"
+        include "common_blocks/propar.h"
+        include "common_blocks/shpdat.h"
+        include "common_blocks/timdat.h"
+        include "common_blocks/nomodule.h"
+
+c
+C     Argument variables
+C
+      REAL*8                aci,         acl,         dwl,        dxidx
+      REAL*8                g1yi,        g2yi,        g3yi,       pres
+      REAL*8                ql,          rho,         rlsl,       rlsli
+      REAL*8                rlui,        shg,         shgl,       shpfun
+      REAL*8                src,         u1,          u2,         u3
+      REAL*8                wdetj,       xl,          yl
+      REAL*8                rmu,        elem_prop_K
+C
+C     Local variables
+C
+      INTEGER             i,           ia,          idflow,      n
+C
+      REAL*8                dist2w,      divqi,       gradh
+      REAL*8                gyti,        sclr,        sforce,     temp
+      REAL*8                tmp,         weber,       xx
+C
+c  passed arrays
+c
+      dimension yl(npro,nshl,ndof),        dwl(npro,nenl),
+     &            acl(npro,nshl,ndof),       shpfun(npro,nshl),
+     &            shgl(npro,nsd,nshl),       xl(npro,nenl,nsd),
+     &            aci(npro,nsd),             g1yi(npro,ndof),
+     &            g2yi(npro,ndof),           g3yi(npro,ndof),
+     &            shg(npro,nshl,nsd),        dxidx(npro,nsd,nsd),
+     &            WdetJ(npro),
+     &            rho(npro),                 pres(npro),
+     &            u1(npro),                  u2(npro),
+     &            u3(npro),                  divqi(npro,nflow-1+isurf),
+     &            ql(npro,nshl,idflx),       rLui(npro,nsd),
+     &            src(npro,nsd), Temp(npro),xx(npro,nsd),
+     &            rmu(npro), elem_prop_K(npro,npermprop)
+c
+        dimension tmp(npro),      dist2w(npro)
+c
+        dimension rlsl(npro,nshl,6),         rlsli(npro,6)
+c
+        real*8    rerrl(npro,nshl,6), omega(3), divu(npro)
+        dimension gyti(npro,nsd),            gradh(npro,nsd),
+     &            sforce(npro,3),            weber(npro),
+     &            Sclr(npro)
+c
+c.... ------------->  Primitive variables at int. point  <--------------
+c
+c.... compute primitive variables
+c
+       pres = zero
+       u1   = zero
+       u2   = zero
+       u3   = zero
+c
+       do n = 1, nshl
+          pres = pres + shpfun(:,n) * yl(:,n,1)
+          u1   = u1   + shpfun(:,n) * yl(:,n,2)
+          u2   = u2   + shpfun(:,n) * yl(:,n,3)
+          u3   = u3   + shpfun(:,n) * yl(:,n,4)
+       enddo
+       if(matflg(5,1).eq.2) then ! boussinesq body force
+          Temp = zero
+          do n = 1, nshl
+             Temp = Temp + shpfun(:,n) * yl(:,n,5)
+          enddo
+       endif
+       if(matflg(5,1).eq.3.or.matflg(6,1).eq.1) then
+c         user-specified body force or coriolis force specified
+          xx = zero
+          do n  = 1,nenl
+             xx(:,1) = xx(:,1)  + shpfun(:,n) * xl(:,n,1)
+             xx(:,2) = xx(:,2)  + shpfun(:,n) * xl(:,n,2)
+             xx(:,3) = xx(:,3)  + shpfun(:,n) * xl(:,n,3)
+          enddo
+       endif
+c
+c
+c.... Resolved Leonhard stress set to zero - no turbulence - DES
+       rlsli = zero
+c
+c.... ----------------------->  accel. at int. point  <----------------------
+c
+       aci = zero
+       do n = 1, nshl
+          aci(:,1) = aci(:,1) + shpfun(:,n) * acl(:,n,2)
+          aci(:,2) = aci(:,2) + shpfun(:,n) * acl(:,n,3)
+          aci(:,3) = aci(:,3) + shpfun(:,n) * acl(:,n,4)
+       enddo
+c
+c.... --------------------->  Element Metrics  <-----------------------
+c
+       call e3metric( xl,         shgl,       dxidx,
+     &                shg,        WdetJ)
+c
+c.... compute the global gradient of u and P
+c
+c
+       g1yi = zero
+       g2yi = zero
+       g3yi = zero
+       do n = 1, nshl
+          g1yi(:,1) = g1yi(:,1) + shg(:,n,1) * yl(:,n,1)
+          g1yi(:,2) = g1yi(:,2) + shg(:,n,1) * yl(:,n,2)
+          g1yi(:,3) = g1yi(:,3) + shg(:,n,1) * yl(:,n,3)
+          g1yi(:,4) = g1yi(:,4) + shg(:,n,1) * yl(:,n,4)
+c
+          g2yi(:,1) = g2yi(:,1) + shg(:,n,2) * yl(:,n,1)
+          g2yi(:,2) = g2yi(:,2) + shg(:,n,2) * yl(:,n,2)
+          g2yi(:,3) = g2yi(:,3) + shg(:,n,2) * yl(:,n,3)
+          g2yi(:,4) = g2yi(:,4) + shg(:,n,2) * yl(:,n,4)
+c
+          g3yi(:,1) = g3yi(:,1) + shg(:,n,3) * yl(:,n,1)
+          g3yi(:,2) = g3yi(:,2) + shg(:,n,3) * yl(:,n,2)
+          g3yi(:,3) = g3yi(:,3) + shg(:,n,3) * yl(:,n,3)
+          g3yi(:,4) = g3yi(:,4) + shg(:,n,3) * yl(:,n,4)
+       enddo
+
+       divqi = zero
+       idflow = 3
+       if ( idiff >= 1 .or. isurf==1 ) then
+c
+c.... compute divergence of diffusive flux vector, qi,i
+c
+          if(idiff >= 1) then
+             do n=1, nshl
+                divqi(:,1) = divqi(:,1) + shg(:,n,1)*ql(:,n,1 )
+     &                                  + shg(:,n,2)*ql(:,n,4 )
+     &                                  + shg(:,n,3)*ql(:,n,7 )
+
+                divqi(:,2) = divqi(:,2) + shg(:,n,1)*ql(:,n,2 )
+     &                                  + shg(:,n,2)*ql(:,n,5 )
+     &                                  + shg(:,n,3)*ql(:,n,8)
+
+                divqi(:,3) = divqi(:,3) + shg(:,n,1)*ql(:,n,3 )
+     &                                  + shg(:,n,2)*ql(:,n,6 )
+     &                                  + shg(:,n,3)*ql(:,n,9 )
+
+          enddo
+
+          endif                 !end of idiff
+c
+          if (isurf .eq. 1) then
+c     .... divergence of normal calculation (curvature)
+             do n=1, nshl
+                divqi(:,idflow+1) = divqi(:,idflow+1)
+     &               + shg(:,n,1)*ql(:,n,idflx-2)
+     &               + shg(:,n,2)*ql(:,n,idflx-1)
+     &               + shg(:,n,3)*ql(:,n,idflx)
+             enddo
+c     .... initialization of some variables
+             Sclr = zero
+             gradh= zero
+             gyti = zero
+             sforce=zero
+             do i = 1, npro
+                do n = 1, nshl
+                   Sclr(i) = Sclr(i) + shpfun(i,n) * yl(i,n,6) !scalar
+c
+c     .... compute the global gradient of Scalar variable
+c
+                   gyti(i,1) = gyti(i,1) + shg(i,n,1) * yl(i,n,6)
+                   gyti(i,2) = gyti(i,2) + shg(i,n,2) * yl(i,n,6)
+                   gyti(i,3) = gyti(i,3) + shg(i,n,3) * yl(i,n,6)
+c
+                enddo
+
+c NMW - 2014-03-25: Not really sure what this is doing.
+c                   deleted since we don't have epsilon_ls anymore, but
+c                   not sure if this is correct.
+c                if (abs (sclr(i)) .le. epsilon_ls) then
+c                   gradh(i,1) = 0.5/epsilon_ls * (1.0
+c     &                  + cos(pi*Sclr(i)/epsilon_ls)) * gyti(i,1)
+c                   gradh(i,2) = 0.5/epsilon_ls * (1.0
+c     &                  + cos(pi*Sclr(i)/epsilon_ls)) * gyti(i,2)
+c                   gradh(i,3) = 0.5/epsilon_ls * (1.0
+c     &                  + cos(pi*Sclr(i)/epsilon_ls)) * gyti(i,3)
+c                endif
+             enddo              !end of the loop over npro
+c
+c .. surface tension force calculation
+c .. divide by density now as it gets multiplied in e3res.f, as surface
+c    tension force is already in the form of force per unit volume
+c
+             weber(:) = Bo
+             sforce(:,1) = -(1.0/weber(:)) * divqi(:,idflow+1) !x-direction
+     &            *gradh(:,1) /rho(:)
+             sforce(:,2) = -(1.0/weber(:)) * divqi(:,idflow+1) !y-direction
+     &            *gradh(:,2) /rho(:)
+             sforce(:,3) = -(1.0/weber(:)) * divqi(:,idflow+1) !z-direction
+     &            *gradh(:,3) /rho(:)
+c
+          endif        ! end of the surface tension force calculation
+       endif           ! diffusive flux computation
+c
+c Calculate strong form of pde as well as the source term
+c
+       call e3resStrongPDE2(
+     &      aci,  u1,   u2,   u3,   Temp, rmu,rho,
+     &      xx, g1yi, g2yi, g3yi,
+     &      rLui, src, divqi,elem_prop_K)
+c
+c.... take care of the surface tension force term here
+c
+       if (isurf .eq. 1) then  ! note multiplied by density in e3res.f
+          src(:,1) = src(:,1) + sforce(:,1)
+          src(:,2) = src(:,2) + sforce(:,2)
+          src(:,3) = src(:,3) + sforce(:,3)
+       endif
+
+       return
+       end
+
+c      modified from e3resStrongPDE with additional input to pass permeability data for modeling porous media using penalty method wgyang 2021/5
+      subroutine e3resStrongPDE2(
+     &     aci,  u1,   u2,   u3,   Temp, rmu, rho,
+     &     xx, g1yi, g2yi, g3yi,
+     &     rLui, src, divqi, elem_prop_K)
+
+        include "global.h"
+        include "common_blocks/conpar.h"
+        include "common_blocks/matdat.h"
+        include "common_blocks/propar.h"
+        include "common_blocks/solpar.h"
+        include "common_blocks/nomodule.h"
+C
+C     Local variables
+C
+      REAL*8                bfx,         bfy,         bfz,         tref
+C
+
+c     INPUTS
+      double precision  aci(npro,nsd)
+      double precision   xx(npro,nsd)
+      double precision g1yi(npro,nflow)
+      double precision g2yi(npro,nflow)
+      double precision g3yi(npro,nflow)
+      double precision u1(npro)
+      double precision u2(npro)
+      double precision u3(npro)
+      double precision Temp(npro)
+      double precision rho(npro)
+      double precision rmu(npro)
+      double precision elem_prop_K(npro,npermprop)
+c     OUTPUTS
+      double precision rLui(npro,nsd)
+      double precision src(npro,nsd)
+
+c     LOCALS
+      double precision divu(npro)
+      double precision divqi(npro,nsd)
+      double precision omega(nsd)
+
+c.... compute source term
+      src = zero
+      if(matflg(5,1) .ge. 1) then
+c        body force contribution to src
+         bfx      = datmat(1,5,1) ! Boussinesq, g*alfap
+         bfy      = datmat(2,5,1)
+         bfz      = datmat(3,5,1)
+         select case ( matflg(5,1) )
+         case ( 1 )             ! standard linear body force
+            src(:,1) = bfx
+            src(:,2) = bfy
+            src(:,3) = bfz
+         case ( 2 )             ! boussinesq body force
+            Tref = datmat(2,2,1)
+            src(:,1) = bfx * (Temp(:)-Tref)
+            src(:,2) = bfy * (Temp(:)-Tref)
+            src(:,3) = bfz * (Temp(:)-Tref)
+         case ( 3 )             ! user specified f(x,y,z)
+            call e3source(xx, src)
+         end select
+      endif
+c
+
+      if(matflg(5,1) .eq. 0 .and. iporouspen .eq. 1) then
+         src(:,1) = rmu/(elem_prop_K(:,1)*rho)*u1
+         src(:,2) = rmu/(elem_prop_K(:,1)*rho)*u2
+         src(:,3) = rmu/(elem_prop_K(:,1)*rho)*u3
+      endif
+
+      if(matflg(6,1).eq.1) then
+c        coriolis force contribution to src
+         omega(1)=datmat(1,6,1)
+         omega(2)=datmat(2,6,1)
+         omega(3)=datmat(3,6,1)
+c  note that we calculate f as if it contains the usual source
+c  plus the Coriolis and the centrifugal forces taken to the rhs (sign change)
+c  as long as we are doing SUPG with no accounting for these terms in the
+c  LHS this is the only change (which will find its way to the RHS momentum
+c  equation (both Galerkin and SUPG parts)).
+c
+c  uncomment later if you want rotation always about z axis
+c                 orig_src - om x om x r       - two om x u
+c
+c$$$          src(:,1)=src(:,1)+omega(3)*omega(3)*xx(:,1)+two*omega(3)*u2
+c$$$          src(:,2)=src(:,2)+omega(3)*omega(3)*xx(:,2)-two*omega(3)*u1
+c
+c more general for testing
+c
+         src(:,1)=src(:,1)
+     &        -omega(2)*(omega(1)*xx(:,2)-omega(2)*xx(:,1))
+     &        -omega(3)*(omega(1)*xx(:,3)-omega(3)*xx(:,1))
+     &        -two*(omega(2)*u3-omega(3)*u2)
+         src(:,2)=src(:,2)
+     &        -omega(1)*(omega(2)*xx(:,1)-omega(1)*xx(:,2))
+     &        -omega(3)*(omega(2)*xx(:,3)-omega(3)*xx(:,2))
+     &        -two*(omega(3)*u1-omega(1)*u3)
+         src(:,3)=src(:,3)
+     &        -omega(1)*(omega(3)*xx(:,1)-omega(1)*xx(:,3))
+     &        -omega(2)*(omega(3)*xx(:,2)-omega(2)*xx(:,3))
+     &        -two*(omega(1)*u2-omega(2)*u1)
+      endif
+c     calculate momentum residual
+      rLui(:,1) =(aci(:,1) + u1 * g1yi(:,2)
+     &     + u2 * g2yi(:,2)
+     &     + u3 * g3yi(:,2) - src(:,1) ) * rho
+     &     + g1yi(:,1)
+     &        - divqi(:,1)
+      rLui(:,2) =(aci(:,2) + u1 * g1yi(:,3)
+     &     + u2 * g2yi(:,3)
+     &     + u3 * g3yi(:,3) - src(:,2) ) * rho
+     &     + g2yi(:,1)
+     &        - divqi(:,2)
+      rLui(:,3) =(aci(:,3) + u1 * g1yi(:,4)
+     &     + u2 * g2yi(:,4)
+     &     + u3 * g3yi(:,4) - src(:,3) ) * rho
+     &     + g3yi(:,1)
+     &        - divqi(:,3)
+      if(iconvflow.eq.1) then
+         divu(:)  = (g1yi(:,2) + g2yi(:,3) + g3yi(:,4))*rho
+         rLui(:,1)=rlui(:,1)+u1(:)*divu(:)
+         rLui(:,2)=rlui(:,2)+u2(:)*divu(:)
+         rLui(:,3)=rlui(:,3)+u3(:)*divu(:)
+      endif
+c
+      return
+      end subroutine e3resStrongPDE2

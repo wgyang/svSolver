@@ -1,10 +1,10 @@
 c     UC Copyright Notice
 c
-c     This software is Copyright (c) 2014-2015 The Regents of the 
+c     This software is Copyright (c) 2014-2015 The Regents of the
 c     University of California. All Rights Reserved.
 c
 c     Permission to copy and modify this software and its documentation
-c     for educational, research and non-profit purposes, without fee, 
+c     for educational, research and non-profit purposes, without fee,
 c     and without a written agreement is hereby granted, provided that
 c     the above copyright notice, this paragraph and the following three
 c     paragraphs appear in all copies.
@@ -28,48 +28,48 @@ c     end-user understands that the program was developed for research
 c     purposes and is advised not to rely exclusively on the program for
 c     any reason.
 c
-c     IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY 
-c     PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL 
-c     DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS 
-c     SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF 
-c     CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
-c     THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY 
-c     WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
-c     OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE 
-c     SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE 
-c     UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE 
+c     IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY
+c     PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+c     DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS
+c     SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+c     CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+c     THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY
+c     WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+c     OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+c     SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE
+c     UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE
 c     MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 c Portions of the code Copyright (c) 2009-2011 Open Source Medical
 c Software Corporation, University of California, San Diego.
 c
-c Portions of the code Copyright (c) 2000-2007, Stanford University, 
-c     Rensselaer Polytechnic Institute, Kenneth E. Jansen, 
+c Portions of the code Copyright (c) 2000-2007, Stanford University,
+c     Rensselaer Polytechnic Institute, Kenneth E. Jansen,
 c     Charles A. Taylor.
-c  
-c  See SimVascular Acknowledgements file for additional 
+c
+c  See SimVascular Acknowledgements file for additional
 c  contributors to the source code.
 c
-c  Redistribution and use in source and binary forms, with or without 
-c  modification, are permitted provided that the following conditions 
+c  Redistribution and use in source and binary forms, with or without
+c  modification, are permitted provided that the following conditions
 c  are met:
 c
 c  Redistributions of source code must retain the above copyright notice,
-c  this list of conditions and the following disclaimer. 
-c  Redistributions in binary form must reproduce the above copyright 
-c  notice, this list of conditions and the following disclaimer in the 
-c  documentation and/or other materials provided with the distribution. 
+c  this list of conditions and the following disclaimer.
+c  Redistributions in binary form must reproduce the above copyright
+c  notice, this list of conditions and the following disclaimer in the
+c  documentation and/or other materials provided with the distribution.
 c  Neither the name of the Stanford University or Rensselaer Polytechnic
 c  Institute nor the names of its contributors may be used to endorse or
-c  promote products derived from this software without specific prior 
+c  promote products derived from this software without specific prior
 c  written permission.
 c
 c  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 c  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-c  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-c  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-c  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-c  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+c  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+c  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+c  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+c  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 c  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 c  OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
 c  AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -81,22 +81,22 @@ c
 
 #include "cvFlowsolverOptions.h"
 
-!> This routine computes the LHS mass matrix, the RHS residual 
+!> This routine computes the LHS mass matrix, the RHS residual
 !! vector, and the preconditioning matrix, for use with the GMRES
 !! solver.
 
-        subroutine ElmGMR (u,         y,         ac,        x,     
+        subroutine ElmGMR (u,         y,         ac,        x,
      &                     shp,       shgl,      iBC,
      &                     BC,        shpb,      shglb,
      &                     res,       iper,      ilwork,
-     &                     rowp,      colm,      lhsK,      
+     &                     rowp,      colm,      lhsK,
      &                     lhsP,      rerr)
 c
         use pvsQbi  ! brings in NABI
-        use stats   !  
+        use stats   !
         use pointer_data  ! brings in the pointers for the blocked arrays
         use local_mass
-        use LagrangeMultipliers 
+        use LagrangeMultipliers
 c
         include "global.h"
         include "common_blocks/aerfrc.h"
@@ -133,16 +133,16 @@ C
 C
         dimension y(nshg,ndof),         ac(nshg,ndof),
      &            u(nshg,nsd),
-     &            x(numnp,nsd),               
-     &            iBC(nshg),           
-     &            BC(nshg,ndofBC),  
+     &            x(numnp,nsd),
+     &            iBC(nshg),
+     &            BC(nshg,ndofBC),
      &            res(nshg,nflow),
      &            iper(nshg)
 c
-        dimension shp(MAXTOP,maxsh,MAXQPT),  
-     &            shgl(MAXTOP,nsd,maxsh,MAXQPT), 
+        dimension shp(MAXTOP,maxsh,MAXQPT),
+     &            shgl(MAXTOP,nsd,maxsh,MAXQPT),
      &            shpb(MAXTOP,maxsh,MAXQPT),
-     &            shglb(MAXTOP,nsd,maxsh,MAXQPT) 
+     &            shglb(MAXTOP,nsd,maxsh,MAXQPT)
 c
         dimension qres(nshg,idflx),     rmass(nshg)
 c
@@ -180,7 +180,7 @@ c of the diffusive flux vector, q, and lumped mass matrix, rmass
 c
            qres = zero
            rmass = zero
-        
+
            do iblk = 1, nelblk
               iel    = lcblk(1,iblk)
               lelCat = lcblk(2,iblk)
@@ -191,25 +191,25 @@ c
               mattyp = lcblk(7,iblk)
               ndofl  = lcblk(8,iblk)
               nsymdl = lcblk(9,iblk)
-              npro   = lcblk(1,iblk+1) - iel 
+              npro   = lcblk(1,iblk+1) - iel
               ngauss = nint(lcsyst)
-c     
+c
 c.... compute and assemble diffusive flux vector residual, qres,
 c     and lumped mass matrix, rmass
 
-              call AsIq (y,                x,                       
-     &                   shp(lcsyst,1:nshl,:), 
+              call AsIq (y,                x,
+     &                   shp(lcsyst,1:nshl,:),
      &                   shgl(lcsyst,:,1:nshl,:),
-     &                   mien(iblk)%p,     mxmudmi(iblk)%p,  
+     &                   mien(iblk)%p,     mxmudmi(iblk)%p,
      &                   qres,             rmass )
            enddo
-       
+
 c
 c.... form the diffusive flux approximation
 c
-           call qpbc( rmass, qres, iBC, iper, ilwork )       
+           call qpbc( rmass, qres, iBC, iper, ilwork )
 c
-        endif 
+        endif
 c
 c.... -------------------->   interior elements   <--------------------
 c
@@ -236,7 +236,7 @@ c
           mattyp = lcblk(7,iblk)
           ndofl  = lcblk(8,iblk)
           nsymdl = lcblk(9,iblk)
-          npro   = lcblk(1,iblk+1) - iel 
+          npro   = lcblk(1,iblk+1) - iel
           inum   = iel + npro - 1
           ngauss = nint(lcsyst)
 c
@@ -249,7 +249,7 @@ c..... to calculate inner product for Lagrange Multipliers
 c
           if(Lagrange.gt.zero) then
              allocate(loclhsLag(npro,9,nshl,nshl,3))
-          endif 
+          endif
 c
 c.... compute and assemble the residual and tangent matrix
 c
@@ -258,22 +258,32 @@ c
 
           tmpshp(1:nshl,:) = shp(lcsyst,1:nshl,:)
           tmpshgl(:,1:nshl,:) = shgl(lcsyst,:,1:nshl,:)
-
-          call AsIGMR (y,                   ac,
-     &                 x,                   mxmudmi(iblk)%p,      
-     &                 tmpshp, 
+          if(iporouspen .eq. 1) then
+             call AsIGMR2 (y,                   ac,
+     &                 x,                   mxmudmi(iblk)%p,
+     &                 tmpshp,
+     &                 tmpshgl,
+     &                 mien(iblk)%p,
+     &                 res,
+     &                 qres,         xKebe,
+     &                 xGoC,         rerr, permpropelem(iblk)%p)
+          else
+             call AsIGMR (y,                   ac,
+     &                 x,                   mxmudmi(iblk)%p,
+     &                 tmpshp,
      &                 tmpshgl,
      &                 mien(iblk)%p,
      &                 res,
      &                 qres,                xKebe,
      &                 xGoC,                rerr)
+          endif
 c
 c.... satisfy the BC's on the implicit LHS
-c     
+c
           if (impl(1) .ne. 9 .and. lhs .eq. 1) then
-             if(ipord.eq.1) 
-     &         call bc3lhs (iBC, BC, mien(iblk)%p, xKebe)  
-               call fillsparseI (mien(iblk)%p, 
+             if(ipord.eq.1)
+     &         call bc3lhs (iBC, BC, mien(iblk)%p, xKebe)
+               call fillsparseI (mien(iblk)%p,
      &                 xKebe,            lhsK,
      &                 xGoC,             lhsP,
      &                 rowp,             colm)
@@ -288,7 +298,7 @@ c..... to calculate inner product for Lagrange Multipliers
 c
        if(Lagrange.gt.zero) then
           deallocate(loclhsLag)
-       endif 
+       endif
 c
 c.... end of interior element loop
 c
@@ -303,7 +313,7 @@ c
        have_local_mass = 1
 c
 c.... time average statistics
-c       
+c
        if ( stsResFlg .eq. 1 ) then
 
           if (numpe > 1) then
@@ -315,7 +325,7 @@ c
                 stsVec(i,:) = stsVec(i,:) + stsVec(j,:)
              endif
           enddo
-c     
+c
           do i = 1,nshg
              stsVec(i,:) = stsVec(iper(i),:)
           enddo
@@ -324,14 +334,14 @@ c
              call commu (stsVec, ilwork, nResDims  , 'out')
           endif
           return
-          
+
        endif
 c
 c.... zero lhsLagL before adding contributions from the boundary elements
 c
        if(Lagrange.gt.zero) then
           lhsLagL = zero
-       endif 
+       endif
 
 c
 c.... -------------------->   boundary elements   <--------------------
@@ -352,7 +362,7 @@ c
           nshlb  = lcblkb(10,iblk)
           mattyp = lcblkb(7,iblk)
           ndofl  = lcblkb(8,iblk)
-          npro   = lcblkb(1,iblk+1) - iel 
+          npro   = lcblkb(1,iblk+1) - iel
 
 
           if(lcsyst.eq.3) lcsyst=nenbl
@@ -372,14 +382,14 @@ c..... to calculate inner product for Lagrange Multipliers
 c
           if(Lagrange.gt.zero) then
              allocate(loclhsLag(npro,9,nshlb,nshlb,3))
-          endif 
+          endif
 c
-c.... compute and assemble the residuals corresponding to the 
+c.... compute and assemble the residuals corresponding to the
 c     boundary integral
 c
           allocate (tmpshpb(nshl,MAXQPT))
           allocate (tmpshglb(nsd,nshl,MAXQPT))
-          
+
           tmpshpb(1:nshl,:) = shpb(lcsyst,1:nshl,:)
           tmpshglb(:,1:nshl,:) = shglb(lcsyst,:,1:nshl,:)
 
@@ -423,7 +433,7 @@ c
 c
 c.... satisfy (again, for the vessel wall contributions) the BC's on the implicit LHS
 c
-c.... first, we need to make xGoC zero, since it doesn't have contributions from the 
+c.... first, we need to make xGoC zero, since it doesn't have contributions from the
 c.... vessel wall elements
 
           xGoC = zero
@@ -450,19 +460,19 @@ c
        enddo
 c
        if(Lagrange.gt.zero) then
-          LagSwitch = 0 
+          LagSwitch = 0
           call CalcNANBLagrange(colm, rowp, y(:,1:3))
        endif
-c       
+c
        if(ipvsq.ge.1) then
 c
 c....  pressure vs. resistance boundary condition sets pressure at
 c      outflow to linearly increase as flow through that face increases
 c      (routine is at bottom of this file)
 c
-          call ElmpvsQ (res,y,-1.0d0)     
+          call ElmpvsQ (res,y,-1.0d0)
        endif
-           
+
 c
 c before the commu we need to rotate the residual vector for axisymmetric
 c boundary conditions (so that off processor periodicity is a dof add instead

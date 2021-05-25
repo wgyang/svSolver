@@ -65,6 +65,7 @@ option(SV_SOLVERIO_REDIRECT "Option to redirect solver IO" OFF)
 option(SV_USE_CORONARY "" ON)
 option(SV_USE_CLOSEDLOOP "" ON)
 option(SV_USE_VARWALL "" ON)
+option(SV_USE_POROUS_PEN "" ON)
 option(SV_USE_SPARSE "Use sparse Library" ON)
 option(SV_USE_METIS "Use metis Library" ON)
 option(SV_USE_NSPCG "Use nspcg Library" ON)
@@ -112,9 +113,9 @@ enable_language(Fortran)
 get_filename_component(Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -ffixed-line-length-132 -cpp")
-  simvascular_get_major_minor_version(${CMAKE_Fortran_COMPILER_VERSION} COMPILER_MAJOR_VERSION 
+  simvascular_get_major_minor_version(${CMAKE_Fortran_COMPILER_VERSION} COMPILER_MAJOR_VERSION
     COMPILER_MINOR_VERSION)
-  # Set the -std=legacy option to compile code using gcc 8.1 (see svSolver GitHub Issue #32). 
+  # Set the -std=legacy option to compile code using gcc 8.1 (see svSolver GitHub Issue #32).
   if(APPLE AND (Fortran_COMPILER_NAME MATCHES "gfortran.*") AND (COMPILER_MAJOR_VERSION GREATER 7))
       set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -std=legacy")
   endif()

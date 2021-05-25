@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
- * 
+ * contributors to the source code.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -42,7 +42,7 @@
 #include "cvFlowsolverOptions.h"
 
 #include "cmd.h"
- 
+
 FILE* stddbg;
 int cmd_input = 1;
 FILE *fp_input = stdin;
@@ -119,6 +119,8 @@ static Cmd cmd_table[] = {
   {"deformable_solve_displacements", cmd_deformable_iterative_solve},
   {"wall_displacements_write_vtp", cmd_wall_displacements_write_vtp},
   {"append_displacements",cmd_append_displacements},
+  //wgyang 2021/5
+  {"set_append_output_permeability",cmd_set_append_output_permeability()},
   #if(VER_VARWALL == 1)
   {"read_varwallprop_restart",cmd_read_restart_varwallprop},
   {"read_varwallprop_geombc",cmd_read_geombc_varwallprop},
@@ -200,9 +202,9 @@ int cmd_proc (char *cmd, int *ok) {
     }
 
   sscanf(cmd, "%s", name);
- 
+
   debugprint(stddbg,"command being processed is %s. \n",name);
-  
+
   for (i = 0; cmd_table[i].name != NULL; i++) {
     if (!strcmp(name, cmd_table[i].name)) {
       pt2Function = cmd_table[i].pt2Function;
@@ -210,7 +212,7 @@ int cmd_proc (char *cmd, int *ok) {
       //return CV_OK;
       }
     }
-  
+
   for (i = 0; i < strlen(cmd); i++) {
     if ((cmd[i] != ' ') && (cmd[i] != '\n')) {
       fprintf(stderr, "\n  **** error: unknown command: %s", cmd);
@@ -223,11 +225,11 @@ int cmd_proc (char *cmd, int *ok) {
 }
 
 
-/*------------------------------------------------------------* 
- *                                                            *  
- *              ****  cmd_token_get  ****                     *  
- *                                                            *  
- * get the next blank separated string.                       *  
+/*------------------------------------------------------------*
+ *                                                            *
+ *              ****  cmd_token_get  ****                     *
+ *                                                            *
+ * get the next blank separated string.                       *
  *------------------------------------------------------------*/
 
 int cmd_token_get (int *p_n, char *string, char *token, int *end) {
@@ -257,7 +259,7 @@ int cmd_token_get (int *p_n, char *string, char *token, int *end) {
   if (n >= len)
     return CV_ERROR;
 
-  while ((c = string[n++]) != '\0') { 
+  while ((c = string[n++]) != '\0') {
     if ((c == ' ') || (c == '\t')) {
       if (i != 0) {
         token[i] = '\0';
@@ -272,7 +274,7 @@ int cmd_token_get (int *p_n, char *string, char *token, int *end) {
 	  *p_n = n;
 	  return CV_OK;
 	  }
-        else if (c == '\n') { 
+        else if (c == '\n') {
           token[i] = '\0';
  	  *p_n = n;
           *end = 1;
@@ -306,7 +308,7 @@ int cmd_token_get (int *p_n, char *string, char *token, int *end) {
   *p_n = n;
   *end = 1;
 
-  if (i == 0) 
+  if (i == 0)
     return CV_ERROR;
 
   return CV_OK;
@@ -335,7 +337,7 @@ int cmd_set_input (int p_cmd_input, FILE *p_fp) {
     }
 
   return CV_OK;
-  
+
 }
 
 

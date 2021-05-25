@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
- * 
+ * contributors to the source code.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -101,6 +101,9 @@ double* P0vwSolution_        = NULL;
 int itissuesuppt             = 0;
 #endif
 
+//permeability data
+double* Permeability_K_ = NULL;
+
 double  Displacement_Evw_        = 0;
 double  Displacement_nuvw_       = 0;
 double  Displacement_thickness_  = 0;
@@ -148,14 +151,14 @@ int main(int argc, char *argv[]) {
       exit(-1);
   }
 
-  //check to make sure file exists! 
+  //check to make sure file exists!
   debugprint(stddbg,"attempt to open [%s]\n",argv[1]);
   FILE *fp = fopen (argv[1], "r");
   if (fp == NULL) {
        fprintf(stderr,"ERROR opening file %s.\n", argv[1]);
        exit(-1);
   }
-    
+
   // set the input to the cmd file
   cmd_set_input (0, fp);
 

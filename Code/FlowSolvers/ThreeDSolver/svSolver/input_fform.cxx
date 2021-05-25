@@ -6,33 +6,33 @@
  * Portions of the code Copyright (c) 2009-2011 Open Source Medical
  * Software Corporation, University of California, San Diego.
  *
- * Portions of the code Copyright (c) 1998-2007 Stanford University, 
- * Rensselaer Polytechnic Institute, Charles A. Taylor, 
+ * Portions of the code Copyright (c) 1998-2007 Stanford University,
+ * Rensselaer Polytechnic Institute, Charles A. Taylor,
  * Kenneth E. Jansen.
- * 
- * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
  *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions 
+ * See SimVascular Acknowledgements file for additional
+ * contributors to the source code.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
  * are met:
 
  * Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 
- * Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
- * documentation and/or other materials provided with the distribution. 
+ * this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  * Neither the name of the Stanford University or Rensselaer Polytechnic
  * Institute nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior 
+ * promote products derived from this software without specific prior
  * written permission.
 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
  * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -156,7 +156,7 @@ int input_fform(char inpfname[])
     (strvalue == "True")? solheat=1:solheat=0;
     //for compressible solheat= False so
     if(matdat.matflg[0][0] ==0) solheat=0;
-    
+
     // Solve Scalars
     solscalr = inp.GetValue("Solve Scalars","0",false,false);
     if ( solscalr > 4 ) {
@@ -197,11 +197,11 @@ int input_fform(char inpfname[])
     strvalue=(string)inp.GetValue("Data Block Format","binary",false,false);//normally use binary
     strcpy( outpar.iotype , strvalue.c_str());
     strcpy( cvsolver_iotype ,strvalue.c_str());
-  
+
 //    //never used
 //    strvalue=(string)inp.GetValue("Print Residual at End of Step","False",false,false);
 //    (strvalue == "True")? genpar.lstres = 1:genpar.lstres = 0;
-  
+
     aerfrc.nsrfCM = inp.GetValue("Number of Force Surfaces","0",false,true);
     if (aerfrc.nsrfCM > 0) {
       ivec = inp.GetValue("Surface ID's for Force Calculation","",true,true);
@@ -288,7 +288,7 @@ int input_fform(char inpfname[])
       matdat.datmat[i][3][0] = vec[i];
     }
     vec.erase(vec.begin(),vec.end());
-  
+
     vec = inp.GetValue("Scalar Diffusivity","0.2",false,false);
     for(i=0; i< solscalr ; i++){
       sclrs.scdiff[i] = vec[i];
@@ -435,31 +435,31 @@ int input_fform(char inpfname[])
     inpdat.deltol[0][0]=inp.GetValue("Velocity Delta Ratio","0",false,false);
     inpdat.deltol[1][0]=inp.GetValue("Pressure Delta Ratio","0",false,false);
 
-    if(solheat==1){ 
+    if(solheat==1){
       inpdat.epstol[1]=inp.GetValue("Temperature Solver Tolerance","0.001",false,true);
       inpdat.LHSupd[1]=inp.GetValue("Number of Solves of Temperature per Left-hand-side Formation","1",false,true);
     }
 
-    // The following is where you should put any inputs that are able to 
-    // input differently for each scalar.  It is a little tedious in the code 
-    // but it should make the solver.inp easier to understand. Note this will 
+    // The following is where you should put any inputs that are able to
+    // input differently for each scalar.  It is a little tedious in the code
+    // but it should make the solver.inp easier to understand. Note this will
     // require some care with regression tests.
 
 
     if(solscalr>0){
       inpdat.epstol[2]=inp.GetValue("Scalar 1 Solver Tolerance","0.001",false,false);
       inpdat.LHSupd[2]=inp.GetValue("Number of Solves of Scalar 1 per Left-hand-side Formation","1",false,false);
-    } 
+    }
 
     if(solscalr>1){
       inpdat.epstol[3]=inp.GetValue("Scalar 2 Solver Tolerance","0.001",false,false);
       inpdat.LHSupd[3]=inp.GetValue("Number of Solves of Scalar 2 per Left-hand-side Formation","1",false,false);
-    } 
+    }
 
     if(solscalr>2){
       inpdat.epstol[4]=inp.GetValue("Scalar 3 Solver Tolerance","0.001",false,false);
       inpdat.LHSupd[4]=inp.GetValue("Number of Solves of Scalar 3 per Left-hand-side Formation","1",false,false);
-    } 
+    }
 
     if(solscalr>3){
       inpdat.epstol[5]=inp.GetValue("Scalar 4 Solver Tolerance","0.001",false,false);
@@ -467,10 +467,10 @@ int input_fform(char inpfname[])
     }
 
     inpdat.restol = inp.GetValue("Residual Tolerance","10000.0",false,true);
-     
+
     // ======================
     // DISCRETIZATION CONTROL
-    // ======================    
+    // ======================
     genpar.ipord = inp.GetValue("Basis Function Order","1",false,false);
 
     strvalue=(string)inp.GetValue("Time Integration Rule","Second Order",false,true);
@@ -480,7 +480,7 @@ int input_fform(char inpfname[])
     else {
       inpdat.rhoinf[0] = (double)inp.GetValue("Time Integration Rho Infinity","0.5",false,true);
     }
-    
+
     strvalue=(string)inp.GetValue("Predictor at Start of Step","Same Velocity",false,false);
     if(strvalue=="Same Velocity") genpar.ipred = 1;
     if(strvalue=="Zero Acceleration") genpar.ipred = 2;
@@ -511,7 +511,7 @@ int input_fform(char inpfname[])
 
     // =========
     // TAU INPUT
-    // ========= 
+    // =========
     strvalue=(string)inp.GetValue("Tau Matrix","Diagonal-Shakib",false,false);
     if(strvalue == "Diagonal-Shakib")
       genpar.itau = 0;
@@ -550,7 +550,7 @@ int input_fform(char inpfname[])
     ivec = inp.GetValue("Scalar Discontinuity Capturing","0 0",false,false);
     for(i=0; i< 2; i++)  solpar.idcsclr[i] = ivec[i];
     ivec.erase(ivec.begin(),ivec.end());
- 
+
     strvalue=(string)inp.GetValue("Include Viscous Correction in Stabilization","True",false,false);
     if(strvalue == "True"){
         if(genpar.ipord == 1 ) genpar.idiff = 1;
@@ -569,7 +569,7 @@ int input_fform(char inpfname[])
     intdat.intg[0][0]=inp.GetValue("Quadrature Rule on Interior","2",false,true);
     intdat.intg[0][1]=inp.GetValue("Quadrature Rule on Boundary","3",false,true);
     genpar.ibksiz = inp.GetValue("Number of Elements Per Block","255",false,true);
-   
+
     // ==================================
     // CARDIOVASCULAR MODELING PARAMETERS
     // ==================================
@@ -581,7 +581,7 @@ int input_fform(char inpfname[])
         cout << "Number of Coupled Surfaces > MAXSURF \n";
        }
         exit(1);
-      } 
+      }
       strvalue=(string)inp.GetValue("Pressure Coupling","Implicit",false,true);
       if ( strvalue == "None")
         nomodule.ipvsq=0;
@@ -675,7 +675,7 @@ int input_fform(char inpfname[])
           strvalue=(string)inp.GetValue("COR Values From File","False",false,true);
           if ( strvalue == "True")
               nomodule.icorfile = 1; else nomodule.icorfile = 0;
-      }      
+      }
 #endif
 //      if(nomodule.numCalcSrfs=inp.GetValue("Number of Surfaces which Output Pressure and Flow","0",false)){
 //       ivec = inp.GetValue("List of Output Surfaces","",true);
@@ -712,6 +712,15 @@ int input_fform(char inpfname[])
 
   }
 
+   // ==========================
+   // Porous media using penalty methods
+   nomodule.iporouspen  = 0;
+   strvalue=(string)inp.GetValue("Porous Media Penalty","False",false,true);
+   if (strvalue == "True") nomodule.iporouspen = 1;
+   // ==========================
+
+
+
    // =========================
    // DEEFORMABLE WALL SETTINGS
    // =========================
@@ -737,7 +746,7 @@ int input_fform(char inpfname[])
        nomodule.itissuesuppt = 1;
      }
 
-     // 4 cases. Read isotropic material properties. 
+     // 4 cases. Read isotropic material properties.
      if (nomodule.ivarwallprop == 0) {
        nomodule.thicknessvw = inp.GetValue("Thickness of Vessel Wall","",true,true);
        nomodule.evw = inp.GetValue("Young Mod of Vessel Wall","",true,true);
@@ -747,7 +756,7 @@ int input_fform(char inpfname[])
          nomodule.csvw = inp.GetValue("Damping Constant of External Support", "", true, true);
          nomodule.p0vw = inp.GetValue("External Pressure", "", true, true);
        }
-     
+
      // For variable wall properties, read isotropic values from File
      } else {
        nomodule.thicknessvw = 0.0;
@@ -779,7 +788,7 @@ int input_fform(char inpfname[])
      } else {
        nomodule.iwallstiffactor = 0;
      }
-   }  
+   }
 
    // ============================
    // Non-linear Iteration Control
@@ -829,7 +838,7 @@ int input_fform(char inpfname[])
 
    cout << endl;
   }
-  
+
   catch ( exception &e ) {
    ierr = 001;
    if (myrank==0) {
