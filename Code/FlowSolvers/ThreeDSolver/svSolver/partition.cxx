@@ -6,33 +6,33 @@
  * Portions of the code Copyright (c) 2009-2011 Open Source Medical
  * Software Corporation, University of California, San Diego.
  *
- * Portions of the code Copyright (c) 1998-2007 Stanford University, 
- * Rensselaer Polytechnic Institute, Charles A. Taylor, 
+ * Portions of the code Copyright (c) 1998-2007 Stanford University,
+ * Rensselaer Polytechnic Institute, Charles A. Taylor,
  * Kenneth E. Jansen.
- * 
- * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
  *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions 
+ * See SimVascular Acknowledgements file for additional
+ * contributors to the source code.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
  * are met:
 
  * Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 
- * Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
- * documentation and/or other materials provided with the distribution. 
+ * this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  * Neither the name of the Stanford University or Rensselaer Polytechnic
  * Institute nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior 
+ * promote products derived from this software without specific prior
  * written permission.
 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
  * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -55,7 +55,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef WIN32 
+#ifdef WIN32
   #include <direct.h>
   #define chdir _chdir
   #define stat _stat
@@ -78,23 +78,23 @@ extern "C" {
     METIS_PartGraphKway(int*,int*,int*,int*,int*,int*,int*,int*,int*,int*,int*);
 }
 
-void 
+void
 Gather_Headers( int* fileDescriptor, std::vector< std::string >& headers );
-    
+
 using namespace std;
 
 typedef vector< int > block ;
 map< int, map< int, int >  > ParallelData;
- 
-// ParallelData is the most important data structure of this code it maitains 
-// the  global to local mapping of shapefuntion numbers 
-// 
-// ParallelData[ global_number][ processor_id ] = processor_local_no 
+
+// ParallelData is the most important data structure of this code it maitains
+// the  global to local mapping of shapefuntion numbers
+//
+// ParallelData[ global_number][ processor_id ] = processor_local_no
 //
 // all shape function numbers, global and local are stored in fortran indexing
 
 struct lessKey{
-    bool operator()(block b1, block b2)const 
+    bool operator()(block b1, block b2)const
         {
             return ( 100*b1[1] + 10*b1[5] < 100*b2[1] + 10*b2[5] );
         }
@@ -107,21 +107,21 @@ struct CommuTask {
     int tag;
     int type;
     int other_pid;
-    vector<int> shpFn ; 
+    vector<int> shpFn ;
 };
 
 typedef struct CommuTask CommuTask;
 
-// since ParallelData[x] is a sorted data structure, the lowest pid 
+// since ParallelData[x] is a sorted data structure, the lowest pid
 // adjacency always  becomes the master.
 
-int 
+int
 getMaster( int x ) {
     map< int , int >::iterator iter  =  ParallelData[x].begin();
     return (*iter).first;
 
 }
-void 
+void
 generate_keyphrase(char* target, const char* prefix, block& tpblock) {
 
     strcpy(target,prefix);  /* interior or boundary */
@@ -170,7 +170,7 @@ generate_keyphrase(char* target, const char* prefix, block& tpblock) {
 }
 
 
-void 
+void
 Partition_Problem( int  numProcs,
                         char iformat[],
                         char oformat[]
@@ -204,12 +204,12 @@ Partition_Problem( int  numProcs,
     probdir[0]='\0';
     sprintf(probdir,"%d-procs_case",numProcs);
     int result = _stat( probdir, &buf );
-   
-//    if ( (result == 0 ) &&  ( 01 & ( buf.st_mode >> _S_IFDIR ) ) ) 
-      if ( (result == 0 ) &&  ( buf.st_mode & _S_IFDIR ) ) 
+
+//    if ( (result == 0 ) &&  ( 01 & ( buf.st_mode >> _S_IFDIR ) ) )
+      if ( (result == 0 ) &&  ( buf.st_mode & _S_IFDIR ) )
 #else
     struct stat buf;
-    if ( !stat( _directory_name, &buf ) &&  S_ISDIR( buf.st_mode ) ) 
+    if ( !stat( _directory_name, &buf ) &&  S_ISDIR( buf.st_mode ) )
 #endif
     {
             cout << "Directory " << _directory_name <<" already exists " << endl;
@@ -217,7 +217,7 @@ Partition_Problem( int  numProcs,
             if ( !chdir( _directory_name ) ) {/* cd successful */
                 cout <<"Changed to the directory " << _directory_name << endl;
                 return;
-            }else { 
+            }else {
                  cout << "Please check the permissions for the problem";
                  cout << " directory " << _directory_name << endl;
                  exit(0);
@@ -235,9 +235,9 @@ Partition_Problem( int  numProcs,
     // else if the case does not already exist
 
 #ifdef WIN32
-    if ( _mkdir( _directory_name ) ) 
+    if ( _mkdir( _directory_name ) )
 #else
-    if ( mkdir( _directory_name, 00755 ) ) 
+    if ( mkdir( _directory_name, 00755 ) )
 #endif
     {
         cerr << "cannot create directory " << _directory_name << endl;
@@ -250,9 +250,9 @@ Partition_Problem( int  numProcs,
     npe.close();
 
     // copy the bct.dat file if one exists
-	
+
     char systemcmd[2048];
- 
+
     int rslt;
 
 #ifdef WIN32
@@ -274,7 +274,7 @@ Partition_Problem( int  numProcs,
         rslt = system(systemcmd);
     }
 #endif
-	
+
     openfile_( "geombc.dat.1", "read", &igeombc );
     vector< string > headers;
     Gather_Headers( &igeombc, headers );
@@ -310,7 +310,7 @@ Partition_Problem( int  numProcs,
     int numflag = 0;
     int edgecut;
     int options[10];
-    options[0] = 0; 
+    options[0] = 0;
     int* epart = new int [ numel ];
     METIS_PartGraphKway( &numel, xadj, adjncy, vwgt, NULL, &wgtflag,
                          &numflag, &numProcs, options, &edgecut, epart);
@@ -319,7 +319,7 @@ Partition_Problem( int  numProcs,
     if ( spebc > 0 ) {
         int swap;
         for (int i=0; i<numel; i++)
-            if ( vwgt[i] > 1 ) { 
+            if ( vwgt[i] > 1 ) {
                 swap = epart[i];
                 break;
             }
@@ -336,34 +336,34 @@ Partition_Problem( int  numProcs,
 
     /* now we have the epart array which is all the partition Info we need */
 
-    int ndof=5; 
+    int ndof=5;
     ifstream numstart("numstart.dat");
     numstart >> stepno;
     numstart.close();
 
-    readheader_( &igeombc, "number of global modes", (void*)iarray, 
+    readheader_( &igeombc, "number of global modes", (void*)iarray,
                  &ione, "integer", iformat );
     int nshgTot = iarray[0];
     int nshg = iarray[0] ;
 
-    readheader_( &igeombc, "number of variables", (void*)iarray, 
+    readheader_( &igeombc, "number of variables", (void*)iarray,
                  &ione, "integer", iformat );
 
     ndof = iarray[0];
 
-    readheader_( &igeombc, "maximum number of element nodes", (void*)iarray, 
+    readheader_( &igeombc, "maximum number of element nodes", (void*)iarray,
                  &ione, "integer", iformat );
     int nenmax = iarray[0];
 
-    readheader_( &igeombc, "number of interior tpblocks", (void*)iarray, 
+    readheader_( &igeombc, "number of interior tpblocks", (void*)iarray,
                  &ione, "integer", iformat  );
     int nblock = iarray[0];
 
-    readheader_( &igeombc, "number of nodes in the mesh", (void*)iarray, 
+    readheader_( &igeombc, "number of nodes in the mesh", (void*)iarray,
                  &ione, "integer", iformat );
     int numnp = iarray[0];
 
-    readheader_( &igeombc, "number of edges in the mesh", (void*)iarray, 
+    readheader_( &igeombc, "number of edges in the mesh", (void*)iarray,
                  &ione, "integer", iformat );
     int numedges = iarray[0];
 
@@ -376,7 +376,7 @@ Partition_Problem( int  numProcs,
     int* ecount= new int [numProcs];
     int* fcount= new int [numProcs];
 
-    for( int e=0; e < numProcs; e++ ) 
+    for( int e=0; e < numProcs; e++ )
         vcount[e] = ecount[e] = fcount[e]= 1;
 
     for( int b = 0; b < nblock ; b++ ) {//nblock is always 1 since only one block for linear tetrahedron
@@ -384,7 +384,7 @@ Partition_Problem( int  numProcs,
         readheader_( &igeombc, "connectivity interior?", (void*)iarray,
                      &iseven, "integer", iformat );
         block CurrentBlock ;
-        for( int w=1; w< iseven; w++ ) 
+        for( int w=1; w< iseven; w++ )
             CurrentBlock.push_back( iarray[w] );
         isize = iarray[0]*iarray[3];
         int* ient = new int [ isize ];
@@ -416,11 +416,11 @@ Partition_Problem( int  numProcs,
             for( vector< int >::iterator iter = element.begin();
                  iter != element.end();
                  iter++ ) {
-                if( !ParallelData[ abs(*iter) ][pid] ) 
-                    ParallelData[ abs(*iter) ][pid] 
-                                = (abs(*iter) > numnp) ? 
-                                    ((abs(*iter) > numnp+numedges )? 
-                                       fcount[pid]++: ecount[pid]++) 
+                if( !ParallelData[ abs(*iter) ][pid] )
+                    ParallelData[ abs(*iter) ][pid]
+                                = (abs(*iter) > numnp) ?
+                                    ((abs(*iter) > numnp+numedges )?
+                                       fcount[pid]++: ecount[pid]++)
                                     : vcount[pid]++ ;
             }
             element.clear();
@@ -431,43 +431,43 @@ Partition_Problem( int  numProcs,
 
     delete [] epcount;
 
-    /* At this point the values stored in vcount ecount and fcount are 1 more 
-     * than  the number of vertices edges and faces respectively , sp we need 
-     * to decrement  all of them by one so that we can directly added them to 
-     * the lower order counts  in the next  step. 
+    /* At this point the values stored in vcount ecount and fcount are 1 more
+     * than  the number of vertices edges and faces respectively , sp we need
+     * to decrement  all of them by one so that we can directly added them to
+     * the lower order counts  in the next  step.
      */
- 
+
     for( int e=0; e < numProcs; e++ ) {
-        --vcount[e] ; 
-        --ecount[e] ; 
+        --vcount[e] ;
+        --ecount[e] ;
         --fcount[e];
     }
 
     /* our parallel data structure has indepenent numbering for vertices, faces
      * and edges, now we need to correct it and add the correct offsets , we
-     * cannot write out ien before we make this correction 
+     * cannot write out ien before we make this correction
      */
 
     for( map< int, map< int, int >  >::iterator iter = ParallelData.begin();
          iter != ParallelData.end();
          iter++ ) {
-        if ( (*iter).first > numnp ) {         // it is not a vertex 
-            if ( (*iter).first > ( numnp + numedges ) ) { // it is not a edge, 
+        if ( (*iter).first > numnp ) {         // it is not a vertex
+            if ( (*iter).first > ( numnp + numedges ) ) { // it is not a edge,
                 // must be a face
-                for( map< int, int> :: iterator modeIter 
+                for( map< int, int> :: iterator modeIter
                                                 = (*iter).second.begin();
                      modeIter != (*iter).second.end();
-                     modeIter++ ) 
-                    (*modeIter).second = (*modeIter).second 
-                                         + vcount[ (*modeIter).first ] 
+                     modeIter++ )
+                    (*modeIter).second = (*modeIter).second
+                                         + vcount[ (*modeIter).first ]
                                          + ecount[ (*modeIter).first ] ;
             } else { // is an edge
 
-                for( map< int, int> :: iterator modeIter 
+                for( map< int, int> :: iterator modeIter
                                                 = (*iter).second.begin();
                      modeIter != (*iter).second.end();
-                     modeIter++ ) 
-                    (*modeIter).second = (*modeIter).second 
+                     modeIter++ )
+                    (*modeIter).second = (*modeIter).second
                                          + vcount[ (*modeIter).first ];
             }
         }
@@ -479,7 +479,7 @@ Partition_Problem( int  numProcs,
 
     /* after correction all local mode numbers are accurate ( hopefully ) and
      * are in fortran style ( starting 1 ) */
-                        
+
     /* at this point, ien still has global numbering */
     /* we now use the parallel data structure to correct ien */
 
@@ -487,7 +487,7 @@ Partition_Problem( int  numProcs,
         for( Block_Map::iterator iter = ien[p].begin();
              iter != ien[p].end();
              iter++ ) {
-            for( vector< vector< int > >:: iterator iter2 
+            for( vector< vector< int > >:: iterator iter2
                                                     = ((*iter).second).begin();
                  iter2 != ((*iter).second).end();
                  iter2++ ) {
@@ -512,7 +512,7 @@ Partition_Problem( int  numProcs,
 
     for( int p=0; p< numProcs; p++ ) {
         int numel=0;
-        
+
         bzero( (void*)filename,255);
         sprintf(filename,"%sgeombc.dat.%d",_directory_name,p+1 );
         openfile_( filename, "write", &fgeom );
@@ -523,7 +523,7 @@ Partition_Problem( int  numProcs,
             writestring_( &fgeom, (*iter).c_str() );
             writestring_( &fgeom, "\n" );
         }
-        
+
 #if defined ( DEBUG )
         sprintf(filename,"%sascii_out.%d",_directory_name,p+1);
         ofstream fascii( filename );
@@ -534,7 +534,7 @@ Partition_Problem( int  numProcs,
         isize = 1;
         nitems = 1;
         iarray[ 0 ] = 1;
-        writeheader_( &fgeom, "byteorder magic number ", 
+        writeheader_( &fgeom, "byteorder magic number ",
                       (void*)iarray, &nitems, &isize, "integer", oformat );
 
         nitems = 1;
@@ -557,7 +557,7 @@ Partition_Problem( int  numProcs,
             vector< vector< int > > blockIEN = (*bIter).second;
             numel += blockIEN.size();
             isize = blockIEN.size()*CurrentBlock[2];
-            iarray[ 0 ] = blockIEN.size();        
+            iarray[ 0 ] = blockIEN.size();
 
 #if defined ( DEBUG )
             fascii << endl;
@@ -575,11 +575,11 @@ Partition_Problem( int  numProcs,
 #endif
             }
 
-            generate_keyphrase( keyphrase, "connectivity interior ", 
+            generate_keyphrase( keyphrase, "connectivity interior ",
                                 CurrentBlock );
             writeheader_( &fgeom, keyphrase, (void*)iarray, &xct, &isize,
                           "integer", oformat );
-   
+
 #if defined ( DEBUG )
             fascii << endl;
             fascii << "********************"<< endl;
@@ -601,8 +601,8 @@ Partition_Problem( int  numProcs,
             }
             nitems = blockIEN.size()*CurrentBlock[2];
             writedatablock_( &fgeom, keyphrase, (void*)( ient ),
-                             &nitems, "integer", oformat ); 
-            
+                             &nitems, "integer", oformat );
+
             delete [] ient;
             blockIEN.clear();
         }// loop over blocks with in a processor
@@ -616,9 +616,9 @@ Partition_Problem( int  numProcs,
 #if defined ( DEBUG )
         fascii.close();
 #endif
-    }// loop over procs 
+    }// loop over procs
     //ien.clear();
-   
+
     /* co-ords */
 
     readheader_( &igeombc, "co-ordinates", (void*)iarray, &itwo, "double",
@@ -633,8 +633,8 @@ Partition_Problem( int  numProcs,
         for( map< int, int>::iterator iter = ParallelData[x].begin();
              iter != ParallelData[x].end();
              iter++ ) {
-            for( int s=0; s < 3 ; s++ ) 
-                Xpart[(*iter).first][(*iter).second].push_back( 
+            for( int s=0; s < 3 ; s++ )
+                Xpart[(*iter).first][(*iter).second].push_back(
                                                        xloc[x-1+s*iarray[0]] );
         }
     }
@@ -655,14 +655,14 @@ Partition_Problem( int  numProcs,
         bzero((void*)filename, 255 );
         sprintf(filename,"number of processors : < 0 > %d \n", numProcs);
         writestring_( &fgeom, filename );
-        
+
         double* xf = new double [ Xpart[p].size() * 3 ];
         for(   map< int, vector< double > >::iterator mIter = Xpart[p].begin();
                mIter != Xpart[p].end();
                mIter++ )
-            for( int f=0; f<3; f++) 
+            for( int f=0; f<3; f++)
                 xf[ f*Xpart[p].size()+ (*mIter).first - 1] = (*mIter).second[f];
-            
+
         isize = Xpart[p].size() * 3 ;
         nitems = 2;
         iarray[ 0 ] = Xpart[p].size();
@@ -682,10 +682,10 @@ Partition_Problem( int  numProcs,
         fprintf(cfascii, "------------------\n");
         int numnp_tmp = Xpart[p].size();
         for( int c=0; c< numnp_tmp ; c++ )
-            fprintf( cfascii,"%f %f %f \n", 
+            fprintf( cfascii,"%f %f %f \n",
                      xf[ c ], xf[ c + numnp_tmp ],xf[c+2*numnp_tmp] );
         fclose( cfascii );
-#endif          
+#endif
 
         delete [] xf ;
         Xpart[p].clear();
@@ -755,8 +755,68 @@ Partition_Problem( int  numProcs,
   }
 #endif
 
+  if (nomodule.iporouspen != 0) {
+    iarray[0]=0;
+    readheader_( &igeombc, "permprop", (void*)iarray, &itwo, "double",
+                 iformat );
+
+    if(iarray[0]>0){
+    	use_restart=0;
+    	int numNode=iarray[0],numComp=iarray[1];
+        isize =  numNode*numComp;
+        double* pploc = new double [ isize ];
+        readdatablock_( &igeombc, "permprop", (void*)pploc, &isize,
+                        "double", iformat );
+        vector< map<int, vector< double > > > Wpart( numProcs );
+
+        for( int x=1; x < numNode+1; x++ ){
+            for( map< int, int>::iterator iter = ParallelData[x].begin();
+                 iter != ParallelData[x].end();
+                 iter++ ) {
+                for( int s=0; s < numComp ; s++ )
+                    Wpart[(*iter).first][(*iter).second].push_back(
+                                                           pploc[x-1+s*numNode] );
+            }
+        }
+        delete [] pploc;
+
+        for( int p=0; p< numProcs; p++ ) {
+
+            bzero((void*)filename, 255 );
+            sprintf(filename,"%sgeombc.dat.%d",_directory_name,p+1 );
+            openfile_( filename, "append", &fgeom );
+
+            double* pf = new double [ Wpart[p].size() * numComp ];
+            for(   map< int, vector< double > >::iterator mIter = Wpart[p].begin();
+                   mIter != Wpart[p].end();
+                   mIter++ )
+                for( int f=0; f<numComp; f++)
+                    pf[ f*Wpart[p].size()+ (*mIter).first - 1] = (*mIter).second[f];
+
+            isize = Wpart[p].size() * numComp ;
+            nitems = 2;
+            iarray[ 0 ] = Wpart[p].size();
+            iarray[ 1 ] = numComp;
+            writeheader_( &fgeom, "permprop", (void*)iarray, &nitems, &isize,
+                          "double", oformat );
+
+            nitems = Wpart[p].size() * numComp;
+            writedatablock_( &fgeom, "permprop", (void*)( pf ), &nitems,
+                             "double", oformat );
+
+            delete [] pf ;
+            Wpart[p].clear();
+            closefile_( &fgeom, "append" );
+        }
+        Wpart.clear();
+
+    }
+  }
+
+
+
     /* let us take care of Essential BCs.*/
-    // BCs are in the indirect numbering of nBC so only nBC needs to be sorted 
+    // BCs are in the indirect numbering of nBC so only nBC needs to be sorted
     // according to nshg
     // BC abd iBC are numbered as numpbc which us given by nBC.
 
@@ -786,32 +846,32 @@ Partition_Problem( int  numProcs,
     vector< map< int, int> > nBCpart( numProcs );
     vector< vector< int> > iBCpart ( numProcs );
     vector< vector< double> > BCpart( numProcs );
-    
+
     for( int x=1; x < nshg+1 ; x++ ) {
         if ( nBC[x-1] > 0 ) {
             for( map< int, int>::iterator iter = ParallelData[x].begin();
                  iter != ParallelData[x].end();
                  iter++ ) {
-                nBCpart[ (*iter).first ][ (*iter).second ] 
-                                                = inumpbc[ (*iter).first ]++; 
+                nBCpart[ (*iter).first ][ (*iter).second ]
+                                                = inumpbc[ (*iter).first ]++;
                 iBCpart[ (*iter).first ].push_back( iBC[ nBC[x-1] - 1 ] );
                 for( int g=0; g< numEBC; g++ )
-                    BCpart[ (*iter).first ].push_back(BC[nBC[x-1]-1+g*numpbc]); 
+                    BCpart[ (*iter).first ].push_back(BC[nBC[x-1]-1+g*numpbc]);
             }
         } else {
             for( map< int, int>::iterator iter = ParallelData[x].begin();
                  iter != ParallelData[x].end();
-                 iter++ ) 
+                 iter++ )
                 nBCpart[ (*iter).first ][ (*iter).second ] = -1;
         }
     }
-   
+
     delete [] nBC;
     delete [] iBC;
     delete [] BC;
 
     // we will calculate a maxnshg here for later use with sonfath.
-    
+
     int maxnshg =0;
 
     for( int p=0; p< numProcs; p++ ) {
@@ -823,7 +883,7 @@ Partition_Problem( int  numProcs,
 #if defined ( DEBUG )
         sprintf( filename, "%sascii_out.%d",_directory_name, p+1 );
         FILE* cfascii = fopen( filename, "a" );
-        fprintf(cfascii,"\nBoundary Condition Mapping Array (nBC):\n" ); 
+        fprintf(cfascii,"\nBoundary Condition Mapping Array (nBC):\n" );
         fprintf(cfascii,"---------------------------------------\n" );
 #endif
 
@@ -831,29 +891,29 @@ Partition_Problem( int  numProcs,
         sprintf( filename,  "maximum number of element nodes : < 0 > %d\n",
                  nenmax );
         writestring_( &fgeom, filename );
-        
+
         bzero( (void*)filename, 255 );
         sprintf(filename,  "number of modes : < 0 > %d\n", (int) nBCpart[p].size() );
         writestring_( &fgeom, filename );
-        
+
         bzero( (void*)filename, 255 );
         sprintf( filename,
-                 "number of shapefunctions soved on processor : < 0 > %d\n", 
+                 "number of shapefunctions soved on processor : < 0 > %d\n",
                  (int) nBCpart[p].size() );
         writestring_( &fgeom, filename );
-        
+
         bzero( (void*)filename, 255 );
-        sprintf( filename, 
+        sprintf( filename,
                  "number of nodes with Dirichlet BCs : < 0 > %d\n",
                  inumpbc[ p ] );
         writestring_( &fgeom, filename );
-        
+
         isize =  nBCpart[p].size();
         nitems = 1 ;
         iarray[ 0 ] = nBCpart[p].size();
         writeheader_( &fgeom, "bc mapping array", (void*)iarray, &nitems,
                       &isize, "integer", oformat );
-        
+
         int* inBC= new int [ nBCpart[p].size() ];
         int count = 0;
         for( map< int, int>::iterator iter = nBCpart[p].begin();
@@ -872,7 +932,7 @@ Partition_Problem( int  numProcs,
         nBCpart[p].clear();
 
 #if defined ( DEBUG )
-        fprintf(cfascii,"\nBoundary Condition Codes Array (iBC):\n" ); 
+        fprintf(cfascii,"\nBoundary Condition Codes Array (iBC):\n" );
         fprintf(cfascii,"-------------------------------------\n" );
 #endif
         isize = inumpbc[p];
@@ -883,7 +943,7 @@ Partition_Problem( int  numProcs,
                       &isize, "integer", oformat );
 
         int* iiBC = new int [ inumpbc[p] ];
-        if ( inumpbc[p] != iBCpart[p].size() ) 
+        if ( inumpbc[p] != iBCpart[p].size() )
             cerr<<"Error 1" << __LINE__ <<endl;
         for( int i = 0; i< inumpbc[p]; i++ ) {
             iiBC[i] = iBCpart[p][i];
@@ -896,15 +956,15 @@ Partition_Problem( int  numProcs,
         writedatablock_( &fgeom, "bc codes array ", (void*)( iiBC ), &nitems,
                          "integer", oformat );
         delete [] iiBC;
-        
+
 #if defined ( DEBUG )
-        fprintf(cfascii,"\nBoundary Condition Array (BC):\n" ); 
+        fprintf(cfascii,"\nBoundary Condition Array (BC):\n" );
         fprintf(cfascii,"--------------------------------\n" );
 #endif
         isize = inumpbc[p]*numEBC;
         nitems = 1;
         iarray[ 0 ] = inumpbc[p]*numEBC;
-        writeheader_( &fgeom, "boundary condition array ", (void*) iarray, 
+        writeheader_( &fgeom, "boundary condition array ", (void*) iarray,
                       &nitems, &isize, "double", oformat );
 
         double* BCf = new double [inumpbc[p]*numEBC];
@@ -924,8 +984,8 @@ Partition_Problem( int  numProcs,
 
         }
         BCpart[p].clear();
-        nitems = inumpbc[p]*numEBC; 
-        writedatablock_( &fgeom, "boundary condition array ", (void*)( BCf ), 
+        nitems = inumpbc[p]*numEBC;
+        writedatablock_( &fgeom, "boundary condition array ", (void*)( BCf ),
                          &nitems, "double", oformat );
 
         delete [] BCf;
@@ -938,16 +998,16 @@ Partition_Problem( int  numProcs,
 
     iBCpart.clear();
     BCpart.clear();
-        
+
     /* done writing ebcs */
 
     /* ienb and BCB and iBCB */
 
-    
+
     int numNBC = ndof + 1;
 
 
-    readheader_( &igeombc, "number of boundary tpblocks", (void*)iarray, 
+    readheader_( &igeombc, "number of boundary tpblocks", (void*)iarray,
                  &ione, "integer", iformat );
     nblock = iarray[0];
 
@@ -959,18 +1019,18 @@ Partition_Problem( int  numProcs,
     vector< map< block, vector< double >, lessKey > > BCBpart( numProcs );
 
     for( int b = 0; b < nblock ; b++ ) {
-        
+
         readheader_( &igeombc, "connectivity boundary?", (void*)iarray, &ieight,
                      "integer", iformat );
 
         block CurrentBlock;
         for( int w=1; w< ieight; w++ ) CurrentBlock.push_back( iarray[w] );
-        
+
         isize = iarray[0]*iarray[3];
         int* ient = new int [ isize ];
         readdatablock_( &igeombc, "connectivity boundary?", (void*)ient,
                         &isize, "integer", iformat );
-        
+
         readheader_( &igeombc, "ienb to sms?", (void*)iarray, &ione,
                      "integer", iformat );
 
@@ -1010,7 +1070,7 @@ Partition_Problem( int  numProcs,
                  iter++ ) {
                 *iter = ( *iter > 0 ) ? ParallelData[ *iter ][pid] :
                     -1*ParallelData[ abs(*iter) ][pid];
-                
+
             }
             ien[pid][CurrentBlock].push_back( element );
             element.clear();
@@ -1018,11 +1078,11 @@ Partition_Problem( int  numProcs,
             iBCBpart[pid][CurrentBlock].push_back( iBCB[c] );
             iBCBpart[pid][CurrentBlock].push_back( iBCB[c + iarray[0]] );
 
-            for( int o=0; o< numNBC; o++) 
-                BCBpart[pid][CurrentBlock].push_back( BCB[ c + iarray[0]*o ] ); 
+            for( int o=0; o< numNBC; o++)
+                BCBpart[pid][CurrentBlock].push_back( BCB[ c + iarray[0]*o ] );
 
         }
-          
+
         delete [] ient;
         delete [] ient_sms;
         delete [] iBCB;
@@ -1034,13 +1094,13 @@ Partition_Problem( int  numProcs,
     /* format and write out */
 
     for( int p=0; p< numProcs; p++ ) {
-        
+
         bzero( (void*)filename,255);
         sprintf(filename,"%sgeombc.dat.%d",_directory_name,p+1 );
         openfile_( filename , "append", &fgeom );
-        
+
         bzero( (void*)filename,255);
-        sprintf( filename,"number of boundary tpblocks : < 0 > %d\n", 
+        sprintf( filename,"number of boundary tpblocks : < 0 > %d\n",
                  (int) ien[p].size() );
         writestring_( &fgeom, filename );
 
@@ -1058,13 +1118,13 @@ Partition_Problem( int  numProcs,
             block CurrentBlock = (*bIter).first;
             vector< vector< int > > blockIEN = (*bIter).second;
             numelb += blockIEN.size();
-             
+
             isize = blockIEN.size()*CurrentBlock[2];
             iarray[ 0 ] = blockIEN.size();
 
 #if defined ( DEBUG )
             fascii << endl;
-            fascii <<"************************"<< endl;    
+            fascii <<"************************"<< endl;
 #endif
             int xct = 1;
             for( block::iterator ibtr = CurrentBlock.begin();
@@ -1075,14 +1135,14 @@ Partition_Problem( int  numProcs,
                 fascii << *ibtr <<" ";
 #endif
             }
-            generate_keyphrase( keyphrase, "connectivity boundary ", 
+            generate_keyphrase( keyphrase, "connectivity boundary ",
                                 CurrentBlock );
             writeheader_( &fgeom, keyphrase, (void*)iarray, &xct, &isize,
                           "integer", oformat );
 
 #if defined ( DEBUG )
             fascii << endl;
-            fascii <<"************************"<< endl;    
+            fascii <<"************************"<< endl;
 #endif
 
             /* now we need to create the fortran style array for this block of
@@ -1100,10 +1160,10 @@ Partition_Problem( int  numProcs,
                 fascii << endl;
 #endif
             }
-          
+
             nitems = blockIEN.size()*CurrentBlock[2];
             writedatablock_( &fgeom, keyphrase, (void*)( ient ),
-                             &nitems, "integer", oformat ); 
+                             &nitems, "integer", oformat );
 
             delete [] ient;
 
@@ -1147,9 +1207,9 @@ Partition_Problem( int  numProcs,
             fascii.precision( 8 );
 #endif
             double* BCBf = new double [ blockIEN.size() * numNBC ];
-            for( int u=0; u< blockIEN.size(); u++ ) { 
-                for( int v=0; v< numNBC; v++ ) { 
-                    BCBf[v* blockIEN.size()+u] 
+            for( int u=0; u< blockIEN.size(); u++ ) {
+                for( int v=0; v< numNBC; v++ ) {
+                    BCBf[v* blockIEN.size()+u]
                                    = BCBpart[p][CurrentBlock][u*numNBC+v];
 
 #if defined ( DEBUG )
@@ -1172,11 +1232,11 @@ Partition_Problem( int  numProcs,
             writeheader_( &fgeom, keyphrase, (void*)iarray, &xct, &isize,
                           "double", oformat );
 
-            nitems = blockIEN.size()*numNBC;        
+            nitems = blockIEN.size()*numNBC;
             writedatablock_( &fgeom, keyphrase, (void*)( BCBf ), &nitems,
                              "double", oformat );
             delete [] BCBf;
-                    
+
             blockIEN.clear();
         }// loop over blocks with in a processor
         ien[p].clear();
@@ -1190,7 +1250,7 @@ Partition_Problem( int  numProcs,
 #if defined ( DEBUG )
         fascii.close();
 #endif
-    }// loop over procs 
+    }// loop over procs
     ien.clear();
 
 
@@ -1198,24 +1258,24 @@ Partition_Problem( int  numProcs,
     /* We need to generate ilwork and ncorp and the iper array for each
      * processor . To achieve this we first read in the complete iper array and
      * then go through "ParallelData" iterating all the global shapefunctions
-     * and then generate a consistant communication trace for all 
+     * and then generate a consistant communication trace for all
      * for on processor periodiciy we just dump an array */
 
-    readheader_( &igeombc, "periodic masters array?", (void*)iarray, &ione, 
+    readheader_( &igeombc, "periodic masters array?", (void*)iarray, &ione,
                  "integer", iformat );
     int* periodic = new int [ nshg ];
     readdatablock_( &igeombc,"periodic masters array?", (void*)periodic, &nshg,
                     "integer", iformat );
     vector< map< int, int > > PeriodicPart( numProcs );
-    
+
     CommuTask*** rtask ;
     CommuTask*** stask;
 
-    rtask = new CommuTask** [numProcs];   
-    stask = new CommuTask** [numProcs];   
+    rtask = new CommuTask** [numProcs];
+    stask = new CommuTask** [numProcs];
     for( int b=0; b< numProcs; b++ ){
-        rtask[b] = new CommuTask* [numProcs];   
-        stask[b] = new CommuTask* [numProcs];   
+        rtask[b] = new CommuTask* [numProcs];
+        stask[b] = new CommuTask* [numProcs];
         for( int c=0; c< numProcs; c++ ){
             rtask[b][c] = NULL;
             stask[b][c] = NULL;
@@ -1225,51 +1285,51 @@ Partition_Problem( int  numProcs,
     bool isPERIODIC = false ;
     for( int x=1; x < nshg+1; x++ ) {
 
-    // first we need to fill a 0 in all the iper entries of x and its images 
-    // since this will be the case even if the node has no periodicity at all 
+    // first we need to fill a 0 in all the iper entries of x and its images
+    // since this will be the case even if the node has no periodicity at all
 
         isPERIODIC = false ;
 
         for( map< int, int >::iterator iter = ParallelData[x].begin();
              iter!= ParallelData[x].end();
-             iter++ ) 
+             iter++ )
             PeriodicPart[ (*iter).first ][ (*iter).second ] = 0;
 
-             
+
         int master_pid = getMaster( x ); // assuming no periodicity
         int Global_Master = ParallelData[x][master_pid];
 
-        if ( periodic[ x-1 ] > 0 ){  
+        if ( periodic[ x-1 ] > 0 ){
 
-    // if there is periodicity, then the real master node and processor are 
-    // not that of the current mode but of the master mode,  and need 
-    // updating...also now the image which shares this master_pid should get 
+    // if there is periodicity, then the real master node and processor are
+    // not that of the current mode but of the master mode,  and need
+    // updating...also now the image which shares this master_pid should get
     // an iper and not a commu.
 
             master_pid = getMaster( periodic[x-1] );
 
-    // master_pid is the processor on which the master is real ( present ) 
+    // master_pid is the processor on which the master is real ( present )
 
-            Global_Master = ParallelData[periodic[x-1]][master_pid];  
+            Global_Master = ParallelData[periodic[x-1]][master_pid];
 
     // Global_Master is the processor local shape function number of the master
     // mode on the master processor
 
             isPERIODIC = true;
         }
-    // periodicity has been taken care of 
-    // now we do the simple commu to the master_pid 
-         
+    // periodicity has been taken care of
+    // now we do the simple commu to the master_pid
+
         for( map< int, int>::iterator iter = ParallelData[x].begin();
              iter != ParallelData[x].end();
-             iter++ )             
+             iter++ )
             if ( (*iter).first != master_pid ) {
 
                 int sender = (*iter).first;
                 int receiver = master_pid;
-                 
-    // if we ever add a send task from A to B then we also immediately add a 
-    // receive task from B to A so its enuf if we check one of them 
+
+    // if we ever add a send task from A to B then we also immediately add a
+    // receive task from B to A so its enuf if we check one of them
                 if ( !stask[sender][receiver] ) {
                     stask[sender][receiver] = new CommuTask;
                     rtask[receiver][sender] = new CommuTask;
@@ -1280,7 +1340,7 @@ Partition_Problem( int  numProcs,
                     stask[sender][receiver]->other_pid = receiver;
                     rtask[receiver][sender]->other_pid = sender;
                 }
-                 
+
                 stask[sender][receiver]->shpFn.push_back( (*iter).second );
                 rtask[receiver][sender]->shpFn.push_back( Global_Master );
 
@@ -1290,9 +1350,9 @@ Partition_Problem( int  numProcs,
     // instead of commu. ( ofcourse only for periodic modes )
 
                 if ( isPERIODIC ) {
-                    PeriodicPart[ (*iter).first ][ (*iter).second ] 
+                    PeriodicPart[ (*iter).first ][ (*iter).second ]
                                                             = Global_Master;
-                }           
+                }
             }
     }
 
@@ -1307,7 +1367,7 @@ Partition_Problem( int  numProcs,
     ofstream ilwf( filename );
 #endif
 
-    for( int a=0; a< numProcs; a++ ){ //outer loop over procs 
+    for( int a=0; a< numProcs; a++ ){ //outer loop over procs
         ilwork.push_back( 0 );
 
 #if defined ( DEBUG )
@@ -1323,9 +1383,9 @@ Partition_Problem( int  numProcs,
                 ilwork.push_back( rtask[a][b]->shpFn.size() );
 
 #if defined ( DEBUG )
-                ilwf << " from "   << rtask[a][b]->other_pid+1 
-                     << " tag "    << rtask[a][b]->tag 
-                     << " numSeg " << rtask[a][b]->shpFn.size() << endl ; 
+                ilwf << " from "   << rtask[a][b]->other_pid+1
+                     << " tag "    << rtask[a][b]->tag
+                     << " numSeg " << rtask[a][b]->shpFn.size() << endl ;
 #endif
 
                 for( vector<int>::iterator iter = rtask[a][b]->shpFn.begin();
@@ -1346,14 +1406,14 @@ Partition_Problem( int  numProcs,
 
                 delete rtask[a][b];
 
-            } 
+            }
 
         } // end inner loop 1 over procs
 
 #if defined ( DEBUG )
 
         ilwf << endl;
-        
+
         ilwf << a+1 << " sends  ";
 #endif
 
@@ -1366,7 +1426,7 @@ Partition_Problem( int  numProcs,
                 ilwork.push_back( stask[a][b]->shpFn.size() );
 
 #if defined ( DEBUG )
-                ilwf << " to "   << stask[a][b]->other_pid+1 
+                ilwf << " to "   << stask[a][b]->other_pid+1
                      << " tag "    << stask[a][b]->tag
                      << " numSeg " << stask[a][b]->shpFn.size() << endl;
 #endif
@@ -1388,7 +1448,7 @@ Partition_Problem( int  numProcs,
 #endif
 
                 delete stask[a][b];
-            } 
+            }
         } // end inner 2loop over procs
 
 #if defined ( DEBUG )
@@ -1397,7 +1457,7 @@ Partition_Problem( int  numProcs,
         if ( ilwork.size() > 0 ) {
             for( vector<int>::iterator iter = ilwork.begin();
                  iter != ilwork.end();
-                 iter++ ) 
+                 iter++ )
                 ilwf << *iter <<" ";
 
             ilwf << endl;
@@ -1440,7 +1500,7 @@ Partition_Problem( int  numProcs,
         int count = 0;
         for( map< int, int>::iterator iter = PeriodicPart[a].begin();
              iter != PeriodicPart[a].end();
-             iter++ ) 
+             iter++ )
             fper[ count++ ] = (*iter).second;
 
 #if defined ( DEBUG )
@@ -1450,11 +1510,11 @@ Partition_Problem( int  numProcs,
         fascii <<"\n------------------------"<<endl;
         fascii <<"Periodic Partners Array:"<<endl;
         fascii <<"------------------------"<<endl;
-        for( int shg=0; shg < count ; shg++ ) 
+        for( int shg=0; shg < count ; shg++ )
             fascii << fper[ shg ] << endl;
         fascii.close();
 #endif
-        
+
         nitems = count;
         writedatablock_( &fgeom, "periodic masters array ", (void*)( fper ),
                          &nitems, "integer", oformat );
@@ -1476,8 +1536,8 @@ Partition_Problem( int  numProcs,
 
 
     // write ncorp
-    // generating ncorp 
-    // ncorp is our map between the "partition local" and the global (sms) 
+    // generating ncorp
+    // ncorp is our map between the "partition local" and the global (sms)
     // numbering of modes  ncorp[ proc ][ local number ] = sms_number
 
     vector< map< int, int > > ncorp( numProcs ) ;
@@ -1493,7 +1553,7 @@ Partition_Problem( int  numProcs,
          bzero( (void*)filename, 255 );
          ofstream myfileltg;
          sprintf( filename, "%sltg.dat.%d",_directory_name,a);
-         myfileltg.open (filename, ios::out); 
+         myfileltg.open (filename, ios::out);
          myfileltg << nshg << endl;
          myfileltg << ncorp[a].size() << endl;
          for( map<int, int>::iterator niter = ncorp[a].begin(); niter != ncorp[a].end(); niter++ ) {
@@ -1508,7 +1568,7 @@ Partition_Problem( int  numProcs,
         bzero( (void*)filename, 255 );
         sprintf( filename, "%sgeombc.dat.%d",_directory_name,a+1 );
         openfile_( filename, "append", &fgeom );
-        
+
         isize = ncorp[a].size() ;
         nitems = 1;
         iarray[ 0 ] = ncorp[a].size() ;
@@ -1551,7 +1611,7 @@ Partition_Problem( int  numProcs,
         closefile_( &fgeom, "append" );
         ncorp[a].clear();
         ecorp[a].clear();
-    } 
+    }
 
     for( int a=0; a< numProcs; a++ ){
 
@@ -1581,9 +1641,9 @@ Partition_Problem( int  numProcs,
 
     //write restart
 
-    sprintf( filename, "restart.%d.1", stepno );  
+    sprintf( filename, "restart.%d.1", stepno );
     openfile_( filename, "read", &irestart );
-    readheader_( &irestart, "solution?", (void*)iarray, &ithree, 
+    readheader_( &irestart, "solution?", (void*)iarray, &ithree,
                  "double", iformat );
 
     nshg  = iarray[0];
@@ -1592,12 +1652,12 @@ Partition_Problem( int  numProcs,
 
     double* solution = new double [ isize ];
 
-    readdatablock_( &irestart,"solution?", (void*)solution, &isize, 
+    readdatablock_( &irestart,"solution?", (void*)solution, &isize,
                     "double", iformat  );
-    
+
     // now we need to create the partitioned data structure.
-    // keeping in mind that unlike BCs this has a direct corelation 
-    // to each nshg so we need to use a 
+    // keeping in mind that unlike BCs this has a direct corelation
+    // to each nshg so we need to use a
     // sorted data structure and we choose a std::map for simplicity
 
     vector< map< int, vector< double > > > solPart( numProcs );
@@ -1607,17 +1667,17 @@ Partition_Problem( int  numProcs,
              pIter != ParallelData[x].end();
              pIter++ ) {
             for( int v=0; v< ndof ; v++ )
-                solPart[ (*pIter).first ][ (*pIter).second ].push_back( 
+                solPart[ (*pIter).first ][ (*pIter).second ].push_back(
                                                    solution[ v*nshg + x -1 ] );
         }
     }
-      
-    delete [] solution; 
+
+    delete [] solution;
 
 
     int nsd = 3;
     double* displacement;
-    double* fDisplacement; 
+    double* fDisplacement;
     int nshgLocalDisp;
     vector< map< int, vector< double > > > dispPart( numProcs );
 
@@ -1625,8 +1685,8 @@ Partition_Problem( int  numProcs,
     if (nomodule.ideformwall != 0) {
 
       //same deal for the displacements
- 
-      readheader_( &irestart, "displacement?", (void*)iarray, &ithree, 
+
+      readheader_( &irestart, "displacement?", (void*)iarray, &ithree,
                  "double", iformat );
 
       nshg  = iarray[0];
@@ -1635,20 +1695,20 @@ Partition_Problem( int  numProcs,
 
       displacement = new double [ isize ];
 
-      readdatablock_( &irestart,"displacement?", (void*)displacement, &isize, 
-                    "double", iformat  );  
+      readdatablock_( &irestart,"displacement?", (void*)displacement, &isize,
+                    "double", iformat  );
 
       for( int x = 1; x < nshg+1; x++ ){
         for( map<int,int>::iterator pIter = ParallelData[x].begin();
              pIter != ParallelData[x].end();
              pIter++ ) {
             for( int v=0; v< nsd ; v++ )
-                dispPart[ (*pIter).first ][ (*pIter).second ].push_back( 
+                dispPart[ (*pIter).first ][ (*pIter).second ].push_back(
                                                    displacement[ v*nshg + x -1 ] );
         }
       }
-      
-      delete [] displacement;   
+
+      delete [] displacement;
 
     }
 
@@ -1743,8 +1803,8 @@ Partition_Problem( int  numProcs,
 
     // now we have the partitioned data structure we need to write it out.
 
-    for( int a=0; a< numProcs; a++ ){ 
-        
+    for( int a=0; a< numProcs; a++ ){
+
         int nshgLocal = solPart[a].size();
         double* fSolution = new double [ nshgLocal * ndof ];
 
@@ -1759,7 +1819,7 @@ Partition_Problem( int  numProcs,
         }
 
 #if(VER_VARWALL == 1)
-        if (nomodule.ivarwallprop != 0 && use_restart==1) {         
+        if (nomodule.ivarwallprop != 0 && use_restart==1) {
           nshgLocalWallprop = wallpropPart[a].size();
           fWallprop = new double [ nshgLocalWallprop * nsdwp ];
 	    }
@@ -1776,7 +1836,7 @@ Partition_Problem( int  numProcs,
         fprintf( rascii, "---------------------------------------------\n");
         for( int y=1; y < nshgLocal+1 ; y++ ) {
             fprintf( rascii, "%d :", y ) ;
-            for( int w=0; w< ndof; w++ ) { 
+            for( int w=0; w< ndof; w++ ) {
                 fprintf(rascii," %f ", solPart[a][y][w] );
             }
             fprintf( rascii, "\n");
@@ -1787,7 +1847,7 @@ Partition_Problem( int  numProcs,
         fprintf( rascii, "---------------------------------------------\n");
         for( int y=1; y < nshgLocalDisp+1 ; y++ ) {
             fprintf( rascii, "%d :", y ) ;
-            for( int w=0; w< nsd; w++ ) { 
+            for( int w=0; w< nsd; w++ ) {
                 fprintf(rascii," %f ", dispPart[a][y][w] );
             }
             fprintf( rascii, "\n");
@@ -1796,7 +1856,7 @@ Partition_Problem( int  numProcs,
 #if(VER_VARWALL == 1)
 
         if (nomodule.ivarwallprop != 0 && use_restart==1) {
-            
+
 			fprintf( rascii, "nshgLocalwallprop: %d\n", nshgLocalWallprop);
 			fprintf( rascii, "numVars: %d\n", nsdwp );
 			fprintf( rascii, "Step Number: %d\n", stepno);
@@ -1814,7 +1874,7 @@ Partition_Problem( int  numProcs,
 
         fclose( rascii );
 #endif
-        for( int w=0; w< ndof; w++ ) 
+        for( int w=0; w< ndof; w++ )
             for( int y=1; y < nshgLocal+1 ; y++ ) {
                 fSolution[ w*nshgLocal+(y-1) ] = solPart[a][y][w];
             }
@@ -1822,7 +1882,7 @@ Partition_Problem( int  numProcs,
         solPart[a].clear();
 
         if (nomodule.ideformwall != 0) {
-          for( int w=0; w< nsd; w++ ) 
+          for( int w=0; w< nsd; w++ )
             for( int y=1; y < nshgLocalDisp+1 ; y++ ) {
                 fDisplacement[ w*nshgLocalDisp+(y-1) ] = dispPart[a][y][w];
             }
@@ -1853,7 +1913,7 @@ Partition_Problem( int  numProcs,
         bzero( (void*)filename, 255 );
         sprintf(filename,"%srestart.%d.%d",_directory_name, stepno, a+1 );
         openfile_( filename, "write", &frest );
-        
+
         for( vector< string >::iterator iter = headers.begin();
              iter != headers.end();
              iter++ ) {
@@ -1865,31 +1925,31 @@ Partition_Problem( int  numProcs,
         bzero( (void*)filename, 255 );
         sprintf(filename,"number of modes : < 0 > %d\n", nshgLocal);
         writestring_( &frest, filename );
-        
+
         bzero( (void*)filename, 255 );
         sprintf(filename,"number of variables : < 0 > %d\n", ndof);
         writestring_( &frest, filename );
-        
+
         isize = 1;
         nitems = 1;
         iarray[ 0 ] = 1;
-        writeheader_( &frest, "byteorder magic number ", 
+        writeheader_( &frest, "byteorder magic number ",
                       (void*)iarray, &nitems, &isize, "integer", oformat );
-        
+
         nitems = 1;
         writedatablock_( &frest, "byteorder magic number ",
                          (void*)mptr, &nitems, "integer", oformat );
-        
-        
+
+
         isize = nshgLocal*ndof;
         nitems = 3;
         iarray[ 0 ] = nshgLocal;
         iarray[ 1 ] = ndof;
         iarray[ 2 ] = stepno;
-        writeheader_( &frest, "solution ", 
+        writeheader_( &frest, "solution ",
                       (void*)iarray, &nitems, &isize, "double", oformat );
-        
-        
+
+
         nitems = nshgLocal*ndof;
         writedatablock_( &frest, "solution ",
                          (void*)(fSolution), &nitems, "double", oformat );
@@ -1900,10 +1960,10 @@ Partition_Problem( int  numProcs,
           iarray[ 0 ] = nshgLocalDisp;
           iarray[ 1 ] = nsd;
           iarray[ 2 ] = stepno;
-          writeheader_( &frest, "displacement ", 
+          writeheader_( &frest, "displacement ",
                       (void*)iarray, &nitems, &isize, "double", oformat );
-        
-        
+
+
           nitems = nshgLocalDisp*nsd;
           writedatablock_( &frest, "displacement ",
                          (void*)(fDisplacement), &nitems, "double", oformat );
@@ -1941,9 +2001,9 @@ Partition_Problem( int  numProcs,
 
 
         closefile_( &frest, "write" );
-        
+
         delete [] fSolution;
- 
+
         if (nomodule.ideformwall != 0) {
           delete [] fDisplacement;
 	    }
@@ -1960,7 +2020,7 @@ Partition_Problem( int  numProcs,
 
     }
 
-    filename[0]='\0';    
+    filename[0]='\0';
     sprintf(filename,"%snumstart.dat", _directory_name );
     ofstream nstart( filename );
     nstart << stepno ;

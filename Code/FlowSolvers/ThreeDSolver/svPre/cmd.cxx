@@ -120,7 +120,10 @@ static Cmd cmd_table[] = {
   {"wall_displacements_write_vtp", cmd_wall_displacements_write_vtp},
   {"append_displacements",cmd_append_displacements},
   //wgyang 2021/5
-  {"set_append_output_permeability",cmd_set_append_output_permeability()},
+  {"set_append_output_permeability",cmd_set_append_output_permeability},
+  {"set_permeability_vtu",cmd_set_permeability_BCs_vtu},
+  {"solve_permeability",cmd_Laplace_permeability},
+  {"append_output_permeability",cmd_append_output_permeability},
   #if(VER_VARWALL == 1)
   {"read_varwallprop_restart",cmd_read_restart_varwallprop},
   {"read_varwallprop_geombc",cmd_read_geombc_varwallprop},

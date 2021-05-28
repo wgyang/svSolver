@@ -104,6 +104,8 @@ extern double* P0vwSolution_;
 extern int itissuesuppt;
 #endif
 
+extern double* PermeabilitySolution_;
+
 int writeGEOMBCDAT(char* filename);
 int writeRESTARTDAT(char* filename);
 int readRESTARTDAT(char* infile, int readSoln, int readDisp, int readAcc);
@@ -2281,6 +2283,151 @@ int cmd_set_Initial_Evw_vtp(char *cmd) {
     return CV_OK;
 }
 
+
+
+// SET Permeability BC
+int cmd_set_permeability_BCs_vtu(char *cmd){
+    // enter
+    debugprint(stddbg,"Entering cmd_set_permeability_BCs_vtu.\n");
+
+    // do work
+    double value = 0;
+    if (parseDouble2(cmd,&value) == CV_ERROR) {
+        return CV_ERROR;
+    }
+
+    debugprint(stddbg,"Setting permeability to [%lf] \n",value);
+
+    // parse command string for filename
+    char meshfn[MAXPATHLEN];
+    meshfn[0] = '\0';
+    parseCmdStr(cmd, meshfn);
+
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(meshfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", meshfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
+
+    // read file
+    vtkXMLUnstructuredGridReader* reader = vtkXMLUnstructuredGridReader::New();
+    reader->SetFileName(meshfn);
+    reader->Update();
+
+    vtkUnstructuredGrid* ug = NULL;
+    ug = reader->GetOutput();
+    if (ug == NULL) {
+        fprintf(stderr, "ERROR: problems parsing file (%s).", meshfn);
+        return CV_ERROR;
+    }
+
+    vtkIntArray* gids = NULL;
+    gids =static_cast<vtkIntArray*>(reader->GetOutput()->GetPointData()->GetArray("GlobalNodeID"));
+    if (gids == NULL) {
+        fprintf(stderr, "ERROR: problem finding GlobalNodeID");
+        return CV_ERROR;
+    }
+
+    if (gBC_ == NULL) {
+     gBC_ = new double [numNodes_];
+     for (int i  = 0; i < numNodes_; i++) {
+         gBC_[i] = -1.0;
+     }
+    }
+
+    for (int i = 0; i < gids->GetNumberOfTuples(); i++) {
+        int nodeId = gids->GetTuple1(i);
+        gBC_[nodeId - 1] = value;
+    }
+
+    // cleanup
+    reader->Delete();
+
+    // cleanup
+    debugprint(stddbg,"Exiting cmd_set_scalar_BCs_vtp.\n");
+    return CV_OK;
+}
+
+int cmd_append_output_permeability(char *cmd){
+
+    char filename[MAXPATHLEN];
+    filename[0] = '\0';
+    parseCmdStr(cmd, filename);
+
+
+     if (PermeabilitySolution_== NULL) {
+         fprintf(stderr,"ERROR: Permeability Solution has not been computed.\n");
+         return CV_ERROR;
+     }
+
+
+    int filenum = -1;
+    openfile_ (filename, "append", &filenum);
+
+    if (filenum < 0) {
+        fprintf(stderr,"ERROR:  could not open file geombc.dat.1 \n");
+        return CV_ERROR;
+    }
+
+    int lstep = 0;
+
+    // fprintf(stdout,"check nsd nshg numNodes %i %i %i \n",nsd,nshg,numNodes_ );
+    // append to file
+    int nitems = 3;
+
+    int numpermprop = 1;
+    int iarray[3];
+    iarray[ 0 ] = numNodes_;
+    iarray[ 1 ] = numpermprop;
+    iarray[ 2 ] = lstep;
+    int size = numNodes_*numpermprop;
+    writeheader_( &filenum, "permprop ",
+                  ( void* )iarray, &nitems, &size,"double", oformat );
+
+    writedatablock_( &filenum, "permprop ",
+                     ( void* )(PermeabilitySolution_), &size, "double", oformat );
+
+    closefile_( &filenum,"append");
+    printf("writing permprop numNodes=%i numperprop=%i,\n",numNodes_,numpermprop);
+    //output permeability vtk results
+
+
+    //write out data
+    vtkUnstructuredGrid* grid = createGrid(numNodes_,nodes_,numElements_,elements_);
+
+    if (PermeabilitySolution_ != NULL) {
+        vtkDoubleArray *perm = vtkDoubleArray::New();
+        perm->SetNumberOfComponents(1);
+        perm->Allocate(numNodes_,10000);
+        perm->SetNumberOfTuples(numNodes_);
+        perm->SetName("Permeability");
+        for(int i = 0; i < numNodes_; i++){
+            perm->SetTuple1(i,PermeabilitySolution_[i]);
+        }
+
+        grid->GetPointData()->AddArray(perm);
+
+        perm->Delete();
+    }
+
+    vtkXMLUnstructuredGridWriter *writer = vtkXMLUnstructuredGridWriter::New();
+    writer->SetFileName("permprop.vtu");
+    writer->SetInputData(grid);
+    writer->Write();
+    writer->Delete();
+    grid->Delete();
+
+    debugprint(stddbg,"cmd_append_output_permeability.\n");
+
+    return CV_OK;
+
+
+}
+
+
 int cmd_varwallprop_write_vtp(char *cmd) {
 
     // enter
@@ -2383,7 +2530,7 @@ int cmd_varwallprop_write_vtp(char *cmd) {
             p0vw->Delete();
         }
     }
-    
+
     /* --------------------------------------------------- */
 
 

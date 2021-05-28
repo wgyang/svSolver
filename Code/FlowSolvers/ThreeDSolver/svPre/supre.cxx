@@ -103,6 +103,7 @@ int itissuesuppt             = 0;
 
 //permeability data
 double* Permeability_K_ = NULL;
+double* PermeabilitySolution_ = NULL;
 
 double  Displacement_Evw_        = 0;
 double  Displacement_nuvw_       = 0;

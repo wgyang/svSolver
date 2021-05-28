@@ -317,7 +317,7 @@ c
           itwo=2
           fname1='varwallprop?'
           intfromfile = 0
-          call readheader(igeom,fname1,intfromfile,itwo, 'integer'//CHAR(0), iotype)
+          call readheader(igeom,fname1,intfromfile,itwo, 'double'//CHAR(0), iotype)
 
           if (intfromfile(1).gt.0) then
               use_restart=0
@@ -358,14 +358,11 @@ c.... Check that either 2 or 5 nwallprop exist: (thicknessvw, evw) with/without 
 c.... read the values of permeability property variables from geombc into permpropg
 c
       if (iporouspen .eq. 1) then
-
        use_restart=1
-       itwo=2
+       ithree=2
        fname1='permprop?'
        intfromfile = 0
-       call readheader(igeom,fname1,intfromfile,itwo, 'integer'//CHAR(0)
-     & , iotype)
-
+       call readheader(igeom,fname1,intfromfile,ithree, 'double'//CHAR(0), iotype)
        if (intfromfile(1).gt.0) then
          use_restart=0
          numnp=intfromfile(1)

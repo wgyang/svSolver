@@ -97,11 +97,10 @@ c      temporary local boundary element nodal coordinates and wall properties
        real*8, allocatable, dimension(:,:,:) :: wallpropl
        integer iblk,iel
        integer nwallprop
-c      temporary local permeability properties
-       real*8, allocatable, dimension(:,:,:) :: permpropl
 #endif
 
-
+c      temporary local permeability properties
+       real*8, allocatable, dimension(:,:,:) :: permpropl
 
 c
 c.... shape function declarations
@@ -241,13 +240,11 @@ c
             iel    = lcblk(1,iblk)
 
             npro   = lcblk(1,iblk+1) - iel
-
 c           allocate ( xlb(npro,nenl,nsd) )
             allocate ( permpropl(npro,nshl,npermprop) )
 
 c           get wall properties for each wall node for block iblk
             call localx(permpropg,permpropl,  mien(iblk)%p, npermprop, 'gather  ')
-
 c           get coordinates for nodes in block iblk
 c           call localx(point2x,  xlb,  mienb(iblk)%p,  nsd,  'gather  ')
 

@@ -158,7 +158,8 @@ extern double  Displacement_thickness_;
 extern double  Displacement_kcons_;
 extern double  Displacement_pressure_;
 
-extern double*  Permeability_K_;
+extern double* Permeability_K_;
+extern double* PermeabilitySolution_;
 
 int writeGEOMBCDAT(char* filename);
 int writeRESTARTDAT(char* filename);
@@ -2882,6 +2883,7 @@ int cmd_set_append_output_permeability(char *cmd){
 
     Permeability_K_ = new double [numNodes_];
     double tmp_K;
+    for (int i =0; i<numNodes_;i++) Permeability_K_[i] = 1e16;
 
     // NOTE: currently node id is ignored,
     // nodes must be in sequential order!
@@ -2907,18 +2909,14 @@ int cmd_set_append_output_permeability(char *cmd){
 
 
     int filenum = -1;
-    char filename[MAXPATHLEN];
-    parseCmdStr(cmd,filename);
-    openfile_("geombc.dat.1", "append", &filenum);
+    openfile_ ("geombc.dat.1", "append", &filenum);
 
-   if (filenum < 0) {
-        fprintf(stderr,"ERROR:  could not open file (%s)\n",filename);
+    if (filenum < 0) {
+        fprintf(stderr,"ERROR:  could not open file geombc.dat.1 \n");
         return CV_ERROR;
     }
 
-
     int lstep = 0;
-
 
     // fprintf(stdout,"check nsd nshg numNodes %i %i %i \n",nsd,nshg,numNodes_ );
     // append to file
@@ -2931,32 +2929,24 @@ int cmd_set_append_output_permeability(char *cmd){
     iarray[ 2 ] = lstep;
     int size = numNodes_*numpermprop;
     writeheader_( &filenum, "permprop ",
-                  ( void* )iarray, &nitems, &size,"integer", oformat );
+                  ( void* )iarray, &nitems, &size,"double", oformat );
 
     writedatablock_( &filenum, "permprop ",
                      ( void* )(Permeability_K_), &size, "double", oformat );
 
     closefile_( &filenum,"append");
 
-
+    printf("writing permprop numNodes=%i numperprop=%i,\n",numNodes_,numpermprop);
     //output permeability vtk results
 
      double scalarval;
 
     FILE *fp = NULL;
-    if(outfile[0]=='\0'){
-        fp = fopen("permprop.vtk","w");
-    }else{
-        fp = fopen(outfile,"w");
-    }
 
-    if (fp == NULL) {
-        fprintf(stderr,"ERROR: could not open file (%s)\n",outfile);
-        return CV_ERROR;
-    }
+    fp = fopen("permprop.vtk","w");
 
    if (Permeability_K_== NULL) {
-        fprintf(stderr,"ERROR: Permeability_K_ is not computed  (%s)\n",outfile);
+        fprintf(stderr,"ERROR: Permeability_K_ is not computed \n");
         return CV_ERROR;
     }
 
@@ -2965,14 +2955,14 @@ int cmd_set_append_output_permeability(char *cmd){
     fprintf(fp,"ASCII\n");
     fprintf(fp,"DATASET UNSTRUCTURED_GRID\n");
     fprintf(fp,"POINTS %i float\n",numNodes_);
-    for (i = 0; i < numNodes_; i++) {
+    for (int i = 0; i < numNodes_; i++) {
         double x = nodes_[0*numNodes_+i];
         double y = nodes_[1*numNodes_+i];
         double z = nodes_[2*numNodes_+i];
         fprintf(fp,"%lf %lf %lf\n",x,y,z);
     }
     fprintf(fp,"CELLS %i %i\n",numElements_,5*numElements_);
-    for (i = 0; i < numElements_; i++) {
+    for (int i = 0; i < numElements_; i++) {
     //global id -1 to get correct index
     fprintf(fp,"4 %i %i %i %i\n",elements_[numElements_*0+i]-1,elements_[numElements_*1+i]-1,
             elements_[numElements_*2+i]-1,elements_[numElements_*3+i]-1);
@@ -2980,7 +2970,7 @@ int cmd_set_append_output_permeability(char *cmd){
     }
 
     fprintf(fp,"CELL_TYPES %i \n",numElements_);
-    for (i = 0; i < numElements_; i++) {
+    for (int i = 0; i < numElements_; i++) {
     fprintf(fp,"%i \n",10);
     }
     fprintf(fp,"POINT_DATA %i\n",numNodes_);
@@ -2989,7 +2979,7 @@ int cmd_set_append_output_permeability(char *cmd){
     if (Permeability_K_ != NULL) {
      fprintf(fp,"SCALARS Permeability double\n");
      fprintf(fp,"LOOKUP_TABLE default\n");
-    for (i = 0; i < numNodes_; i++) {
+    for (int i = 0; i < numNodes_; i++) {
        scalarval=Permeability_K_[i];
       // printf("%lf\n",scalarval);
         fprintf(fp,"%lf\n",scalarval);
@@ -3008,3 +2998,24 @@ int cmd_set_append_output_permeability(char *cmd){
 
 
 }
+
+
+// SOLVE LAPLACE EQUATION WITH THICKNESS
+int cmd_Laplace_permeability(char *cmd) {
+
+    // enter
+    debugprint(stddbg,"Entering cmd_Laplace_Thickness.\n");
+
+    if (PermeabilitySolution_ == NULL) {
+        WallPropSolution_ = new double [numNodes_];
+    }
+
+    int Laplacetype  = 4; // PERMEABILITY
+    calcWallPropDistribution(Laplacetype);
+
+    // cleanup
+    debugprint(stddbg,"Exiting cmd_Laplace_Thickness.\n");
+    return CV_OK;
+}
+
+

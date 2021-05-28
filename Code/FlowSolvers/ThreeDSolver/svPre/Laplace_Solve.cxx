@@ -52,7 +52,7 @@ extern double* EvwSolution_;
 extern double* KsvwSolution_;
 extern double* CsvwSolution_;
 extern double* P0vwSolution_;
-
+extern double* PermeabilitySolution_;
 extern char buffer_[MAXCMDLINELENGTH];
 extern int* iBC_;
 extern double* gBC_;
@@ -262,7 +262,7 @@ int CallFortranGMRES(Kentry* Kentries, int NNZ, double *b,int nunknown,double *u
     // std::cout <<"M[2]"<<M[2]<<std::endl;
     // delete [] Kentries;
     gmresfortran(&nunknown,&NNZ,IA,JA, M, b,u);
-    
+
     //   std::cout <<"u[2]"<<u[2]<<std::endl;
     //   std::cout <<"u[1]"<<u[1]<<std::endl;
 
@@ -485,12 +485,12 @@ int calcWallPropDistribution(int Laplacetype) {
     //  printf("row=%d col=%d val=%lf \n",Kentriesnew[i].row,Kentriesnew[i].col,Kentriesnew[i].value);
     //  printf("row=%d Fglobal=%lf \n",i,Fglobal[i]);
 
-    
+
     /* Kentriesnew is of size 50 * nunknown
      * array_size is NNZ (number of nonzero entries in the stiffness matrix)
-     * Fglobal is of size nunknown 
+     * Fglobal is of size nunknown
      * soln is of size nunknown
-    */ 
+    */
 
     CallFortranGMRES(Kentriesnew, array_size, Fglobal, nunknown, soln);
 
@@ -514,6 +514,8 @@ int calcWallPropDistribution(int Laplacetype) {
         KsvwSolution_ = WallPropSolution_;
     } else if (Laplacetype == 3) {
         CsvwSolution_ = WallPropSolution_;
+    } else if (Laplacetype == 4) {
+        PermeabilitySolution_ = WallPropSolution_;
     } else {
         P0vwSolution_ = WallPropSolution_;
     }

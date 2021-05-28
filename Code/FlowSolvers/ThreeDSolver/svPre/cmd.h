@@ -199,7 +199,11 @@ int CALLTYPE cmd_write_geombcdat(char*);
 int CALLTYPE cmd_write_numstartdat(char*);
 int CALLTYPE cmd_append_displacements(char*);
 //wgyang 2021/5
-int CALLTYPE cmd_set_append_otuput_permeability(char*);
+int CALLTYPE cmd_set_append_output_permeability(char*);
+int CALLTYPE cmd_set_permeability_BCs_vtu(char*);
+int CALLTYPE cmd_Laplace_permeability(char*);
+int CALLTYPE cmd_append_output_permeability(char *);
+
 #if(VER_VARWALL == 1)
 int CALLTYPE cmd_Laplace_Thickness(char*);
 int CALLTYPE cmd_Laplace_Evw(char*);
